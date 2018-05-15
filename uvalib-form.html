@@ -1,0 +1,36 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="uvalib-form">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]!</h2>
+  </template>
+
+  <script>
+    /**
+     * `uvalib-form`
+     * Component that builds out a web form UI using a form definition via the API.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class UvalibForm extends Polymer.Element {
+      static get is() { return 'uvalib-form'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'uvalib-form'
+          }
+        };
+      }
+    }
+
+    window.customElements.define(UvalibForm.is, UvalibForm);
+  </script>
+</dom-module>
