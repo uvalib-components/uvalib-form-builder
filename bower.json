@@ -4,7 +4,8 @@
   "main": "uvalib-form.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
-    "uvalib-elements": "uvalib-components/uvalib-elements#^2.0.0"
+    "uvalib-elements": "uvalib-components/uvalib-elements#master",
+    "uvalib-account": "uvalib-components/uvalib-account"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
@@ -14,7 +15,6 @@
   "resolutions": {
     "polymer": "^2.5.0",
     "lodash": "^4.17.4",
-    "webcomponentsjs": "^1.1.1",
-    "uvalib-elements": "master"
+    "webcomponentsjs": "^1.1.1"
   }
 }

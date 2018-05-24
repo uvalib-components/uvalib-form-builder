@@ -1,5 +1,8 @@
 <link rel="import" href="../polymer/polymer-element.html">
-<link rel="import" href="../uvalib-theme/uvalib-ui-element.html">
+<link rel="import" href="../uvalib-account/uvalib-account-auth.html">
+<link rel="import" href="../uva-models/uva-library.html">
+<link rel="import" href="../uvalib-theme/uvalib-theme.html">
+
 
 <dom-module id="uvalib-form">
   <template>
@@ -8,7 +11,20 @@
         display: block;
       }
     </style>
-    <h2>Hello [[prop1]]!</h2>
+
+    <uva-library path="web/forms" items="{{formDefinition}}" filter="{{_formFilter}}"></uva-library>
+
+    <template is="dom-if" if="{{_authenticatedForm}}"><uvalib-account-auth user="{{userInfo}}"></uvalib-account-auth></template>
+    <form method="post" action="">
+        <template is="dom-repeat" items="{{_formElements}}" as="elem">
+          <template is="dom-if" if="_isHTML(elem)"></template>
+          <template is="dom-if" if="_isField(elem)"></template>
+          <template is="dom-if" if="_isFieldSet(elem)"></template>
+          <template is="dom-if" if="_isActions(elem)"></template>
+        </template>
+        <input type="hidden" name="[[formId]]" />
+    </form>
+
   </template>
 
   <script>
@@ -20,15 +36,95 @@
      * @polymer
      * @demo demo/index.html
      */
-    class UvalibForm extends UvalibUiElement.Element {
+    class UvalibForm extends Polymer.Element {
       static get is() { return 'uvalib-form'; }
       static get properties() {
         return {
-          prop1: {
+          /**
+           * User name, email address, department, etc. for use in pre-populating some information.
+           */
+          userInfo: {
+            type: Object,
+            value: function() { return {name: "Jack Kelly", emailAddress: "jkelly@virginia.edu", phone: "434-924-7119", affiliation: "Staff", departmentOrSchool: "UVA Library"}; }
+          },
+          /**
+           * Used to indicate which workflow the server should use when processing the request submitted.
+           */
+          formId: {
+            type: String
+          },
+          /**
+           * An array containing the form page definition returned for the specified form id.
+           */
+          formDefinition: {
+            type: Array,
+            notify: true
+          },
+          /**
+           * Filter for the uva library api call to select only the form id requested.
+           */
+          _formFilter: {
+            type: Object,
+            computed: '_filter(formId)'
+          },
+          /**
+           * The object instance of the formDefinition string.
+           */
+          _formElements: {
+            type: Array,
+            computed: '_parseDefinition(formDefinition)'
+          },
+          _authenticatedForm: {
+            type: Boolean,
+            computed: '_isFormAuthenticated(_formElements)'
+          },
+          _confirmationPagePath: {
             type: String,
-            value: 'uvalib-form'
+            computed: '_getConfirmationPagePath(_formElements)'
+          },
+          _inFieldSet: {
+            type: Boolean,
+            value: false
           }
         };
+      }
+
+      /**
+       * Filter API web forms to get the one needed.
+       * @return Object
+       */
+      _filter(id) {
+        return {'target_id': id};
+      }
+
+      /**
+       * Check authenticated field value to determine if form requires NetBadge.
+       * @return Boolean
+       */
+      _isFormAuthenticated(frmElements) {
+        let auth = _.find(frmElements, 'authenticated');
+        return (auth.authenticated.value == "yes") ? true : false;
+      }
+
+      /**
+       * Get the path for the confirmation page.
+       * @return String
+       */
+      _getConfirmationPagePath(frmElements) {
+        let path = _.find(frmElements, 'confirmation_page_path');
+        return path.confirmation_page_path.value;
+      }
+
+      /**
+       * Returns web form definition for the form page object.
+       * @return Array
+       */
+      _parseDefinition(frmDefn) {
+        let f = _.values(JSON.parse(frmDefn[0].webform));
+        console.log(f);
+        let fields = _.map(JSON.parse(frmDefn[0].webform), function(value, key) { return { [key]: value }; });
+        console.log(fields);
+        return fields;
       }
     }
 
