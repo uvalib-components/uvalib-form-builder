@@ -5,7 +5,10 @@
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "uvalib-elements": "uvalib-components/uvalib-elements#master",
-    "uvalib-account": "uvalib-components/uvalib-account"
+    "paper-input": "PolymerElements/paper-input#^2.2.2",
+    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^2.1.0",
+    "paper-listbox": "PolymerElements/paper-listbox#^2.1.1",
+    "paper-item": "PolymerElements/paper-item#^2.1.1"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",

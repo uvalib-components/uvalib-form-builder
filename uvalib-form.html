@@ -2,6 +2,12 @@
 <link rel="import" href="../uvalib-account/uvalib-account-auth.html">
 <link rel="import" href="../uva-models/uva-library.html">
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-input/paper-textarea.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-button/paper-button.html">
 
 
 <dom-module id="uvalib-form">
@@ -15,12 +21,36 @@
     <uva-library path="web/forms" items="{{formDefinition}}" filter="{{_formFilter}}"></uva-library>
 
     <template is="dom-if" if="{{_authenticatedForm}}"><uvalib-account-auth user="{{userInfo}}"></uvalib-account-auth></template>
-    <form method="post" action="">
+    <form method="post" action="{{_confirmationPagePath}}">
         <template is="dom-repeat" items="{{_formElements}}" as="elem">
-          <template is="dom-if" if="_isHTML(elem)"></template>
-          <template is="dom-if" if="_isField(elem)"></template>
-          <template is="dom-if" if="_isFieldSet(elem)"></template>
-          <template is="dom-if" if="_isActions(elem)"></template>
+          <template is="dom-if" if="{{_isFieldset(elem)}}">
+            <template is="dom-if" if="{{_inFieldset}}">
+              </fieldset>
+            </template>
+              <fieldset>
+                <legend>{{elem.title}}</legend>
+          </template>
+          <template is="dom-if" if="{{_isSelect(elem)}}">
+            <paper-dropdown-menu label="{{elem.title}}" name="{{elem.name}}" required="{{elem.required}}">
+              <paper-listbox slot="dropdown-content">
+                <template is="dom-repeat" items="{{_getOptionsArray(elem.options)}}" as="option">
+                  <paper-item>{{option}}</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+          </template>
+          <template is="dom-if" if="{{_isEmail(elem)}}">
+            <paper-input label="{{elem.title}}" type="email" name="{{elem.name}}" required="{{elem.required}}" error-message="{{elem.required_error}}"></paper-input>
+          </template>
+          <template is="dom-if" if="{{_isText(elem)}}">
+            <paper-input label="{{elem.title}}" type="text" name="{{elem.name}}" required="{{elem.required}}" error-message="{{elem.required_error}}"></paper-input>
+          </template>
+          <template is="dom-if" if="{{_isTextArea(elem)}}">
+            <paper-textarea label="{{elem.title}}" name="{{elem.name}}" required="{{elem.required}}" error-message="{{elem.required_error}}"></paper-textarea>
+          </template>
+          <template is="dom-if" if="{{_isSubmit(elem)}}">
+            <paper-button>?Submit?</paper-button>
+          </template>
         </template>
         <input type="hidden" name="[[formId]]" />
     </form>
@@ -82,7 +112,7 @@
             type: String,
             computed: '_getConfirmationPagePath(_formElements)'
           },
-          _inFieldSet: {
+          _inFieldset: {
             type: Boolean,
             value: false
           }
@@ -102,17 +132,41 @@
        * @return Boolean
        */
       _isFormAuthenticated(frmElements) {
-        let auth = _.find(frmElements, 'authenticated');
-        return (auth.authenticated.value == "yes") ? true : false;
+        let auth = _.find(frmElements, {title: 'authenticated'});
+        return (auth.value == "yes") ? true : false;
       }
 
+      _isSelect(el) {
+        return (el.type && el.type=="select") ? true : false;
+      }
+      _isEmail(el) {
+        return (el.type && el.type=="email") ? true : false;
+      }
+      _isText(el) {
+        return (el.type && el.type=="textfield") ? true : false;
+      }
+      _isTextArea(el) {
+        return (el.type && el.type=="textarea") ? true : false;
+      }
+      _isSubmit(el) {
+        return (el.type && el.type=="webform_actions") ? true : false;
+      }
+      _isFieldset(el) {
+        this._inFieldset = true;
+        return (el.type && el.type=="fieldset") ? true : false;
+      }
+
+      _getOptionsArray(options) {
+        console.log(_.values(options));
+        return _.values(options);
+      }
       /**
        * Get the path for the confirmation page.
        * @return String
        */
       _getConfirmationPagePath(frmElements) {
-        let path = _.find(frmElements, 'confirmation_page_path');
-        return path.confirmation_page_path.value;
+        let path = _.find(frmElements, {title: 'confirmation page path'});
+        return path.value;
       }
 
       /**
@@ -120,9 +174,8 @@
        * @return Array
        */
       _parseDefinition(frmDefn) {
-        let f = _.values(JSON.parse(frmDefn[0].webform));
-        console.log(f);
-        let fields = _.map(JSON.parse(frmDefn[0].webform), function(value, key) { return { [key]: value }; });
+        let fields = _.values(JSON.parse(frmDefn[0].webform));
+        //let fields = _.map(JSON.parse(frmDefn[0].webform), function(value, key) { return { [key]: value }; });
         console.log(fields);
         return fields;
       }
