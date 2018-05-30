@@ -16,43 +16,76 @@
       :host {
         display: block;
       }
+      .text-block {
+
+      }
+      .section {
+        padding-top: 1rem;
+      }
+      fieldset {
+        padding: 10px 0px;
+        border: none;
+      }
+      legend {
+        padding: 0px;
+        font: 1.5rem bold serif;
+      }
+      paper-dropdown-menu {
+        display: block;
+      }
+      paper-button {
+        border: 1px solid black;
+      }
     </style>
 
     <uva-library path="web/forms" items="{{formDefinition}}" filter="{{_formFilter}}"></uva-library>
 
     <template is="dom-if" if="{{_authenticatedForm}}"><uvalib-account-auth user="{{userInfo}}"></uvalib-account-auth></template>
     <form method="post" action="{{_confirmationPagePath}}">
-        <template is="dom-repeat" items="{{_formElements}}" as="elem">
-          <template is="dom-if" if="{{_isFieldset(elem)}}">
-            <template is="dom-if" if="{{_inFieldset}}">
-              </fieldset>
-            </template>
-              <fieldset>
-                <legend>{{elem.title}}</legend>
+      <input type="hidden" name="[[formId]]" />
+      <template is="dom-repeat" items="{{_formElements}}" as="elem">
+        <template is="dom-if" if="{{_isFieldset(elem)}}">
+          <template is="dom-if" if="{{_inFieldset}}">
+            </fieldset>
+          </div>
           </template>
-          <template is="dom-if" if="{{_isSelect(elem)}}">
-            <paper-dropdown-menu label="{{elem.title}}" name="{{elem.name}}" required="{{elem.required}}">
-              <paper-listbox slot="dropdown-content">
-                <template is="dom-repeat" items="{{_getOptionsArray(elem.options)}}" as="option">
-                  <paper-item>{{option}}</paper-item>
+          <div class="section">
+            <fieldset>
+              <legend>{{elem.title}}</legend>
+                <template is="dom-repeat" items="{{_getFieldSetElements(elem)}}" as="item">
+                  <!--  REPLICATE other dom-if templates here?? Seems redundant. Rethink this... -->
                 </template>
-              </paper-listbox>
-            </paper-dropdown-menu>
-          </template>
-          <template is="dom-if" if="{{_isEmail(elem)}}">
-            <paper-input label="{{elem.title}}" type="email" name="{{elem.name}}" required="{{elem.required}}" error-message="{{elem.required_error}}"></paper-input>
-          </template>
-          <template is="dom-if" if="{{_isText(elem)}}">
-            <paper-input label="{{elem.title}}" type="text" name="{{elem.name}}" required="{{elem.required}}" error-message="{{elem.required_error}}"></paper-input>
-          </template>
-          <template is="dom-if" if="{{_isTextArea(elem)}}">
-            <paper-textarea label="{{elem.title}}" name="{{elem.name}}" required="{{elem.required}}" error-message="{{elem.required_error}}"></paper-textarea>
-          </template>
-          <template is="dom-if" if="{{_isSubmit(elem)}}">
-            <paper-button>?Submit?</paper-button>
-          </template>
         </template>
-        <input type="hidden" name="[[formId]]" />
+        <template is="dom-if" if="{{_isMarkup(elem)}}">
+          <div class="text-block" inner-h-t-m-l="{{elem.markup}}"></div>
+        </template>
+        <template is="dom-if" if="{{_isSelect(elem)}}">
+          <paper-dropdown-menu label="{{elem.title}}" name="{{elem.name}}" required="{{elem.required}}">
+            <paper-listbox attr-for-selected="item-name" selected="{{elem.default_value}}" slot="dropdown-content">
+              <template is="dom-repeat" items="{{_getArray(elem.options)}}" as="option">
+                <template is="dom-if" if="{{_isValidOption(option)}}">
+                  <paper-item item-name="{{option}}">{{option}}</paper-item>
+                </template>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </template>
+        <template is="dom-if" if="{{_isEmail(elem)}}">
+          <paper-input label="{{elem.title}}" type="email" name="{{elem.name}}" required="{{elem.required}}" error-message="{{elem.required_error}}"></paper-input>
+        </template>
+        <template is="dom-if" if="{{_isText(elem)}}">
+          <paper-input label="{{elem.title}}" type="text" name="{{elem.name}}" required="{{elem.required}}" error-message="{{elem.required_error}}"></paper-input>
+        </template>
+        <template is="dom-if" if="{{_isTextArea(elem)}}">
+          <paper-textarea label="{{elem.title}}" name="{{elem.name}}" required="{{elem.required}}" error-message="{{elem.required_error}}"></paper-textarea>
+        </template>
+        <template is="dom-if" if="{{_isSubmit(elem)}}">
+          <paper-button>{{elem.submit.value}}</paper-button>
+        </template>
+      </template>
+      <template is="dom-if" if="{{_noSubmitButton}}">
+        <paper-button>Submit</paper-button>
+      </template>
     </form>
 
   </template>
@@ -61,6 +94,8 @@
     /**
      * `uvalib-form`
      * Component that builds out a web form UI using a form definition via the API.
+     *
+     * @TODO Need to utilize the states property to address showing/hiding elements as needed.
      *
      * @customElement
      * @polymer
@@ -115,6 +150,10 @@
           _inFieldset: {
             type: Boolean,
             value: false
+          },
+          _noSubmitButton: {
+            type: Boolean,
+            value: true
           }
         };
       }
@@ -136,6 +175,9 @@
         return (auth.value == "yes") ? true : false;
       }
 
+      _isMarkup(el) {
+        return (el.type && el.type == "webform_markup") ? true : false;
+      }
       _isSelect(el) {
         return (el.type && el.type=="select") ? true : false;
       }
@@ -149,16 +191,28 @@
         return (el.type && el.type=="textarea") ? true : false;
       }
       _isSubmit(el) {
-        return (el.type && el.type=="webform_actions") ? true : false;
+        if (el.type && el.type=="webform_actions") {
+          this._noSubmitButton = false;
+          return true;
+        } else {
+          return false;
+        }
       }
       _isFieldset(el) {
         this._inFieldset = true;
         return (el.type && el.type=="fieldset") ? true : false;
       }
+      _isValidOption(value) {
+        return (value != '- Select -') ? true : false;
+      }
+      _getFieldSetElements(el) {
+        // Loop through the fieldset object key values and just examine the ones with
+        // fld
+      }
 
-      _getOptionsArray(options) {
-        console.log(_.values(options));
-        return _.values(options);
+      _getArray(obj) {
+        console.log(_.values(obj));
+        return _.values(obj);
       }
       /**
        * Get the path for the confirmation page.
