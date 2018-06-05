@@ -2,13 +2,7 @@
 <link rel="import" href="../uvalib-account/uvalib-account-auth.html">
 <link rel="import" href="../uva-models/uva-library.html">
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
-<link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../paper-input/paper-textarea.html">
-<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../paper-listbox/paper-listbox.html">
-<link rel="import" href="../paper-item/paper-item.html">
 <link rel="import" href="../paper-button/paper-button.html">
-
 
 <dom-module id="uvalib-form">
   <template>
@@ -30,8 +24,17 @@
         padding: 0px;
         font: 1.5rem bold serif;
       }
-      paper-dropdown-menu {
+      .form-field {
+        padding: 10px 0px 10px 0px;
+      }
+      label {
         display: block;
+        font-weight: bold;
+        padding-bottom: 5px;
+      }
+      .required {
+        padding-left: 5px;
+        color: var(--uvalib-main-rotunda-orange);
       }
       paper-button {
         border: 1px solid black;
@@ -52,32 +55,45 @@
           <div class="section">
             <fieldset>
               <legend>{{elem.title}}</legend>
-                <template is="dom-repeat" items="{{_getFieldSetElements(elem)}}" as="item">
+                <template is="dom-repeat" items="{{_getFieldSetElements(elem)}}" as="fldset_elem">
                   <!--  REPLICATE other dom-if templates here?? Seems redundant. Rethink this... -->
+                  <div>
+                    <label>{{fldset_elem.title}}</label>
+                  </div>
                 </template>
         </template>
         <template is="dom-if" if="{{_isMarkup(elem)}}">
           <div class="text-block" inner-h-t-m-l="{{elem.markup}}"></div>
         </template>
         <template is="dom-if" if="{{_isSelect(elem)}}">
-          <paper-dropdown-menu label="{{elem.title}}" name="{{elem.name}}" required="{{elem.required}}">
-            <paper-listbox attr-for-selected="item-name" selected="{{elem.default_value}}" slot="dropdown-content">
+          <div class="form-field">
+            <label for="{{elem.name}}">{{elem.title}}<template is="dom-if" if="{{_isRequired(elem)}}"><span class="required">*</span></template></label>
+            <select id="{{elem.name}}" required="{{_isRequired(elem)}}">
               <template is="dom-repeat" items="{{_getArray(elem.options)}}" as="option">
                 <template is="dom-if" if="{{_isValidOption(option)}}">
-                  <paper-item item-name="{{option}}">{{option}}</paper-item>
+                  <option value="{{option}}">{{option}}</option>
                 </template>
               </template>
-            </paper-listbox>
-          </paper-dropdown-menu>
+            </select>
+          </div>
         </template>
         <template is="dom-if" if="{{_isEmail(elem)}}">
-          <paper-input label="{{elem.title}}" type="email" name="{{elem.name}}" required="{{elem.required}}" error-message="{{elem.required_error}}"></paper-input>
+          <div class="form-field">
+            <label for="{{elem.name}}">{{elem.title}}<template is="dom-if" if="{{_isRequired(elem)}}"><span class="required">*</span></template></label>
+            <input type="email" id="{{elem.name}}" required="{{_isRequired(elem)}}" error-message="{{elem.required_error}}"></input>
+          </div>
         </template>
         <template is="dom-if" if="{{_isText(elem)}}">
-          <paper-input label="{{elem.title}}" type="text" name="{{elem.name}}" required="{{elem.required}}" error-message="{{elem.required_error}}"></paper-input>
+          <div class="form-field">
+            <label for="{{elem.name}}">{{elem.title}}<template is="dom-if" if="{{_isRequired(elem)}}"><span class="required">*</span></template></label>
+            <input type="text" id="{{elem.name}}" required="{{_isRequired(elem)}}" error-message="{{elem.required_error}}"></input>
+          </div>
         </template>
         <template is="dom-if" if="{{_isTextArea(elem)}}">
-          <paper-textarea label="{{elem.title}}" name="{{elem.name}}" required="{{elem.required}}" error-message="{{elem.required_error}}"></paper-textarea>
+          <div class="form-field">
+            <label for="{{elem.name}}">{{elem.title}}<template is="dom-if" if="{{_isRequired(elem)}}"><span class="required">*</span></template></label>
+            <textarea id="{{elem.name}}" required="{{_isRequired(elem)}}" error-message="{{elem.required_error}}"></textarea>
+          </div>
         </template>
         <template is="dom-if" if="{{_isSubmit(elem)}}">
           <paper-button>{{elem.submit.value}}</paper-button>
@@ -175,6 +191,9 @@
         return (auth.value == "yes") ? true : false;
       }
 
+      _isRequired(elem) {
+        return elem.required || (elem.required_error && (elem.required_error != ""));
+      }
       _isMarkup(el) {
         return (el.type && el.type == "webform_markup") ? true : false;
       }
@@ -183,6 +202,9 @@
       }
       _isEmail(el) {
         return (el.type && el.type=="email") ? true : false;
+      }
+      _isPhone(el) {
+        return (el.type && el.type=="tel") ? true : false;
       }
       _isText(el) {
         return (el.type && el.type=="textfield") ? true : false;
@@ -207,7 +229,13 @@
       }
       _getFieldSetElements(el) {
         // Loop through the fieldset object key values and just examine the ones with
-        // fld
+        // fld, mkup, fldset, ???
+        let fields = _.values(el); 
+        /*        _.filter(el, function (o, prop) {
+          return /^(fld\_|mkup\_|fldset\_)/.test(prop.index);
+        });*/
+        console.log(fields);
+        return fields;
       }
 
       _getArray(obj) {
