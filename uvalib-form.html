@@ -31,6 +31,10 @@
         font-weight: bold;
         padding-bottom: 5px;
       }
+      input[type="checkbox"] {
+        display: inline;
+        float left;
+      }
       .required {
         padding-left: 5px;
         color: var(--uvalib-main-rotunda-orange);
@@ -246,6 +250,8 @@
         if (!item.states) return true;
         else if (item.states && item.states.visible) {
           return this._testState(item.states.visible);
+        } else if (item.states && item.states.required) {
+          return this._testState(item.states.required);
         }
       }
       _testState(state){
@@ -294,34 +300,26 @@
         return el.required || (el.required_error && el.required_error != "");
       }
       _isMarkup(el) {
-        return (el.type && el.type == "webform_markup") ? true : false;
+        return (el.type && el.type == "webform_markup");
       }
       _isSelect(el) {
-        return (el.type && el.type=="select") ? true : false;
+        return (el.type && el.type=="select");
       }
       _isField(el) {
-        return (el.type && (el.type=="email" || el.type=="tel" || el.type=="text" || el.type=="select" || el.type=="textarea" || el.type=="checkbox"))
+        console.log(el);
+        return (el.type && (el.type=="email" || el.type=="tel" || el.type=="text" || el.type=="select" || el.type=="textarea" || el.type=="checkbox"));
       }
       _isInput(el) {
-        return (el.type && (el.type=="email" || el.type=="tel" || el.type=="text"))
+        return (el.type && (el.type=="email" || el.type=="tel" || el.type=="text"));
       }
       _isCheckbox(el) {
-        return (el.type && el.type=="checkbox")
+        return (el.type && el.type=="checkbox");
       }
       _hasDescription(el) {
         return (el.description && el.description.markup && el.description.markup!='');
       }
-/*      _isEmail(el) {
-        return (el.type && el.type=="email") ? true : false;
-      }
-      _isPhone(el) {
-        return (el.type && el.type=="tel") ? true : false;
-      }
-      _isText(el) {
-        return (el.type && el.type=="text") ? true : false;
-      }*/
       _isTextArea(el) {
-        return (el.type && el.type=="textarea") ? true : false;
+        return (el.type && el.type=="textarea");
       }
       _isSubmit(el) {
         if (el.type && el.type=="webform_actions") {
@@ -336,6 +334,7 @@
         return (el.type && el.type=="fieldset") ? true : false;
       }
       _isValidOption(value) {
+        // '- Select -' is a default assigned by the Drupal webform module. So we want to ignore this when generating our forms.
         return (value != '- Select -') ? true : false;
       }
       // Loop through the fieldset object key values and just examine the ones with
@@ -391,45 +390,6 @@
       _selectedValue(el,option) {
         return (el.default_value && el.default_value==option);
       }
-
-/*      _generateMarkup(el) {
-        var markup = '';
-        if (el.name && el.name.match(/^fld\_/)) {
-          if (el.type && el.type == 'webform_markup') {
-            markup += '<div class="text-block">'+el.markup+'</div>';
-          } else if (el.type && el.type == 'webform_actions') {
-            // @TODO should this be handled differently?
-          } else {
-            markup += '<label for="'+el.name+'">'+el.title;
-            markup += this._isRequired(el) ? '<span class="required">*</span>' : '';
-            markup += '</label>';
-            if ((el.type && el.type == 'email') || (el.type && el.type == 'tel') || (el.type && el.type == 'text'))  {
-              markup += '<input type="'+el.type+'" id="'+el.name+'" size="'+el.size+'" error-message="'+el.required_error+'"';
-              markup += this._isRequired(el) ? ' required' : '';
-              markup += '></input>';
-            } else if (el.type && el.type == 'textarea') {
-              markup += '<textarea id="'+el.name+'" rows="'+el.rows+'" cols="'+el.cols+'" error-message="'+el.required_error+'"';
-              markup += this._isRequired(el) ? ' required' : '';
-              markup += '></textarea>';
-            } else if (el.type && el.type == 'checkbox') {
-              // @TODO Review a form to see what the Drupal content generates.
-            } else if (el.type && el.type == 'select') {
-              markup += '<select id="'+el.name+'"';
-              markup += this._isRequired(el) ? ' required' : '';
-              markup += '>';
-              for (var key in el.options) {
-                if (el.options[key] != '- Select -') {
-                  markup += '<option value="'+key+'"';
-                  markup += (el.default_value == key) ? ' selected' : '';
-                  markup += '>'+el.options[key]+'</option>';
-                }
-              }
-              markup += '</select>';
-            }
-          }
-        }
-        return markup;
-      }*/
 
     }
 
