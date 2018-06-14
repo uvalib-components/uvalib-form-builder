@@ -2,47 +2,20 @@
 <link rel="import" href="../uvalib-account/uvalib-account-auth.html">
 <link rel="import" href="../uva-models/uva-library.html">
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
+<link rel="import" href="uvalib-form-style.html">
+<link rel="import" href="uvalib-form-fieldset.html">
+<link rel="import" href="uvalib-field-select.html">
+<link rel="import" href="uvalib-field-input.html">
+<link rel="import" href="uvalib-field-textarea.html">
+<link rel="import" href="uvalib-field-checkbox.html">
+<link rel="import" href="uvalib-field-html-markup.html">
 
 <dom-module id="uvalib-form">
   <template>
-    <style>
-      :host {
-        display: block;
-      }
-      .text-block {
-
-      }
-      .section {
-        padding-top: 1rem;
-      }
-      fieldset {
-        padding: 10px 0px;
-        border: none;
-      }
-      legend {
-        padding: 0px;
-        font: 1.5rem bold serif;
-      }
-      .form-field {
-        padding: 10px 0px 10px 0px;
-      }
-      label {
-        display: block;
-        font-weight: bold;
-        padding-bottom: 5px;
-      }
-      input[type="checkbox"] {
-        display: inline;
-        float left;
-      }
-      .required {
-        padding-left: 5px;
-        color: var(--uvalib-main-rotunda-orange);
-      }
-      paper-button {
-        border: 1px solid black;
-      }
-    </style>
+    <custom-style>
+      <style include="uvalib-theme uvalib-form-style">
+      </style>
+    </custom-style>
 
     <uva-library path="web/forms" items="{{formPage}}" filter="{{_formFilter}}"></uva-library>
 
@@ -50,89 +23,12 @@
     <form method="post" action="{{_confirmationPagePath}}">
       <input type="hidden" name="[[formId]]" />
       <template is="dom-repeat" items="{{_elements}}" as="elem">
-        <template is="dom-if" if="{{_isFieldset(elem)}}">
-          <template is="dom-if" if="{{_inFieldset}}">
-            </fieldset>
-          </div>
-          </template>
-          <template is="dom-if" if="[[_showFieldSet(elem,_ping)]]">
-            <div class="section">
-              <fieldset>
-                <legend>{{elem.title}}</legend>
-                  <template is="dom-repeat" items="{{_getFieldSetElements(elem)}}" as="fldset_elem">
-                    <template is="dom-if" if="{{_isMarkup(fldset_elem)}}">
-                      <template is="dom-if" if="[[_showMarkup(fldset_elem,_ping)]]">
-                        <div class="text-block" inner-h-t-m-l="{{fldset_elem.markup}}"></div>
-                      </template>
-                    </template>
-                    <template is="dom-if" if="{{_isField(fldset_elem)}}">
-                      <template is="dom-if" if="[[_showField(fldset_elem,_ping)]]">
-                        <div class="form-field">
-                          <label for="{{fldset_elem.name}}">{{fldset_elem.title}}<template is="dom-if" if="{{_isRequired(fldset_elem)}}"><span class="required">*</span></template></label>
-                          <template is="dom-if" if="{{_hasDescription(fldset_elem)}}">
-                            <div class="descriptive-text">{{fldset_elem.description.markup}}</div>
-                          </template>
-                          <template is="dom-if" if="{{_isSelect(fldset_elem)}}">
-                            <select id="{{fldset_elem.name}}" required="{{_isRequired(fldset_elem)}}" value="{{fldset_elem.value::change}}" on-change="_pingIt">
-                              <template is="dom-repeat" items="{{_getArray(fldset_elem.options)}}" as="fldset_option">
-                                <template is="dom-if" if="{{_isValidOption(fldset_option)}}">
-                                  <template is="dom-if" if="{{_selectedValue(fldset_elem,fldset_option)}}"><option selected value="{{fldset_option}}">{{fldset_option}}</option></template>
-                                  <template is="dom-if" if="{{!_selectedValue(fldset_elem,fldset_option)}}"><option value="{{fldset_option}}">{{fldset_option}}</option></template>
-                                </template>
-                              </template>
-                            </select>
-                          </template>
-                          <template is="dom-if" if="{{_isInput(fldset_elem)}}">
-                            <input type="{{fldset_elem.type}}" id="{{fldset_elem.name}}" size="{{fldset_elem.size}}" required="{{_isRequired(fldset_elem)}}" value=""></input>
-                          </template>
-                          <template is="dom-if" if="{{_isCheckbox(fldset_elem)}}">
-                            <input type="{{fldset_elem.type}}" id="{{fldset_elem.name}}" required="{{_isRequired(fldset_elem)}}" value=""></input>
-                          </template>
-                          <template is="dom-if" if="{{_isTextArea(fldset_elem)}}">
-                            <textarea id="{{fldset_elem.name}}" rows="{{fldset_elem.rows}}" cols="{{fldset_elem.cols}}" required="{{_isRequired(fldset_elem)}}" value=""></textarea>
-                          </template>
-                        </div>
-                      </template>
-                    </template>
-                  </template>
-          </template>
-        </template>
-        <template is="dom-if" if="{{!_isFieldset(elem)}}">
-          <template is="dom-if" if="{{_isMarkup(elem)}}">
-            <template is="dom-if" if="[[_showMarkup(elem,_ping)]]">
-              <div class="text-block" inner-h-t-m-l="{{elem.markup}}"></div>
-            </template>
-          </template>
-          <template is="dom-if" if="{{_isField(elem)}}">
-            <template is="dom-if" if="[[_showField(elem,_ping)]]">
-              <div class="form-field">
-                <label for="{{elem.name}}">{{elem.title}}<template is="dom-if" if="{{_isRequired(elem)}}"><span class="required">*</span></template></label>
-                <template is="dom-if" if="{{_hasDescription(elem)}}">
-                  <div class="descriptive-text">{{elem.description.markup}}</div>
-                </template>
-                <template is="dom-if" if="{{_isSelect(elem)}}">
-                  <select id="{{elem.name}}" required="{{_isRequired(elem)}}" value="{{elem.value::change}}" on-change="_pingIt">
-                    <template is="dom-repeat" items="{{_getArray(elem.options)}}" as="option">
-                      <template is="dom-if" if="{{_isValidOption(option)}}">
-                        <template is="dom-if" if="{{_selectedValue(elem,option)}}"><option selected value="{{option}}">{{option}}</option></template>
-                        <template is="dom-if" if="{{!_selectedValue(elem,option)}}"><option value="{{option}}">{{option}}</option></template>
-                      </template>
-                    </template>
-                  </select>
-                </template>
-                <template is="dom-if" if="{{_isInput(elem)}}">
-                  <input type="{{elem.type}}" id="{{elem.name}}" size="{{elem.size}}" required="{{_isRequired(elem)}}" value=""></input>
-                </template>
-                <template is="dom-if" if="{{_isCheckbox(elem)}}">
-                  <input type="{{elem.type}}" id="{{elem.name}}" required="{{_isRequired(elem)}}" value=""></input>
-                </template>
-                <template is="dom-if" if="{{_isTextArea(elem)}}">
-                  <textarea id="{{elem.name}}" rows="{{elem.rows}}" cols="{{elem.cols}}" required="{{_isRequired(elem)}}" value=""></textarea>
-                </template>
-              </div>
-            </template>
-          </template>
-        </template>
+        <uvalib-form-fieldset element="{{elem}}"></uvalib-form-fieldset>
+        <uvalib-field-html-markup element="{{elem}}"></uvalib-field-html-markup>
+        <uvalib-field-select element="{{elem}}"></uvalib-field-select>
+        <uvalib-field-input element="{{elem}}"></uvalib-field-input>
+        <uvalib-field-checkbox element="{{elem}}"></uvalib-field-checkbox>
+        <uvalib-field-textarea element="{{elem}}"></uvalib-field-textarea>
         <template is="dom-if" if="{{_isSubmit(elem)}}">
           </fieldset>
           <template is="dom-if" if="{{_showSubmit(elem)}}">
@@ -206,10 +102,6 @@
             type: String,
             computed: '_getConfirmationPagePath(_elements)'
           },
-          _inFieldset: {
-            type: Boolean,
-            value: false
-          },
           _noSubmitButton: {
             type: Boolean,
             value: true
@@ -224,20 +116,6 @@
       _pingIt(_ping) {
         this._ping = !this._ping;
       }
-      _showFieldSet(item){
-        if (!item.states) return true;
-        else if (item.states && item.states.visible) {
-          return this._testState(item.states.visible);
-        }
-      }
-      _showMarkup(item){
-        var isMarkup = item.type && item.type === "webform_markup";
-        if (!isMarkup) return false;
-        else if (!item.states) return true;
-        else if (item.states && item.states.visible) {
-          return this._testState(item.states.visible);
-        }
-      }
       _showSubmit(item){
         var isSubmit = item.type && item.type === "webform_actions";
         if (!isSubmit) return false;
@@ -245,38 +123,6 @@
         else if (item.states && item.states.visible) {
           return this._testState(item.states.visible);
         }
-      }
-      _showField(item){
-        if (!item.states) return true;
-        else if (item.states && item.states.visible) {
-          return this._testState(item.states.visible);
-        } else if (item.states && item.states.required) {
-          return this._testState(item.states.required);
-        }
-      }
-      _testState(state){
-        //console.log("state test:");
-        //console.log(state);
-        if (Array.isArray(state)) {
-          for (var i=0; i<state.length; i=i+2) {
-            if (this._testField(state[i])) return true;
-          }
-          return false;
-        } else {
-          return this._testField(state);
-        }
-      }
-      _testField(state){
-        var test = true;
-        // very error prone test - assuming much
-        for (var key in state) {
-          var id = key.replace(/.*"(.*)".*/,"$1"),
-              val = state[key].value;
-          if (!this.shadowRoot.querySelector('#'+id) || this.shadowRoot.querySelector('#'+id).value != val) {
-            test = false; break;
-          }
-        }
-        return test;
       }
 
       /**
@@ -296,31 +142,6 @@
         return (auth.value == "yes") ? true : false;
       }
 
-      _isRequired(el) {
-        return el.required || (el.required_error && el.required_error != "");
-      }
-      _isMarkup(el) {
-        return (el.type && el.type == "webform_markup");
-      }
-      _isSelect(el) {
-        return (el.type && el.type=="select");
-      }
-      _isField(el) {
-        console.log(el);
-        return (el.type && (el.type=="email" || el.type=="tel" || el.type=="text" || el.type=="select" || el.type=="textarea" || el.type=="checkbox"));
-      }
-      _isInput(el) {
-        return (el.type && (el.type=="email" || el.type=="tel" || el.type=="text"));
-      }
-      _isCheckbox(el) {
-        return (el.type && el.type=="checkbox");
-      }
-      _hasDescription(el) {
-        return (el.description && el.description.markup && el.description.markup!='');
-      }
-      _isTextArea(el) {
-        return (el.type && el.type=="textarea");
-      }
       _isSubmit(el) {
         if (el.type && el.type=="webform_actions") {
           this._noSubmitButton = false;
@@ -328,29 +149,6 @@
         } else {
           return false;
         }
-      }
-      _isFieldset(el) {
-        this._inFieldset = true;
-        return (el.type && el.type=="fieldset") ? true : false;
-      }
-      _isValidOption(value) {
-        // '- Select -' is a default assigned by the Drupal webform module. So we want to ignore this when generating our forms.
-        return (value != '- Select -') ? true : false;
-      }
-      // Loop through the fieldset object key values and just examine the ones with
-      // fld, mkup, fldset, ???
-      _getFieldSetElements(el) {
-        let fields = Array();
-        for (var key in el) {
-          if (key.match(/^fld\_|mkup\_|actions/)) {
-            fields.push(el[key]);
-            if (el[key].type && el[key].type == 'textfield') {
-              el[key].type = 'text';
-            }
-          }
-        }
-        console.log(fields);
-        return fields;
       }
 
       _getArray(obj) {
@@ -387,9 +185,6 @@
         return fields;
       }
 
-      _selectedValue(el,option) {
-        return (el.default_value && el.default_value==option);
-      }
 
     }
 

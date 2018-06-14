@@ -1,0 +1,82 @@
+<link rel="import" href="../uva-helper-libs/lodash.html">
+
+<script>
+    /**
+     * The Mixin for a form field.
+     * Contains properties and methods associated with displaying form inputs.
+     *
+     * @polymerMixin
+     */
+    UvalibField = function(superClass) {
+      return class extends superClass {
+        constructor() {
+          super();
+        }
+        static get properties() {
+          return {
+            /**
+             * The form field element.
+             */
+            element: {
+              type: Object
+            },
+            ping: {
+              type: Boolean,
+              value: false
+            }
+          };
+        }
+
+        pingIt(ping) {
+          this.ping = !this.ping;
+        }
+
+        _showField(item){
+          if (!item.states) return true;
+          else if (item.states && item.states.visible) {
+            return this._testState(item.states.visible);
+          } else if (item.states && item.states.required) {
+            return this._testState(item.states.required);
+          }
+        }
+
+        _testState(state){
+          //console.log("state test:");
+          //console.log(state);
+          if (Array.isArray(state)) {
+            for (var i=0; i<state.length; i=i+2) {
+              if (this._testField(state[i])) return true;
+            }
+            return false;
+          } else {
+            return this._testField(state);
+          }
+        }
+
+        _testField(state){
+          var test = true;
+          // very error prone test - assuming much
+          for (var key in state) {
+            var id = key.replace(/.*"(.*)".*/,"$1"),
+                val = state[key].value;
+            if (!this.shadowRoot.querySelector('#'+id) || this.shadowRoot.querySelector('#'+id).value != val) {
+              test = false; break;
+            }
+          }
+          return test;
+        }
+
+        _hasDescription(el) {
+          return (el.description && el.description.markup && el.description.markup!='');
+        }
+
+        _isField(el) {
+          return (el.type && (el.type=="email" || el.type=="tel" || el.type=="text" || el.type=="select" || el.type=="textarea" || el.type=="checkbox"));
+        }
+
+        _isRequired(el) {
+          return el.required || (el.required_error && el.required_error != "");
+        }
+      }
+    }
+  </script>

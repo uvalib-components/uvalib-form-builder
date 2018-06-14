@@ -1,0 +1,52 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="uvalib-field.html">
+<link rel="import" href="../uvalib-theme/uvalib-theme.html">
+<link rel="import" href="uvalib-form-style.html">
+
+<dom-module id="uvalib-field-input">
+  <template>
+    <custom-style>
+      <style include="uvalib-theme uvalib-form-style">
+      </style>
+    </custom-style>
+
+    <template is="dom-if" if="{{_isField(element)}}">
+      <template is="dom-if" if="{{_isInput(element)}}">
+        <template is="dom-if" if="[[_showField(element,ping)]]">
+          <div class="form-field">
+            <label class="field-label" for="{{element.name}}">{{element.title}}<template is="dom-if" if="{{_isRequired(element)}}"><span class="required">*</span></template></label>
+            <template is="dom-if" if="{{_hasDescription(element)}}">
+              <div class="descriptive-text" inner-h-t-m-l="{{element.description.markup}}"></div>
+            </template>
+            <input type="{{element.type}}" id="{{element.name}}" name="{{element.name}}" size="{{element.size}}" required="{{_isRequired(element)}}" value="{{element.value::change}}" on-change="pingIt">
+          </div>
+        </template>
+      </template>
+    </template>
+  </template>
+
+  <script>
+    /**
+     * `uvalib-field-input`
+     * Component that generates an text input field as well as some the custom ones for email and phone number.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/uvalib-field-input.html
+     */
+    class UvalibFieldInput extends UvalibField(Polymer.Element) {
+      static get is() { return 'uvalib-field-input'; }
+      static get properties() {
+        return Object.assign(super.properties,{
+        });
+      }
+
+      _isInput(el) {
+        return (el.type && (el.type=="email" || el.type=="tel" || el.type=="text"));
+      }
+
+    }
+
+    window.customElements.define(UvalibFieldInput.is, UvalibFieldInput);
+  </script>
+</dom-module>
