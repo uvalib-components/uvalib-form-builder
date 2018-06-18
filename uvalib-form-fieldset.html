@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
+<link rel="import" href="uvalib-field.html">
 <link rel="import" href="uvalib-form-style.html">
 <link rel="import" href="uvalib-field-checkbox.html">
 <link rel="import" href="uvalib-field-html-markup.html">
@@ -19,7 +20,7 @@
         <div class="section">
           <fieldset>
             <legend>{{element.title}}</legend>
-              <template is="dom-repeat" items="{{_getFieldSetElements(elem)}}" as="elem">
+              <template is="dom-repeat" items="{{_getFieldSetElements(element)}}" as="elem">
                 <uvalib-field-html-markup element="{{elem}}"></uvalib-field-html-markup>
                 <uvalib-field-select element="{{elem}}"></uvalib-field-select>
                 <uvalib-field-input element="{{elem}}"></uvalib-field-input>
@@ -27,6 +28,8 @@
                 <uvalib-field-textarea element="{{elem}}"></uvalib-field-textarea>
               </template>
           </fieldset>
+        </div>
+      </template>
     </template>
   </template>
 
@@ -51,7 +54,6 @@
       }
 
       _isFieldset(el) {
-        console.log("in _isFieldset");
         return (el.type && el.type=="fieldset");
       }
 
@@ -67,7 +69,7 @@
             }
           }
         }
-        console.log(fields);
+//        console.log(fields);
         return fields;
       }
 
