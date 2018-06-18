@@ -18,7 +18,7 @@
             <template is="dom-if" if="{{_hasDescription(element)}}">
               <div class="descriptive-text" inner-h-t-m-l="{{element.description.markup}}"></div>
             </template>
-            <select id="{{element.name}}" name="{{element.name}}" required="{{_isRequired(elem)}}" value="{{element.value::change}}" on-change="pingIt">
+            <select id="{{element.name}}" name="{{element.name}}" required="{{_isRequired(elem)}}" value="{{element.value::change}}" on-change="_changedValue">
               <template is="dom-repeat" items="{{_getOptions(element)}}" as="option">
                 <template is="dom-if" if="{{_isValidOption(option)}}">
                   <template is="dom-if" if="{{_selectedValue(element,option)}}"><option selected value="{{option}}">{{option}}</option></template>

@@ -21,10 +21,10 @@
               </div>
             </template>
             <template is="dom-if" if="{{!_isChecked(element)}}">
-              <input type="{{element.type}}" id="{{element.name}}" name="{{element.name}}" required="{{_isRequired(element)}}" value="1" on-change="pingIt" />
+              <input type="{{element.type}}" id="{{element.name}}" name="{{element.name}}" required="{{_isRequired(element)}}" value="1" on-change="_changedValue" />
             </template>
             <template is="dom-if" if="{{_isChecked(element)}}">
-              <input type="{{element.type}}" id="{{element.name}}" name="{{element.name}}" required="{{_isRequired(element)}}" value="1" on-change="pingIt" checked/>
+              <input type="{{element.type}}" id="{{element.name}}" name="{{element.name}}" required="{{_isRequired(element)}}" value="1" on-change="_changedValue" checked/>
             </template>
             <label for="{{element.name}}">{{element.title}}</label>
           </div>

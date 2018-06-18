@@ -27,10 +27,6 @@
           };
         }
 
-        pingIt(ping) {
-          this.ping = !this.ping;
-        }
-
         _showField(item){
           if (!item.states) return true;
           else if (item.states && item.states.visible) {
@@ -64,6 +60,11 @@
             }
           }
           return test;
+        }
+
+        _changedValue(e) {
+          console.log('changed value');
+          this.dispatchEvent(new CustomEvent('changedValue', {detail: {field_name: this.element.name}, bubbles: true, composed: true}));
         }
 
         _hasDescription(el) {

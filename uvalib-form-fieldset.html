@@ -21,11 +21,11 @@
           <fieldset>
             <legend>{{element.title}}</legend>
               <template is="dom-repeat" items="{{_getFieldSetElements(element)}}" as="elem">
-                <uvalib-field-html-markup element="{{elem}}"></uvalib-field-html-markup>
-                <uvalib-field-select element="{{elem}}"></uvalib-field-select>
-                <uvalib-field-input element="{{elem}}"></uvalib-field-input>
-                <uvalib-field-checkbox element="{{elem}}"></uvalib-field-checkbox>
-                <uvalib-field-textarea element="{{elem}}"></uvalib-field-textarea>
+                <uvalib-field-html-markup element="{{elem}}" recentChange="{{}}"></uvalib-field-html-markup>
+                <uvalib-field-select element="{{elem}}" recentChange="{{}}"></uvalib-field-select>
+                <uvalib-field-input element="{{elem}}" recentChange="{{}}"></uvalib-field-input>
+                <uvalib-field-checkbox element="{{elem}}" recentChange="{{}}"></uvalib-field-checkbox>
+                <uvalib-field-textarea element="{{elem}}" recentChange="{{}}"></uvalib-field-textarea>
               </template>
           </fieldset>
         </div>
@@ -47,10 +47,6 @@
       static get properties() {
         return Object.assign(super.properties,{
         });
-      }
-
-      _pingIt(_ping) {
-        this._ping = !this._ping;
       }
 
       _isFieldset(el) {

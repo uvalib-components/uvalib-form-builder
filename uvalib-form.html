@@ -9,6 +9,7 @@
 <link rel="import" href="uvalib-field-textarea.html">
 <link rel="import" href="uvalib-field-checkbox.html">
 <link rel="import" href="uvalib-field-html-markup.html">
+<link rel="import" href="../iron-meta/iron-meta.html">
 
 <dom-module id="uvalib-form">
   <template>
@@ -23,18 +24,12 @@
     <form method="post" action="{{_confirmationPagePath}}">
       <input type="hidden" name="[[formId]]" />
       <template is="dom-repeat" items="{{_elements}}" as="elem">
-        <uvalib-form-fieldset element="{{elem}}"></uvalib-form-fieldset>
-        <uvalib-field-html-markup element="{{elem}}"></uvalib-field-html-markup>
-        <uvalib-field-select element="{{elem}}"></uvalib-field-select>
-        <uvalib-field-input element="{{elem}}"></uvalib-field-input>
-        <uvalib-field-checkbox element="{{elem}}"></uvalib-field-checkbox>
-        <uvalib-field-textarea element="{{elem}}"></uvalib-field-textarea>
-        <template is="dom-if" if="{{_isSubmit(elem)}}">
-          </fieldset>
-          <template is="dom-if" if="{{_showSubmit(elem)}}">
-            <input type="{{elem.submit.type}}" value="{{elem.submit.value}}"/>
-          </template>
-        </template>
+        <uvalib-form-fieldset element="{{elem}}" recentChange="{{_elementUpdated}}"></uvalib-form-fieldset>
+        <uvalib-field-html-markup element="{{elem}}" recentChange="{{_elementUpdated}}"></uvalib-field-html-markup>
+        <uvalib-field-select element="{{elem}}" recentChange="{{_elementUpdated}}"></uvalib-field-select>
+        <uvalib-field-input element="{{elem}}" recentChange="{{_elementUpdated}}"></uvalib-field-input>
+        <uvalib-field-checkbox element="{{elem}}" recentChange="{{_elementUpdated}}"></uvalib-field-checkbox>
+        <uvalib-field-textarea element="{{elem}}" recentChange="{{_elementUpdated}}"></uvalib-field-textarea>
       </template>
       <template is="dom-if" if="{{_noSubmitButton}}">
         </fieldset>
@@ -49,12 +44,15 @@
      * `uvalib-form`
      * Component that builds out a web form UI using a form definition via the API.
      *
-     * @TODO Need to utilize the states property to address showing/hiding elements as needed.
-     *
      * @customElement
      * @polymer
      * @demo demo/index.html
      * @demo demo/purchase-request.html
+     * @demo demo/uvalib-field-checkbox.html
+     * @demo demo/uvalib-field-input.html
+     * @demo demo/uvalib-field-select.html
+     * @demo demo/uvalib-field-textarea.html
+     * @demo demo/uvalib-form-fieldset.html
      */
     class UvalibForm extends Polymer.Element {
       static get is() { return 'uvalib-form'; }
@@ -94,10 +92,16 @@
             type: Array,
             computed: '_parsePageForm(formPage)'
           },
+          /**
+           * Authenticated form indicator.
+           */
           _authenticated: {
             type: Boolean,
             computed: '_isFormAuthenticated(_elements)'
           },
+          /**
+           * Form confirmation page path.
+           */
           _confirmationPagePath: {
             type: String,
             computed: '_getConfirmationPagePath(_elements)'
@@ -106,16 +110,26 @@
             type: Boolean,
             value: true
           },
-          _ping: {
-            type: Boolean,
-            value: false
+          /**
+           * Name of the field that was just updated.
+           */
+          _elementUpdated: {
+            type: String,
+            value:''
           }
         };
       }
 
-      _pingIt(_ping) {
-        this._ping = !this._ping;
+      ready() {
+        this.addEventListener('changedValue', this._valueChanged);
+        super.ready();
       }
+
+      _valueChanged(e) {
+        console.log(e.detail.field_name);
+        this._elementUpdated = e.detail.field_name;
+      }
+
       _showSubmit(item){
         var isSubmit = item.type && item.type === "webform_actions";
         if (!isSubmit) return false;
@@ -151,10 +165,6 @@
         }
       }
 
-      _getArray(obj) {
-        console.log(_.values(obj));
-        return _.values(obj);
-      }
       /**
        * Get the path for the confirmation page.
        * @return String
@@ -184,7 +194,6 @@
         console.log(fields);
         return fields;
       }
-
 
     }
 
