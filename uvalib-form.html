@@ -9,7 +9,6 @@
 <link rel="import" href="uvalib-field-textarea.html">
 <link rel="import" href="uvalib-field-checkbox.html">
 <link rel="import" href="uvalib-field-html-markup.html">
-<link rel="import" href="../iron-meta/iron-meta.html">
 
 <dom-module id="uvalib-form">
   <template>
@@ -20,19 +19,18 @@
 
     <uva-library path="web/forms" items="{{formPage}}" filter="{{_formFilter}}"></uva-library>
 
-    <template is="dom-if" if="{{_authenticated}}"><uvalib-account-auth user="{{userInfo}}"></uvalib-account-auth></template>
-    <form method="post" action="{{_confirmationPagePath}}">
+    <template is="dom-if" if="[[_authenticated]]"><uvalib-account-auth user="{{userInfo}}"></uvalib-account-auth></template>
+    <form method="post" action="[[_confirmationPagePath]]">
       <input type="hidden" name="[[formId]]" />
       <template is="dom-repeat" items="{{_elements}}" as="elem">
-        <uvalib-form-fieldset element="{{elem}}" recentChange="{{_elementUpdated}}"></uvalib-form-fieldset>
-        <uvalib-field-html-markup element="{{elem}}" recentChange="{{_elementUpdated}}"></uvalib-field-html-markup>
-        <uvalib-field-select element="{{elem}}" recentChange="{{_elementUpdated}}"></uvalib-field-select>
-        <uvalib-field-input element="{{elem}}" recentChange="{{_elementUpdated}}"></uvalib-field-input>
-        <uvalib-field-checkbox element="{{elem}}" recentChange="{{_elementUpdated}}"></uvalib-field-checkbox>
-        <uvalib-field-textarea element="{{elem}}" recentChange="{{_elementUpdated}}"></uvalib-field-textarea>
+        <uvalib-form-fieldset id="[[elem.name]]" element="{{elem}}" refresh="{{_refresh}}"></uvalib-form-fieldset>
+        <uvalib-field-html-markup id="[[elem.name]]" element="{{elem}}" refresh="{{_refresh}}"></uvalib-field-html-markup>
+        <uvalib-field-select id="[[elem.name]]" element="{{elem}}" refresh="{{_refresh}}"></uvalib-field-select>
+        <uvalib-field-input id="[[elem.name]]" element="{{elem}}" refresh="{{_refresh}}"></uvalib-field-input>
+        <uvalib-field-checkbox id="[[elem.name]]" element="{{elem}}" refresh="{{_refresh}}"></uvalib-field-checkbox>
+        <uvalib-field-textarea id="[[elem.name]]" element="{{elem}}" refresh="{{_refresh}}"></uvalib-field-textarea>
       </template>
       <template is="dom-if" if="{{_noSubmitButton}}">
-        </fieldset>
         <input type="submit" value="Submit"/>
       </template>
     </form>
@@ -110,12 +108,9 @@
             type: Boolean,
             value: true
           },
-          /**
-           * Name of the field that was just updated.
-           */
-          _elementUpdated: {
-            type: String,
-            value:''
+          _refresh: {
+            type: Boolean,
+            value: false
           }
         };
       }
@@ -127,7 +122,7 @@
 
       _valueChanged(e) {
         console.log(e.detail.field_name);
-        this._elementUpdated = e.detail.field_name;
+        this._refresh = !this._refresh;
       }
 
       _showSubmit(item){

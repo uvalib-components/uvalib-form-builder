@@ -10,15 +10,15 @@
       </style>
     </custom-style>
 
-    <template is="dom-if" if="{{_isField(element)}}">
-      <template is="dom-if" if="{{_isInput(element)}}">
-        <template is="dom-if" if="[[_showField(element,ping)]]">
+    <template is="dom-if" if="[[_isField(element)]]">
+      <template is="dom-if" if="[[_isInput(element)]]">
+        <template is="dom-if" if="[[_showField(element,refresh)]]">
           <div class="form-field">
-            <label class="field-label" for="{{element.name}}">{{element.title}}<template is="dom-if" if="{{_isRequired(element)}}"><span class="required">*</span></template></label>
-            <template is="dom-if" if="{{_hasDescription(element)}}">
-              <div class="descriptive-text" inner-h-t-m-l="{{element.description.markup}}"></div>
+            <label class="field-label" for="[[element.name]]">[[element.title]]<template is="dom-if" if="[[_isRequired(element)]]"><span class="required">*</span></template></label>
+            <template is="dom-if" if="[[_hasDescription(element)]]">
+              <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
             </template>
-            <input type="{{element.type}}" id="{{element.name}}" name="{{element.name}}" size="{{element.size}}" required="{{_isRequired(element)}}" value="{{element.value::change}}" on-change="_changedValue">
+            <input type="[[element.type]]" id="[[element.name]]" name="[[element.name]]" size="[[element.size]]" required="[[_isRequired(element)]]" value="{{element.value::change}}" on-change="_changedValue">
           </div>
         </template>
       </template>

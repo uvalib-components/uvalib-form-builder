@@ -7,7 +7,7 @@
      *
      * @polymerMixin
      */
-    UvalibField = function(superClass) {
+    UvalibField = Polymer.dedupingMixin(function(superClass) {
       return class extends superClass {
         constructor() {
           super();
@@ -20,14 +20,20 @@
             element: {
               type: Object
             },
-            ping: {
+            refresh: {
               type: Boolean,
-              value: false
-            }
-          };
+              observer: '_showField'
+            }          };
+        }
+        static get observers() {
+          return [
+            '_showField(element, refresh)'
+          ]
         }
 
-        _showField(item){
+
+        _showField(item, refresh){
+          console.log('_showField');
           if (!item.states) return true;
           else if (item.states && item.states.visible) {
             return this._testState(item.states.visible);
@@ -37,8 +43,8 @@
         }
 
         _testState(state){
-          //console.log("state test:");
-          //console.log(state);
+          console.log("state test:");
+          console.log(state);
           if (Array.isArray(state)) {
             for (var i=0; i<state.length; i=i+2) {
               if (this._testField(state[i])) return true;
@@ -79,5 +85,5 @@
           return el.required || (el.required_error && el.required_error != "");
         }
       }
-    }
+    });
   </script>

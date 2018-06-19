@@ -15,17 +15,17 @@
       </style>
     </custom-style>
 
-    <template is="dom-if" if="{{_isFieldset(element)}}">
-      <template is="dom-if" if="[[_showFieldSet(element,_ping)]]">
+    <template is="dom-if" if="[[_isFieldset(element)]]">
+      <template is="dom-if" if="[[_showField(element,refresh)]]">
         <div class="section">
           <fieldset>
-            <legend>{{element.title}}</legend>
+            <legend>element.title]]</legend>
               <template is="dom-repeat" items="{{_getFieldSetElements(element)}}" as="elem">
-                <uvalib-field-html-markup element="{{elem}}" recentChange="{{}}"></uvalib-field-html-markup>
-                <uvalib-field-select element="{{elem}}" recentChange="{{}}"></uvalib-field-select>
-                <uvalib-field-input element="{{elem}}" recentChange="{{}}"></uvalib-field-input>
-                <uvalib-field-checkbox element="{{elem}}" recentChange="{{}}"></uvalib-field-checkbox>
-                <uvalib-field-textarea element="{{elem}}" recentChange="{{}}"></uvalib-field-textarea>
+                <uvalib-field-html-markup id="[[elem.name]]" element="{{elem}}" refresh="{{refresh}}"></uvalib-field-html-markup>
+                <uvalib-field-select id="[[elem.name]]" element="{{elem}}" refresh="{{refresh}}"></uvalib-field-select>
+                <uvalib-field-input id="[[elem.name]]" element="{{elem}}" refresh="{{refresh}}"></uvalib-field-input>
+                <uvalib-field-checkbox id="[[elem.name]]" element="{{elem}}" refresh="{{refresh}}"></uvalib-field-checkbox>
+                <uvalib-field-textarea id="[[elem.name]]" element="{{elem}}" refresh="{{refresh}}"></uvalib-field-textarea>
               </template>
           </fieldset>
         </div>
@@ -65,15 +65,8 @@
             }
           }
         }
-//        console.log(fields);
+        //console.log(fields);
         return fields;
-      }
-
-      _showFieldSet(item){
-        if (!item.states) return true;
-        else if (item.states && item.states.visible) {
-          return this._testState(item.states.visible);
-        }
       }
     }
 

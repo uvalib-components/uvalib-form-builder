@@ -10,9 +10,9 @@
       </style>
     </custom-style>
 
-    <template is="dom-if" if="{{_isMarkup(element)}}">
-      <template is="dom-if" if="[[_showField(element,_ping)]]">
-        <div class="text-block" inner-h-t-m-l="{{element.markup}}"></div>
+    <template is="dom-if" if="[[_isMarkup(element)]]">
+      <template is="dom-if" if="[[_showField(element,refresh)]]">
+        <div class="text-block" inner-h-t-m-l="[[element.markup]]"></div>
       </template>
     </template>
 
@@ -31,10 +31,6 @@
       static get properties() {
         return Object.assign(super.properties,{
         });
-      }
-
-      _pingIt(_ping) {
-        this._ping = !this._ping;
       }
 
       _isMarkup(el) {
