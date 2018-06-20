@@ -1,4 +1,4 @@
-# \<uvalib-form\>
+# \<uvalib-form-builder\>
 
 Component that builds out a web form UI using a form definition via the API.
 
