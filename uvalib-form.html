@@ -1,197 +1,55 @@
-<link rel="import" href="../polymer/polymer-element.html">
-<link rel="import" href="../uvalib-account/uvalib-account-auth.html">
-<link rel="import" href="../uva-models/uva-library.html">
-<link rel="import" href="../uvalib-theme/uvalib-theme.html">
-<link rel="import" href="uvalib-form-style.html">
-<link rel="import" href="uvalib-form-fieldset.html">
-<link rel="import" href="uvalib-field-select.html">
-<link rel="import" href="uvalib-field-input.html">
-<link rel="import" href="uvalib-field-textarea.html">
-<link rel="import" href="uvalib-field-checkbox.html">
-<link rel="import" href="uvalib-field-html-markup.html">
-
-<dom-module id="uvalib-form">
-  <template>
-    <custom-style>
-      <style include="uvalib-theme uvalib-form-style">
-      </style>
-    </custom-style>
-
-    <uva-library path="web/forms" items="{{formPage}}" filter="{{_formFilter}}"></uva-library>
-
-    <template is="dom-if" if="[[_authenticated]]"><uvalib-account-auth user="{{userInfo}}"></uvalib-account-auth></template>
-    <form method="post" action="[[_confirmationPagePath]]">
-      <input type="hidden" name="[[formId]]" />
-      <template is="dom-repeat" items="{{_elements}}" as="elem">
-        <uvalib-form-fieldset id="[[elem.name]]" element="{{elem}}" refresh="{{_refresh}}"></uvalib-form-fieldset>
-        <uvalib-field-html-markup id="[[elem.name]]" element="{{elem}}" refresh="{{_refresh}}"></uvalib-field-html-markup>
-        <uvalib-field-select id="[[elem.name]]" element="{{elem}}" refresh="{{_refresh}}"></uvalib-field-select>
-        <uvalib-field-input id="[[elem.name]]" element="{{elem}}" refresh="{{_refresh}}"></uvalib-field-input>
-        <uvalib-field-checkbox id="[[elem.name]]" element="{{elem}}" refresh="{{_refresh}}"></uvalib-field-checkbox>
-        <uvalib-field-textarea id="[[elem.name]]" element="{{elem}}" refresh="{{_refresh}}"></uvalib-field-textarea>
-      </template>
-      <template is="dom-if" if="{{_noSubmitButton}}">
-        <input type="submit" value="Submit"/>
-      </template>
-    </form>
-
-  </template>
-
-  <script>
+<script>
     /**
-     * `uvalib-form`
-     * Component that builds out a web form UI using a form definition via the API.
+     * The Mixin for a form.
+     * Contains properties and methods associated with a form.
      *
-     * @customElement
-     * @polymer
-     * @demo demo/index.html
-     * @demo demo/purchase-request.html
-     * @demo demo/uvalib-field-checkbox.html
-     * @demo demo/uvalib-field-input.html
-     * @demo demo/uvalib-field-select.html
-     * @demo demo/uvalib-field-textarea.html
-     * @demo demo/uvalib-form-fieldset.html
+     * @polymerMixin
      */
-    class UvalibForm extends Polymer.Element {
-      static get is() { return 'uvalib-form'; }
-      static get properties() {
-        return {
-          /**
-           * User name, email address, department, etc. for use in pre-populating some information.
-           */
-          userInfo: {
-            type: Object,
-            value: function() { return {name: "Jack Kelly", emailAddress: "jkelly@virginia.edu", phone: "434-924-7119", affiliation: "Staff", departmentOrSchool: "UVA Library"}; }
-          },
-          /**
-           * Used to indicate which workflow the server should use when processing the request submitted.
-           */
-          formId: {
-            type: String
-          },
-          /**
-           * An array containing the form page returned for the specified form id.
-           */
-          formPage: {
-            type: Array,
-            notify: true
-          },
-          /**
-           * Filter for the uva library api call to select only the form id requested.
-           */
-          _formFilter: {
-            type: Object,
-            computed: '_filter(formId)'
-          },
-          /**
-           * The form object from the page.
-           */
-          _elements: {
-            type: Array,
-            computed: '_parsePageForm(formPage)'
-          },
-          /**
-           * Authenticated form indicator.
-           */
-          _authenticated: {
-            type: Boolean,
-            computed: '_isFormAuthenticated(_elements)'
-          },
-          /**
-           * Form confirmation page path.
-           */
-          _confirmationPagePath: {
-            type: String,
-            computed: '_getConfirmationPagePath(_elements)'
-          },
-          _noSubmitButton: {
-            type: Boolean,
-            value: true
-          },
-          _refresh: {
-            type: Boolean,
-            value: false
-          }
-        };
-      }
-
-      ready() {
-        this.addEventListener('changedValue', this._valueChanged);
-        super.ready();
-      }
-
-      _valueChanged(e) {
-        console.log(e.detail.field_name);
-        this._refresh = !this._refresh;
-      }
-
-      _showSubmit(item){
-        var isSubmit = item.type && item.type === "webform_actions";
-        if (!isSubmit) return false;
-        else if (!item.states) return true;
-        else if (item.states && item.states.visible) {
-          return this._testState(item.states.visible);
+    UvalibForm = Polymer.dedupingMixin(function(superClass) {
+      return class extends superClass {
+        constructor() {
+          super();
         }
-      }
-
-      /**
-       * Filter API web forms to get the one needed.
-       * @return Object
-       */
-      _filter(id) {
-        return {'target_id': id};
-      }
-
-      /**
-       * Check authenticated field value to determine if form requires NetBadge.
-       * @return Boolean
-       */
-      _isFormAuthenticated(els) {
-        let auth = _.find(els, {title: 'authenticated'});
-        return (auth.value == "yes") ? true : false;
-      }
-
-      _isSubmit(el) {
-        if (el.type && el.type=="webform_actions") {
-          this._noSubmitButton = false;
-          return true;
-        } else {
-          return false;
-        }
-      }
-
-      /**
-       * Get the path for the confirmation page.
-       * @return String
-       */
-      _getConfirmationPagePath(els) {
-        let path = _.find(els, {title: 'confirmation page path'});
-        return path.value;
-      }
-
-      /**
-       * Returns web form definition for the form page object.
-       * @return Array
-       */
-      _parsePageForm(frmPg) {
-        var fields = Array();
-        if (frmPg) {
-          var form = JSON.parse(frmPg[0].webform);
-          for (var key in form) {
-            if (key.match(/^fld\_|fldset\_|mkup\_|authenticated|confirmation|actions/)) {
-              fields.push(form[key]);
-              if (form[key].type && form[key].type == 'textfield') {
-                form[key].type = 'text';
-              }
+        static get properties() {
+          return {
+            /**
+             * User name, email address, department, etc. for use in pre-populating some information.
+             */
+            userInfo: {
+              type: Object,
+              value: function() { return {name: "Jack Kelly", emailAddress: "jkelly@virginia.edu", phone: "434-924-7119", affiliation: "Staff", departmentOrSchool: "UVA Library"}; }
             }
-          }
+          };
         }
-        console.log(fields);
-        return fields;
+
+        _isCheckbox(el) {
+          return (el.type && el.type=="checkbox");
+        }
+
+        _isField(el) {
+          return (el.type && (el.type=="email" || el.type=="tel" || el.type=="text" || el.type=="select" || el.type=="textarea" || el.type=="checkbox"));
+        }
+
+        _isFieldset(el) {
+          return (el.type && el.type=="fieldset");
+        }
+
+        _isInput(el) {
+          return (el.type && (el.type=="email" || el.type=="tel" || el.type=="text"));
+        }
+
+        _isMarkup(el) {
+          return (el.type && el.type == "webform_markup");
+        }
+
+        _isSelect(el) {
+          return (el.type && el.type=="select");
+        }
+
+        _isTextarea(el) {
+          return (el.type && el.type=="textarea");
+        }
+
       }
-
-    }
-
-    window.customElements.define(UvalibForm.is, UvalibForm);
+    });
   </script>
-</dom-module>

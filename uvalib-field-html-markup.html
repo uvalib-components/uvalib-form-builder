@@ -10,9 +10,8 @@
       </style>
     </custom-style>
 
-    <template is="dom-if" if="[[_isMarkup(element)]]">
       <template is="dom-if" if="[[_showField(element,refresh)]]">
-        <div class="text-block" inner-h-t-m-l="[[element.markup]]"></div>
+        <div id$="[[element.webform_key]]" class="text-block" inner-h-t-m-l="[[element.markup]]"></div>
       </template>
     </template>
 
@@ -31,10 +30,6 @@
       static get properties() {
         return Object.assign(super.properties,{
         });
-      }
-
-      _isMarkup(el) {
-        return (el.type && el.type == "webform_markup");
       }
 
     }
