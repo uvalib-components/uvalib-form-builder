@@ -9,19 +9,19 @@
     <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
-    <link rel="import" href="../uvalib-form.html">
+    <link rel="import" href="../uvalib-form-builder.html">
   </head>
   <body>
 
     <test-fixture id="BasicTestFixture">
       <template>
-        <uvalib-form></uvalib-form>
+        <uvalib-form-builder></uvalib-form-builder>
       </template>
     </test-fixture>
 
     <test-fixture id="ChangedPropertyTestFixture">
       <template>
-        <uvalib-form prop1="new-prop1"></uvalib-form>
+        <uvalib-form-builder prop1="new-prop1"></uvalib-form-builder>
       </template>
     </test-fixture>
 
@@ -30,10 +30,10 @@
 
         test('instantiating the element with default properties works', () => {
           const element = fixture('BasicTestFixture');
-          assert.equal(element.prop1, 'uvalib-form');
+          assert.equal(element.prop1, 'uvalib-form-builder');
           const elementShadowRoot = element.shadowRoot;
           const elementHeader = elementShadowRoot.querySelector('h2');
-          assert.equal(elementHeader.innerHTML, 'Hello uvalib-form!');
+          assert.equal(elementHeader.innerHTML, 'Hello uvalib-form-builder!');
         });
 
         test('setting a property on the element works', () => {
