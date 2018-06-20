@@ -1,5 +1,5 @@
 {
-  "name": "uvalib-form",
+  "name": "uvalib-form-builder",
   "description": "Component that builds out a web form UI using a form definition via the API.",
   "main": "uvalib-form.html",
   "dependencies": {
