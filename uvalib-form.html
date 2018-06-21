@@ -18,8 +18,22 @@
             userInfo: {
               type: Object,
               value: function() { return {name: "Jack Kelly", emailAddress: "jkelly@virginia.edu", phone: "434-924-7119", affiliation: "Staff", departmentOrSchool: "UVA Library"}; }
+            },
+            _refresh: {
+              type: Boolean,
+              value: false
             }
           };
+        }
+
+        ready() {
+          this.addEventListener('changedValue', this._valueChanged);
+          super.ready();
+        }
+
+        _valueChanged(e) {
+          console.log(e.detail.field_id);
+          this._refresh = !this._refresh;
         }
 
         _isCheckbox(el) {
@@ -48,6 +62,43 @@
 
         _isTextarea(el) {
           return (el.type && el.type=="textarea");
+        }
+
+        _showField(item, refresh){
+          console.log('_showField');
+          if (!item.states) return true;
+          else if (item.states && item.states.visible) {
+            return this._testState(item.states.visible);
+          } else if (item.states && item.states.required) {
+            return this._testState(item.states.required);
+          }
+        }
+
+        _testState(state){
+          console.log("state test:");
+          console.log(state);
+          if (Array.isArray(state)) {
+            for (var i=0; i<state.length; i=i+2) {
+              if (this._testField(state[i])) return true;
+            }
+            return false;
+          } else {
+            return this._testField(state);
+          }
+        }
+
+        _testField(state){
+          console.log('field test:');
+          var test = true;
+          // very error prone test - assuming much
+          for (var key in state) {
+            var id = key.replace(/.*"(.*)".*/,"$1"),
+                val = state[key].value;
+            if (!this.shadowRoot.querySelector('#'+id) || this.shadowRoot.querySelector('#'+id).value != val) {
+              test = false; break;
+            }
+          }
+          return test;
         }
 
       }

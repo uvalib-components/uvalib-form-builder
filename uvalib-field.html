@@ -22,54 +22,8 @@
             },
             value: {
               type: String
-            },
-            refresh: {
-              type: Boolean,
-              observer: '_showField'
             }
           };
-        }
-        static get observers() {
-          return [
-            '_showField(element, refresh)'
-          ]
-        }
-
-        _showField(item, refresh){
-          console.log('_showField');
-          if (!item.states) return true;
-          else if (item.states && item.states.visible) {
-            return this._testState(item.states.visible);
-          } else if (item.states && item.states.required) {
-            return this._testState(item.states.required);
-          }
-        }
-
-        _testState(state){
-          console.log("state test:");
-          console.log(state);
-          if (Array.isArray(state)) {
-            for (var i=0; i<state.length; i=i+2) {
-              if (this._testField(state[i])) return true;
-            }
-            return false;
-          } else {
-            return this._testField(state);
-          }
-        }
-
-        _testField(state){
-          console.log('field test:');
-          var test = true;
-          // very error prone test - assuming much
-          for (var key in state) {
-            var id = key.replace(/.*"(.*)".*/,"$1"),
-                val = state[key].value;
-            if (!this.shadowRoot.querySelector('#'+id) || this.shadowRoot.querySelector('#'+id).value != val) {
-              test = false; break;
-            }
-          }
-          return test;
         }
 
         _changedValue(e) {

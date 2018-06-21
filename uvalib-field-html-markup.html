@@ -2,6 +2,7 @@
 <link rel="import" href="uvalib-field.html">
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
 <link rel="import" href="uvalib-form-style.html">
+<link rel="import" href="../marked-element/marked-element.html">
 
 <dom-module id="uvalib-field-html-markup">
   <template>
@@ -10,9 +11,9 @@
       </style>
     </custom-style>
 
-      <template is="dom-if" if="[[_showField(element,refresh)]]">
-        <div id$="[[element.webform_key]]" class="text-block" inner-h-t-m-l="[[element.markup]]"></div>
-      </template>
+      <marked-element markdown="[[element.markup]]">
+        <div class="text-block" slot="markdown-html"></div>
+      </marked-element>
     </template>
 
   </template>

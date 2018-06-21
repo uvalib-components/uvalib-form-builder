@@ -16,35 +16,33 @@
       </style>
     </custom-style>
 
-    <template is="dom-if" if="[[_showField(element,refresh)]]">
-      <div class="section">
-        <fieldset>
-          <legend tabindex="0" aria-label$="[[element.title]] section">[[element.title]]</legend>
-            <template is="dom-repeat" items="{{_getFieldSetElements(element)}}" as="elem">
-              <template is="dom-if" if="[[_isFieldset(elem)]]">
-                <uvalib-form-fieldset id="[[elem.webform_key]]" element="{{elem}}" refresh="{{_refresh}}"></uvalib-form-fieldset>
+    <div class="section">
+      <fieldset>
+        <legend tabindex="0" aria-label$="[[element.title]] section">[[element.title]]</legend>
+          <template is="dom-repeat" items="{{_getFieldSetElements(element)}}" as="elem">
+            <template is="dom-if" if="[[_isFieldset(elem)]]">
+              <uvalib-form-fieldset id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-form-fieldset>
+            </template>
+            <template is="dom-if" if="[[_isMarkup(elem)]]">
+              <uvalib-field-html-markup id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-html-markup>
+            </template>
+            <template is="dom-if" if="[[_isField(elem)]]">
+              <template is="dom-if" if="[[_isSelect(elem)]]">
+                <uvalib-field-select id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-select>
               </template>
-              <template is="dom-if" if="[[_isMarkup(elem)]]">
-                <uvalib-field-html-markup id="[[elem.webform_key]]" element="{{elem}}" refresh="{{_refresh}}"></uvalib-field-html-markup>
+              <template is="dom-if" if="[[_isInput(elem)]]">
+                <uvalib-field-input id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-input>
               </template>
-              <template is="dom-if" if="[[_isField(elem)]]">
-                <template is="dom-if" if="[[_isSelect(elem)]]">
-                  <uvalib-field-select id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" refresh="{{_refresh}}"></uvalib-field-select>
-                </template>
-                <template is="dom-if" if="[[_isInput(elem)]]">
-                  <uvalib-field-input id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" refresh="{{_refresh}}"></uvalib-field-input>
-                </template>
-                <template is="dom-if" if="[[_isCheckbox(elem)]]">
-                  <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" refresh="{{_refresh}}"></uvalib-field-checkbox>
-                </template>
-                <template is="dom-if" if="[[_isTextarea(elem)]]">
-                  <uvalib-field-textarea id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" refresh="{{_refresh}}"></uvalib-field-textarea>
-                </template>
+              <template is="dom-if" if="[[_isCheckbox(elem)]]">
+                <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-checkbox>
+              </template>
+              <template is="dom-if" if="[[_isTextarea(elem)]]">
+                <uvalib-field-textarea id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-textarea>
               </template>
             </template>
-        </fieldset>
-      </div>
-    </template>
+          </template>
+      </fieldset>
+    </div>
   </template>
 
   <script>
