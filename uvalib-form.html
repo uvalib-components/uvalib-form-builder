@@ -28,6 +28,7 @@
 
         ready() {
           this.addEventListener('changedValue', this._valueChanged);
+          this.addEventListener('clickedButton', this._buttonClicked);
           super.ready();
         }
 
@@ -36,12 +37,16 @@
           this._refresh = !this._refresh;
         }
 
+        _isButton(el) {
+          return (el.type && el.type=="webform_actions");
+        }
+
         _isCheckbox(el) {
           return (el.type && el.type=="checkbox");
         }
 
         _isField(el) {
-          return (el.type && (el.type=="email" || el.type=="tel" || el.type=="text" || el.type=="select" || el.type=="textarea" || el.type=="checkbox"));
+          return (el.type && (el.type=="email" || el.type=="tel" || el.type=="text" || el.type=="select" || el.type=="textarea" || el.type=="checkbox" || el.type=="webform_actions"));
         }
 
         _isFieldset(el) {
@@ -65,7 +70,7 @@
         }
 
         _showField(item, refresh){
-          console.log('_showField');
+          //console.log('_showField');
           if (!item.states) return true;
           else if (item.states && item.states.visible) {
             return this._testState(item.states.visible);
@@ -75,8 +80,8 @@
         }
 
         _testState(state){
-          console.log("state test:");
-          console.log(state);
+          //console.log("state test:");
+          //console.log(state);
           if (Array.isArray(state)) {
             for (var i=0; i<state.length; i=i+2) {
               if (this._testField(state[i])) return true;
@@ -88,7 +93,7 @@
         }
 
         _testField(state){
-          console.log('field test:');
+          //console.log('field test:');
           var test = true;
           // very error prone test - assuming much
           for (var key in state) {

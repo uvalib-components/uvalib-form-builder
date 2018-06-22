@@ -9,7 +9,7 @@
 <link rel="import" href="uvalib-field-input.html">
 <link rel="import" href="uvalib-field-textarea.html">
 <link rel="import" href="uvalib-field-checkbox.html">
-<!-- link rel="import" href="uvalib-field-button.html" -->
+<link rel="import" href="uvalib-field-button.html">
 
 <dom-module id="uvalib-form-builder">
   <template>
@@ -20,7 +20,7 @@
 
     <uva-library path="web/forms" items="{{formPage}}" filter="{{_formFilter}}"></uva-library>
 
-    <template is="dom-if" if="[[_authenticated]]"><uvalib-account-auth user="{{userInfo}}"></uvalib-account-auth></template>
+    <template is="dom-if" if="[[_authenticated]]"><uvalib-account-auth auto user="{{userInfo}}"></uvalib-account-auth></template>
     <form method="post">
       <input type="hidden" name="[[formId]]" />
       <template is="dom-repeat" items="{{_elements}}" as="elem">
@@ -45,6 +45,9 @@
                     <template is="dom-if" if="[[_isTextarea(fs_elem)]]">
                       <uvalib-field-textarea id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-textarea>
                     </template>
+                    <template is="dom-if" if="[[_isButton(fs_elem)]]">
+                      <uvalib-field-button id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-button>
+                    </template>
                   </template>
                 </template>
             </fieldset>
@@ -66,10 +69,10 @@
           <template is="dom-if" if="[[_isTextarea(elem)]]">
             <uvalib-field-textarea id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-textarea>
           </template>
+          <template is="dom-if" if="[[_isButton(elem)]]">
+            <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-button>
+          </template>
         </template>
-      </template>
-      <template is="dom-if" if="{{_noSubmitButton}}">
-        <input type="submit" value="Submit"/>
       </template>
     </form>
 
@@ -142,15 +145,6 @@
         });
       }
 
-      _showSubmit(item){
-        var isSubmit = item.type && item.type === "webform_actions";
-        if (!isSubmit) return false;
-        else if (!item.states) return true;
-        else if (item.states && item.states.visible) {
-          return this._testState(item.states.visible);
-        }
-      }
-
       /**
        * Filter API web forms to get the one needed.
        * @return Object
@@ -166,15 +160,6 @@
       _isFormAuthenticated(els) {
         let auth = _.find(els, {title: 'authenticated'});
         return (auth.value == "yes") ? true : false;
-      }
-
-      _isSubmit(el) {
-        if (el.type && el.type=="webform_actions") {
-          this._noSubmitButton = false;
-          return true;
-        } else {
-          return false;
-        }
       }
 
       /**
@@ -195,7 +180,7 @@
         if (frmPg) {
           var form = JSON.parse(frmPg[0].webform);
           for (var key in form) {
-            if (key.match(/^fld\_|fldset\_|mkup\_|authenticated|confirmation|actions/)) {
+            if (key.match(/^fld\_|fldset\_|mkup\_|btn\_|authenticated|confirmation/)) {
               fields.push(form[key]);
               if (form[key].type && form[key].type == 'textfield') {
                 form[key].type = 'text';
@@ -211,7 +196,7 @@
       _getFieldSetElements(el) {
         let fields = Array();
         for (var key in el) {
-          if (key.match(/^fld\_|mkup\_|actions/)) {
+          if (key.match(/^fld\_|mkup\_|btn_/)) {
             fields.push(el[key]);
             if (el[key].type && el[key].type == 'textfield') {
               el[key].type = 'text';
