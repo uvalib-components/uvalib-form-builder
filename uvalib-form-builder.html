@@ -20,7 +20,8 @@
 
     <uva-library path="web/forms" items="{{formPage}}" filter="{{_formFilter}}"></uva-library>
 
-    <template is="dom-if" if="[[_authenticated]]"><uvalib-account-user id="user" auto contact-info="{{userInfo}}"></uvalib-account-auth></template>
+    <uvalib-account-user id="user" auto="[[_authenticated]]" contact-info="{{userInfo}}"></uvalib-account-user>
+
     <form method="post">
       <input type="hidden" name="[[formId]]" />
       <template is="dom-repeat" items="{{_elements}}" as="elem">
@@ -144,7 +145,7 @@
           }
         });
       }
-      
+
       _buttonClicked(e) {
         console.log(e.detail.name);
         if (e.detail.name == 'Submit') {
