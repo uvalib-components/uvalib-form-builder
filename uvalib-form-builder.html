@@ -1,5 +1,5 @@
 <link rel="import" href="../polymer/polymer-element.html">
-<link rel="import" href="../uvalib-account/uvalib-account-auth.html">
+<link rel="import" href="../uvalib-account/uvalib-account-user.html">
 <link rel="import" href="../uva-models/uva-library.html">
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
 <link rel="import" href="uvalib-form.html">
@@ -20,7 +20,7 @@
 
     <uva-library path="web/forms" items="{{formPage}}" filter="{{_formFilter}}"></uva-library>
 
-    <template is="dom-if" if="[[_authenticated]]"><uvalib-account-auth auto user="{{userInfo}}"></uvalib-account-auth></template>
+    <template is="dom-if" if="[[_authenticated]]"><uvalib-account-user id="user" auto contact-info="{{userInfo}}"></uvalib-account-auth></template>
     <form method="post">
       <input type="hidden" name="[[formId]]" />
       <template is="dom-repeat" items="{{_elements}}" as="elem">
@@ -143,6 +143,13 @@
             value: true
           }
         });
+      }
+      
+      _buttonClicked(e) {
+        console.log(e.detail.name);
+        if (e.detail.name == 'Submit') {
+          this.$.user.writeRequest(this._elements);
+        }
       }
 
       /**
