@@ -29,7 +29,7 @@
           <div class="section" hidden$="{{!_showField(elem,_refresh)}}">
             <fieldset>
               <legend tabindex="0" aria-label$="[[ele.title]] section">[[elem.title]]</legend>
-                <template is="dom-repeat" items="{{_getFieldSetElements(elem)}}" as="fs_elem">
+                <template is="dom-repeat" items="{{_getFieldSetElements(elem,userInfo)}}" as="fs_elem">
                   <template is="dom-if" if="[[_isMarkup(fs_elem)]]">
                     <uvalib-field-html-markup id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-html-markup>
                   </template>
@@ -167,7 +167,7 @@
        */
       _isFormAuthenticated(els) {
         let auth = _.find(els, {title: 'authenticated'});
-        return (auth.value == "yes") ? true : false;
+        return (auth.value && auth.value == "yes") ? true : false;
       }
 
       /**
