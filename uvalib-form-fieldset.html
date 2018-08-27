@@ -10,7 +10,7 @@
 <link rel="import" href="uvalib-field-textarea.html">
 
 <dom-module id="uvalib-form-fieldset">
-  <template>
+    <template>
     <custom-style>
       <style include="uvalib-theme uvalib-form-style">
       </style>
@@ -18,66 +18,50 @@
 
     <div class="section">
       <fieldset>
-        <legend tabindex="0" aria-label$="[[element.title]] section">[[element.title]]</legend>
-          <template is="dom-repeat" items="{{_getFieldSetElements(element)}}" as="elem">
-            <template is="dom-if" if="[[_isFieldset(elem)]]">
-              <uvalib-form-fieldset id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-form-fieldset>
+        <legend>[[element.title]]</legend>
+        <template is="dom-repeat" items="{{_getFieldSetElements(element)}}" as="elem">
+            <template is="dom-if" if="[[_isCheckbox(elem)]]">
+              <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-checkbox>
             </template>
-            <template is="dom-if" if="[[_isMarkup(elem)]]">
-              <uvalib-field-html-markup id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-html-markup>
-            </template>
-            <template is="dom-if" if="[[_isField(elem)]]">
-              <template is="dom-if" if="[[_isSelect(elem)]]">
-                <uvalib-field-select id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-select>
-              </template>
-              <template is="dom-if" if="[[_isInput(elem)]]">
-                <uvalib-field-input id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-input>
-              </template>
-              <template is="dom-if" if="[[_isCheckbox(elem)]]">
-                <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-checkbox>
-              </template>
-              <template is="dom-if" if="[[_isTextarea(elem)]]">
-                <uvalib-field-textarea id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-textarea>
-              </template>
-            </template>
-          </template>
-      </fieldset>
+    </template>
+    </fieldset>
     </div>
-  </template>
+    </template>
 
-  <script>
-    /**
-     * `uvalib-form-fieldset`
-     * Component that generates a group of related input fields with an associated title/heading.
-     *
-     * @customElement
-     * @polymer
-     * @demo demo/uvalib-form-fieldset.html
-     */
-    class UvalibFormFieldset extends UvalibForm(UvalibField(Polymer.Element)) {
-      static get is() { return 'uvalib-form-fieldset'; }
-      static get properties() {
-        return Object.assign(super.properties,{
-        });
-      }
-
-      // Loop through the fieldset object key values and just examine the ones with
-      // fld, mkup, fldset, ???
-      _getFieldSetElements(el) {
-        let fields = Array();
-        for (var key in el) {
-          if (key.match(/^fld\_|mkup\_|actions/)) {
-            fields.push(el[key]);
-            if (el[key].type && el[key].type == 'textfield') {
-              el[key].type = 'text';
+    <script>
+        /**
+         * `uvalib-form-fieldset`
+         * Component that generates a group of related input fields with an associated title/heading.
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/uvalib-form-fieldset.html
+         */
+        class UvalibFormFieldset extends UvalibForm(UvalibField(Polymer.Element)) {
+            static get is() {
+                return 'uvalib-form-fieldset';
             }
-          }
-        }
-        //console.log(fields);
-        return fields;
-      }
-    }
+            static get properties() {
+                return Object.assign(super.properties, {});
+            }
 
-    window.customElements.define(UvalibFormFieldset.is, UvalibFormFieldset);
-  </script>
+            // Loop through the fieldset object key values and just examine the ones with
+            // fld, mkup, fldset, ???
+            _getFieldSetElements(el) {
+                let fields = Array();
+                for (var key in el) {
+                    if (key.match(/^fld\_|mkup\_|actions/)) {
+                        fields.push(el[key]);
+                        if (el[key].type && el[key].type == 'textfield') {
+                            el[key].type = 'text';
+                        }
+                    }
+                }
+                //console.log(fields);
+                return fields;
+            }
+        }
+
+        window.customElements.define(UvalibFormFieldset.is, UvalibFormFieldset);
+    </script>
 </dom-module>
