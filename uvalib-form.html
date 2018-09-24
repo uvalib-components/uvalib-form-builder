@@ -80,6 +80,22 @@
                 this._refresh = !this._refresh;
             }
 
+            // Loop through the section object key values and just examine the ones with
+            // fld, mkup, fldset, ???
+            _getSectionFields(el) {
+                let fields = Array();
+                for (var key in el) {
+                    if (key.match(/^fld\_|fldset\_|mkup\_|actions/)) {
+                        fields.push(el[key]);
+                        if (el[key].type && el[key].type == 'textfield') {
+                            el[key].type = 'text';
+                        }
+                    }
+                }
+                //console.log(fields);
+                return fields;
+            }
+
             _isButton(el) {
                 return (el.type && el.type == "webform_actions");
             }
@@ -89,7 +105,7 @@
             }
 
             _isField(el) {
-                return (el.type && (el.type == "email" || el.type == "tel" || el.type == "text" || el.type == "select" || el.type == "textarea" || el.type == "checkbox" || el.type == "webform_actions"));
+                return (el.type && (el.type == "email" || el.type == "tel" || el.type == "text" || el.type == "select" || el.type == "textarea" || el.type == "radios" || el.type == "checkbox" || el.type == "fieldset" || el.type == "webform_actions"));
             }
 
             _isFieldset(el) {
@@ -102,6 +118,10 @@
 
             _isMarkup(el) {
                 return (el.type && el.type == "webform_markup");
+            }
+
+            _isRadios(el) {
+                return (el.type && el.type == "radios");
             }
 
             _isSelect(el) {

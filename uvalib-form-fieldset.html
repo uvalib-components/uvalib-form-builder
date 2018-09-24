@@ -8,6 +8,7 @@
 <link rel="import" href="uvalib-field-input.html">
 <link rel="import" href="uvalib-field-select.html">
 <link rel="import" href="uvalib-field-textarea.html">
+<link rel="import" href="uvalib-field-radios.html">
 
 <dom-module id="uvalib-form-fieldset">
     <template>
@@ -16,19 +17,25 @@
       </style>
     </custom-style>
 
-    <div class="section">
+    <div class="form-field-group">
       <fieldset>
         <legend>[[element.title]]</legend>
         <template is="dom-repeat" items="{{_getFieldSetElements(element)}}" as="elem">
-            <template is="dom-if" if="[[_isCheckbox(elem)]]">
-              <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-checkbox>
+          <template is="dom-if" if="[[_isMarkup(fs_elem)]]">
+            <uvalib-field-html-markup id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-html-markup>
+          </template>
+          <template is="dom-if" if="[[_isField(fs_elem)]]">
+            <template is="dom-if" if="[[_isCheckbox(fs_elem)]]">
+              <uvalib-field-checkbox id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-checkbox>
             </template>
-    </template>
-    </fieldset>
+          </template>
+        </template>
+      </fieldset>
     </div>
     </template>
 
     <script>
+        // @TODO Needs review before used to identify which input types we want to support in a fieldset since this can have negative impact on accessibility.
         /**
          * `uvalib-form-fieldset`
          * Component that generates a group of related input fields with an associated title/heading.

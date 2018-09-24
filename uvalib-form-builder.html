@@ -10,9 +10,10 @@
 <link rel="import" href="uvalib-field-textarea.html">
 <link rel="import" href="uvalib-field-checkbox.html">
 <link rel="import" href="uvalib-field-button.html">
+<link rel="import" href="uvalib-field-radios.html">
 
 <dom-module id="uvalib-form-builder">
-    <template>
+  <template>
     <custom-style>
       <style include="uvalib-theme uvalib-form-style">
       </style>
@@ -23,60 +24,62 @@
     <uvalib-account-user id="user" auto="[[_authenticated]]" contact-info="{{userInfo}}"></uvalib-account-user>
 
     <form method="post">
-      <input type="hidden" name="form_id" value="[[formId]]" />
       <input type="hidden" name="authenticated" value="[[_authenticated]]" />
       <template is="dom-repeat" items="{{_elements}}" as="elem">
         <template is="dom-if" if="[[_isSection(elem)]]">
           <div class="section" hidden$="{{!_showField(elem,_refresh)}}">
             <h2>[[elem.title]]</h2>
-              <template is="dom-repeat" items="{{_getFieldSetElements(elem,userInfo)}}" as="fs_elem">
+              <template is="dom-repeat" items="{{_getSectionFields(elem,userInfo)}}" as="fs_elem">
                 <template is="dom-if" if="[[_isMarkup(fs_elem)]]">
                   <uvalib-field-html-markup id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-html-markup>
                 </template>
-    <template is="dom-if" if="[[_isField(fs_elem)]]">
+                <template is="dom-if" if="[[_isField(fs_elem)]]">
+                  <template is="dom-if" if="[[_isFieldset(fs_elem)]]">
+                    <uvalib-form-fieldset id="[[fs_elem.webform_key]]" element="{{fs_elem}}"></uvalib-form-fieldset>
+                  </template>
                   <template is="dom-if" if="[[_isSelect(fs_elem)]]">
                     <uvalib-field-select id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-select>
                   </template>
-    <template is="dom-if" if="[[_isInput(fs_elem)]]">
+                  <template is="dom-if" if="[[_isInput(fs_elem)]]">
                     <uvalib-field-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-input>
                   </template>
-    <template is="dom-if" if="[[_isCheckbox(fs_elem)]]">
+                  <template is="dom-if" if="[[_isCheckbox(fs_elem)]]">
                     <uvalib-field-checkbox id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-checkbox>
                   </template>
-    <template is="dom-if" if="[[_isTextarea(fs_elem)]]">
+                  <template is="dom-if" if="[[_isTextarea(fs_elem)]]">
                     <uvalib-field-textarea id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-textarea>
                   </template>
-    <template is="dom-if" if="[[_isButton(fs_elem)]]">
+                  <template is="dom-if" if="[[_isButton(fs_elem)]]">
                     <uvalib-field-button id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-button>
                   </template>
-    </template>
+                </template>
     </template>
     </div>
     </template>
     <template is="dom-if" if="[[_isMarkup(elem)]]">
           <uvalib-field-html-markup id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-html-markup>
         </template>
-    <template is="dom-if" if="[[_isField(elem)]]">
+        <template is="dom-if" if="[[_isField(elem)]]">
           <template is="dom-if" if="[[_isSelect(elem)]]">
             <uvalib-field-select id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-select>
           </template>
-    <template is="dom-if" if="[[_isInput(elem)]]">
+          <template is="dom-if" if="[[_isInput(elem)]]">
             <uvalib-field-input id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-input>
           </template>
-    <template is="dom-if" if="[[_isCheckbox(elem)]]">
+          <template is="dom-if" if="[[_isCheckbox(elem)]]">
             <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-checkbox>
           </template>
-    <template is="dom-if" if="[[_isTextarea(elem)]]">
+          <template is="dom-if" if="[[_isTextarea(elem)]]">
             <uvalib-field-textarea id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-textarea>
           </template>
-    <template is="dom-if" if="[[_isButton(elem)]]">
+          <template is="dom-if" if="[[_isButton(elem)]]">
             <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-button>
           </template>
     </template>
     </template>
     </form>
 
-    </template>
+  </template>
 
     <script>
         /**
@@ -191,34 +194,19 @@
              * @return Array
              */
             _parsePageForm(frmPg) {
-                    var fields = Array();
-                    if (frmPg) {
-                        var form = JSON.parse(frmPg[0].webform);
-                        for (var key in form) {
-                            if (key.match(/^sect\_|fld\_|fldset\_|mkup\_|btn\_|authenticated|confirmation/)) {
-                                fields.push(form[key]);
-                                if (form[key].type && form[key].type == 'textfield') {
-                                    form[key].type = 'text';
-                                }
+                var fields = Array();
+                if (frmPg) {
+                    var form = JSON.parse(frmPg[0].webform);
+                    for (var key in form) {
+                        if (key.match(/^sect\_|fld\_|fldset\_|mkup\_|btn\_|authenticated|confirmation/)) {
+                            fields.push(form[key]);
+                            if (form[key].type && form[key].type == 'textfield') {
+                                form[key].type = 'text';
                             }
                         }
                     }
-                    console.log(fields);
-                    return fields;
                 }
-                // Loop through the fieldset object key values and just examine the ones with
-                // fld, mkup, fldset, ???
-            _getFieldSetElements(el) {
-                let fields = Array();
-                for (var key in el) {
-                    if (key.match(/^fld\_|mkup\_|btn_/)) {
-                        fields.push(el[key]);
-                        if (el[key].type && el[key].type == 'textfield') {
-                            el[key].type = 'text';
-                        }
-                    }
-                }
-                //console.log(fields);
+                console.log(fields);
                 return fields;
             }
 

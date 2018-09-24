@@ -1,0 +1,61 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="uvalib-field.html">
+<link rel="import" href="../uvalib-theme/uvalib-theme.html">
+<link rel="import" href="uvalib-form-style.html">
+
+<dom-module id="uvalib-field-radios">
+    <template>
+    <custom-style>
+      <style include="uvalib-theme uvalib-form-style">
+      </style>
+    </custom-style>
+
+    <div class="form-field-group">
+      <fieldset>
+        <legend id="[[element.webform-key]]-legend">[[element.title]]</legend>
+        <template is="dom-if" if="[[_hasDescription(element)]]">
+          <div class="field-label">
+            <span inner-h-t-m-l="[[element.description.markup]]"></span>
+            <template is="dom-if" if="[[_isRequired(element)]]"><span class="required">*</span></template>
+          </div>
+        </template>
+
+        <template is="dom-repeat" items="{{_getOptions(element)}}" as="option">
+          <input aria-describedby="[[element.webform-key]]-legend" type$="radio" id$="[[element.webform_key]]-[[option]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" value="[[option]]" on-change="_changedValue"/>
+          <label for$="[[element.webform_key]]-[[option]]">[[option]]</label>
+        </template>
+      </fieldset>
+    </div>
+    </template>
+
+    <script>
+        // @TODO Needs testing.
+        /**
+         * `uvalib-field-radios`
+         * Component that generates radio button input field.
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/uvalib-field-radios.html
+         */
+        class UvalibFieldRadios extends UvalibField(Polymer.Element) {
+            static get is() {
+                return 'uvalib-field-radios';
+            }
+            static get properties() {
+                return Object.assign(super.properties, {});
+            }
+
+            _getOptions(el) {
+              let opts = Array();
+              for (var key in el.options) {
+                opts[key] = el.options.key;
+              }
+              return opts;
+            }
+
+        }
+
+        window.customElements.define(UvalibFieldRadios.is, UvalibFieldRadios);
+    </script>
+</dom-module>
