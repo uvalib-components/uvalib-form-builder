@@ -15,13 +15,14 @@
         <div class="field-label">
           <span inner-h-t-m-l="[[element.description.markup]]"></span>
           <template is="dom-if" if="[[_isRequired(element)]]"><span class="required">*</span></template>
-    </div>
-    </template>
-    <template is="dom-if" if="[[!_isChecked(element)]]">
-        <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" value="1" on-change="_changedValue" />
+        </div>
       </template>
-    <template is="dom-if" if="[[_isChecked(element)]]">
-        <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" value="1" on-change="_changedValue" checked/>
+      <div id="validation-message" hidden$="{{!ariaInvalid}}">[[element.required_error]]</div>
+      <template is="dom-if" if="[[!_isChecked(element)]]">
+        <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" value="1" on-change="_changedValue" aria-invalid$="{{ariaInvalid}}"/>
+      </template>
+      <template is="dom-if" if="[[_isChecked(element)]]">
+        <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" value="1" on-change="_changedValue" checked aria-invalid$="{{ariaInvalid}}"/>
       </template>
     <label for$="[[element.webform_key]]">[[element.title]]</label>
     </div>

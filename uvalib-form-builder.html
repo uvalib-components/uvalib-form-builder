@@ -25,6 +25,12 @@
 
     <form method="post">
       <input type="hidden" name="authenticated" value="[[_authenticated]]" />
+
+      <div id="error-list">
+        <!--  insert error messages here after submit validation -->
+        <!-- make sure to set aria-live="assertive" when providing error feedback -->
+      </div>
+
       <template is="dom-repeat" items="{{_elements}}" as="elem">
         <template is="dom-if" if="[[_isSection(elem)]]">
           <div class="section" hidden$="{{!_showField(elem,_refresh)}}">
@@ -153,6 +159,9 @@
             _buttonClicked(e) {
                 console.log(e.detail.name);
                 if (e.detail.name == 'Submit') {
+                    // @TODO Make sure all required fields are populated before attempting
+                    // Loop through form fields to make sure required items have values
+
                     this.$.user.saveRequest(this._elements);
                 }
             }
