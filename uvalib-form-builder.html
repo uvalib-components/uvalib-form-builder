@@ -156,14 +156,47 @@
                 });
             }
 
-            _buttonClicked(e) {
-                console.log(e.detail.name);
-                if (e.detail.name == 'Submit') {
-                    // @TODO Make sure all required fields are populated before attempting
-                    // Loop through form fields to make sure required items have values
-
-                    this.$.user.saveRequest(this._elements);
+            _validateSection(fldIndex) {
+              let err = false;
+              for (var key in this._elements[fldIndex]) {
+                if (key.match(/^fld_/)) {
+                  if (this._elements[fldIndex][key].required && this._elements[fldIndex][key].value === "") {
+                    this._elements[fldIndex][key].valid = false;
+                    err = true;
+                  }
+                } else if (key.match(/^fldset_/)) {
+                  // @TODO Revisit when we use <fieldset>
                 }
+              }
+              return err;
+            }
+
+            _buttonClicked(e) {
+              let err = false;
+              if (e.detail.name == 'Submit') {
+                  // @TODO Make sure all required fields are populated before attempting
+                  // Loop through form fields to make sure required items have values
+                  for (var i=0; i<this._elements.length; i++) {
+                    let field = this._elements[i].webform_key;
+                    if (field.match(/^sect_/)) {
+                      err = this._validateSection(i);
+                    } else if (field.match(/^fld_/)) {
+                      if (this._elements[i].required && this._elements[i].value === "") {
+                        this._elements[i].valid = false;
+                        err = true;
+                      }
+                    } else if (field.match(/^fldset_/)) {
+                      // @TODO Revisit when we use <fieldset>
+                    }
+                  }
+                  // if no errors then save the request.
+                  if (!err) {
+                    this.$.user.saveRequest(this._elements);
+                  } else {
+                    console.log('Required fields left empty.');
+                  }
+                  console.log(this._elements);
+              }
             }
 
             /**
