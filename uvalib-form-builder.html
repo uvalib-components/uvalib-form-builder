@@ -26,7 +26,8 @@
     <form method="post">
       <input type="hidden" name="authenticated" value="[[_authenticated]]" />
 
-      <div id="error-list">
+      <div id="error-list" hidden$="[[!_invalidValues]]">
+        <h2>Submission Errors Found</h2>
         <!--  insert error messages here after submit validation -->
         <!-- make sure to set aria-live="assertive" when providing error feedback -->
       </div>
@@ -133,6 +134,7 @@
                      */
                     _elements: {
                         type: Array,
+                        reflectToAttribute: true,
                         computed: '_parsePageForm(formPage)'
                     },
                     /**
@@ -152,6 +154,11 @@
                     _noSubmitButton: {
                         type: Boolean,
                         value: true
+                    },
+                    _invalidValues: {
+                      type: Boolean,
+                      value: false,
+                      reflectToAttribute: true,
                     }
                 });
             }
@@ -160,6 +167,7 @@
               let err = false;
               for (var key in this._elements[fldIndex]) {
                 if (key.match(/^fld_/)) {
+                  // make sure required field doesn't have empty value
                   if (this._elements[fldIndex][key].required && this._elements[fldIndex][key].value === "") {
                     this._elements[fldIndex][key].valid = false;
                     err = (err || !this._elements[fldIndex][key].valid);
@@ -172,28 +180,28 @@
             }
 
             _buttonClicked(e) {
-              let err = false;
+              this._invalidValues = false;
               if (e.detail.name == 'Submit') {
-                  // @TODO Make sure all required fields are populated before attempting
                   // Loop through form fields to make sure required items have values
                   for (var i=0; i<this._elements.length; i++) {
                     let field = this._elements[i].webform_key;
                     if (field.match(/^sect_/)) {
-                      err = (err || this._validateSection(i));
+                      this._invalidValues = (this._invalidValues || this._validateSection(i));
                     } else if (field.match(/^fld_/)) {
+                      // make sure required field doesn't have empty value
                       if (this._elements[i].required && this._elements[i].value === "") {
                         this._elements[i].valid = false;
-                        err = (err || !this._elements[i].valid);
+                        this._invalidValues = (this._invalidValues || !this._elements[i].valid);
                       }
                     } else if (field.match(/^fldset_/)) {
                       // @TODO Revisit when we use <fieldset>
                     }
                   }
                   // if no errors then save the request.
-                  if (!err) {
+                  if (!this._invalidValues) {
                     this.$.user.saveRequest(this._elements);
                   } else {
-                    console.log('Required fields left empty.');
+                    console.log('Required fields are missing.');
                   }
                   console.log(this._elements);
               }
