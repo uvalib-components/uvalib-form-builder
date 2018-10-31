@@ -162,7 +162,7 @@
                 if (key.match(/^fld_/)) {
                   if (this._elements[fldIndex][key].required && this._elements[fldIndex][key].value === "") {
                     this._elements[fldIndex][key].valid = false;
-                    err = true;
+                    err = (err || !this._elements[fldIndex][key].valid);
                   }
                 } else if (key.match(/^fldset_/)) {
                   // @TODO Revisit when we use <fieldset>
@@ -179,11 +179,11 @@
                   for (var i=0; i<this._elements.length; i++) {
                     let field = this._elements[i].webform_key;
                     if (field.match(/^sect_/)) {
-                      err = this._validateSection(i);
+                      err = (err || this._validateSection(i));
                     } else if (field.match(/^fld_/)) {
                       if (this._elements[i].required && this._elements[i].value === "") {
                         this._elements[i].valid = false;
-                        err = true;
+                        err = (err || !this._elements[i].valid);
                       }
                     } else if (field.match(/^fldset_/)) {
                       // @TODO Revisit when we use <fieldset>
