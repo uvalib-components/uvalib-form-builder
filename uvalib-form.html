@@ -17,6 +17,7 @@
                      */
                     userInfo: {
                         type: Object,
+                        notify: true,
                         value: function() {
                             return {
                                 computing_id: '',
@@ -52,7 +53,7 @@
                 console.log('setRequestor');
                 console.log(userInfo);
                 for (var key in _elements) {
-                    if (key.match(/^sect\_|fld\_|mkup\_|btn_/)) {
+                    if (key.match(/^sect\_|fld\_|mkup\_|btn\_/)) {
                         // prefill user form field values if authenticated form
                         if (userInfo) {
                             if (key.match(/^fld_uva_computing_id/)) {

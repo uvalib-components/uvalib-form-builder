@@ -38,23 +38,23 @@
             <h2>[[elem.title]]</h2>
               <template is="dom-repeat" items="{{_getSectionFields(elem,userInfo)}}" as="fs_elem">
                 <template is="dom-if" if="[[_isMarkup(fs_elem)]]">
-                  <uvalib-field-html-markup id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-html-markup>
+                  <uvalib-field-html-markup id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}" aria-invalid="{{!fs_elem.valid}}"></uvalib-field-html-markup>
                 </template>
                 <template is="dom-if" if="[[_isField(fs_elem)]]">
                   <template is="dom-if" if="[[_isFieldset(fs_elem)]]">
-                    <uvalib-form-fieldset id="[[fs_elem.webform_key]]" element="{{fs_elem}}"></uvalib-form-fieldset>
+                    <uvalib-form-fieldset id="[[fs_elem.webform_key]]" element="{{fs_elem}}" aria-invalid="{{!fs_elem.valid}}"></uvalib-form-fieldset>
                   </template>
                   <template is="dom-if" if="[[_isSelect(fs_elem)]]">
-                    <uvalib-field-select id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-select>
+                    <uvalib-field-select id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" aria-invalid="{{!fs_elem.valid}}"></uvalib-field-select>
                   </template>
                   <template is="dom-if" if="[[_isInput(fs_elem)]]">
-                    <uvalib-field-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-input>
+                    <uvalib-field-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" aria-invalid="{{!fs_elem.valid}}"></uvalib-field-input>
                   </template>
                   <template is="dom-if" if="[[_isCheckbox(fs_elem)]]">
-                    <uvalib-field-checkbox id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-checkbox>
+                    <uvalib-field-checkbox id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" aria-invalid="{{!fs_elem.valid}}"></uvalib-field-checkbox>
                   </template>
                   <template is="dom-if" if="[[_isTextarea(fs_elem)]]">
-                    <uvalib-field-textarea id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-textarea>
+                    <uvalib-field-textarea id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" aria-invalid="{{!fs_elem.valid}}"></uvalib-field-textarea>
                   </template>
                   <template is="dom-if" if="[[_isButton(fs_elem)]]">
                     <uvalib-field-button id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-button>
@@ -134,6 +134,7 @@
                      */
                     _elements: {
                         type: Array,
+                        notify: true,
                         reflectToAttribute: true,
                         computed: '_parsePageForm(formPage)'
                     },
@@ -165,12 +166,16 @@
 
             _validateSection(fldIndex) {
               let err = false;
+              console.log('section');
+              console.log(fieldIndex+': '+key);
               for (var key in this._elements[fldIndex]) {
                 if (key.match(/^fld_/)) {
                   // make sure required field doesn't have empty value
-                  if (this._elements[fldIndex][key].required && this._elements[fldIndex][key].value === "") {
+                  if (this._elements[fldIndex][key].required && this._elements[fldIndex][key].value == "") {
                     this._elements[fldIndex][key].valid = false;
                     err = (err || !this._elements[fldIndex][key].valid);
+                  } else {
+                    this._elements[fldIndex][key].valid = true;
                   }
                 } else if (key.match(/^fldset_/)) {
                   // @TODO Revisit when we use <fieldset>
@@ -192,6 +197,8 @@
                       if (this._elements[i].required && this._elements[i].value === "") {
                         this._elements[i].valid = false;
                         this._invalidValues = (this._invalidValues || !this._elements[i].valid);
+                      } else {
+                        this._elements[i].valid = true;
                       }
                     } else if (field.match(/^fldset_/)) {
                       // @TODO Revisit when we use <fieldset>
@@ -248,8 +255,19 @@
                 if (frmPg) {
                     var form = JSON.parse(frmPg[0].webform);
                     for (var key in form) {
+                        if (key.match(/^sect_/)) {
+                          for (var skey in form[key]) {
+                            if (skey.match(/^fld_|fldset_/)) {
+                              form[key][skey].valid = true;
+                              if (form[key][skey].type && form[key][skey].type == 'textfield') {
+                                form[key][skey].type = 'text';
+                              }
+                            }
+                          }
+                        }
                         if (key.match(/^sect\_|fld\_|fldset\_|mkup\_|btn\_|authenticated|confirmation/)) {
                             fields.push(form[key]);
+                            form[key].valid = true;
                             if (form[key].type && form[key].type == 'textfield') {
                                 form[key].type = 'text';
                             }

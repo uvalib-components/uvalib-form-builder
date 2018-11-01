@@ -22,11 +22,14 @@
             },
             value: {
               type: String,
-              notify: true
+              notify: true,
+              reflectToAttribute: true
             },
             ariaInvalid: {
               type: Boolean,
-              value: false
+              value: false,
+              notify: true,
+              reflectToAttribute: true
             }
           };
         }

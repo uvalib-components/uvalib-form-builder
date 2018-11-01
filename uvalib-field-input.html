@@ -16,7 +16,7 @@
         <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
       </template>
       <div id="validation-message" hidden$="{{!ariaInvalid}}">[[element.required_error]]</div>
-      <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" size$="[[element.size]]" required$="[[_isRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{ariaInvalid}}"/>
+      <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" size$="[[element.size]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{ariaInvalid}}"/>
     </div>
   </template>
 

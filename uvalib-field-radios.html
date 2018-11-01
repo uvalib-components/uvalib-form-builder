@@ -21,7 +21,7 @@
         </template>
 
         <template is="dom-repeat" items="{{_getOptions(element)}}" as="option">
-          <input aria-describedby="[[element.webform-key]]-legend" type$="radio" id$="[[element.webform_key]]-[[option]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" value="[[option]]" on-change="_changedValue"/>
+          <input aria-describedby="[[element.webform-key]]-legend" type$="radio" id$="[[element.webform_key]]-[[option]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value="[[option]]" on-change="_changedValue"/>
           <label for$="[[element.webform_key]]-[[option]]">[[option]]</label>
         </template>
       </fieldset>

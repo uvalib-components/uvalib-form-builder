@@ -16,7 +16,7 @@
           <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
         </template>
         <div id="validation-message" hidden$="{{!ariaInvalid}}">[[element.required_error]]</div>
-        <select id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{ariaInvalid}}">
+        <select id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{ariaInvalid}}">
           <template is="dom-repeat" items="{{_getOptions(element)}}" as="option">
             <template is="dom-if" if="[[_isValidOption(option)]]">
               <template is="dom-if" if="[[_selectedValue(element,option)]]"><option selected value$="[[option]]">[[option]]</option></template>

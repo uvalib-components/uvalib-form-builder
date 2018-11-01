@@ -59,6 +59,7 @@
                 for (var key in el) {
                     if (key.match(/^fld\_|mkup\_|actions/)) {
                         fields.push(el[key]);
+                        el[key].valid = true;
                         if (el[key].type && el[key].type == 'textfield') {
                             el[key].type = 'text';
                         }
