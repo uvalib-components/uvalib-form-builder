@@ -166,16 +166,16 @@
 
             _validateSection(fldIndex) {
               let err = false;
-              console.log('section');
-              console.log(fieldIndex+': '+key);
               for (var key in this._elements[fldIndex]) {
                 if (key.match(/^fld_/)) {
                   // make sure required field doesn't have empty value
-                  if (this._elements[fldIndex][key].required && this._elements[fldIndex][key].value == "") {
-                    this._elements[fldIndex][key].valid = false;
-                    err = (err || !this._elements[fldIndex][key].valid);
-                  } else {
-                    this._elements[fldIndex][key].valid = true;
+                  if (this._elements[fldIndex][key].required) {
+                    if (this._elements[fldIndex][key].value && this._elements[fldIndex][key].value !== "") {
+                      this._elements[fldIndex][key].valid = true;
+                    } else {
+                      this._elements[fldIndex][key].valid = false;
+                      err = (err || !this._elements[fldIndex][key].valid);
+                    }
                   }
                 } else if (key.match(/^fldset_/)) {
                   // @TODO Revisit when we use <fieldset>
@@ -207,6 +207,7 @@
                   // if no errors then save the request.
                   if (!this._invalidValues) {
                     this.$.user.saveRequest(this._elements);
+                    console.log('Request saved!')
                   } else {
                     console.log('Required fields are missing.');
                   }
