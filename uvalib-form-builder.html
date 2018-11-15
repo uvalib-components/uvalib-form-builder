@@ -68,16 +68,16 @@
         </template>
         <template is="dom-if" if="[[_isField(elem)]]">
           <template is="dom-if" if="[[_isSelect(elem)]]">
-            <uvalib-field-select id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-select>
+            <uvalib-field-select id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" aria-invalid="{{!elem.valid}}"></uvalib-field-select>
           </template>
           <template is="dom-if" if="[[_isInput(elem)]]">
-            <uvalib-field-input id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-input>
+            <uvalib-field-input id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" aria-invalid="{{!elem.valid}}"></uvalib-field-input>
           </template>
           <template is="dom-if" if="[[_isCheckbox(elem)]]">
-            <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-checkbox>
+            <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" aria-invalid="{{!elem.valid}}"></uvalib-field-checkbox>
           </template>
           <template is="dom-if" if="[[_isTextarea(elem)]]">
-            <uvalib-field-textarea id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-textarea>
+            <uvalib-field-textarea id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" aria-invalid="{{!elem.valid}}"></uvalib-field-textarea>
           </template>
           <template is="dom-if" if="[[_isButton(elem)]]">
             <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-button>
@@ -175,6 +175,8 @@
                     } else {
                       this._elements[fldIndex][key].valid = false;
                       err = (err || !this._elements[fldIndex][key].valid);
+                      console.log(this._elements[fldIndex][key].valid);
+                      this.notifyPath(this._elements[fldIndex][key].valid);
                     }
                   }
                 } else if (key.match(/^fldset_/)) {
@@ -195,13 +197,17 @@
                     } else if (field.match(/^fld_/)) {
                       // make sure required field doesn't have empty value
                       if (this._elements[i].required && this._elements[i].value === "") {
-                        this._elements[i].valid = false;
-                        this._invalidValues = (this._invalidValues || !this._elements[i].valid);
-                      } else {
-                        this._elements[i].valid = true;
+                        if (this._elements[i].value && this._elements[i].value !== "") {
+                          this._elements[i].valid = true;
+                        } else {
+                          this._elements[i].valid = false;
+                          this._invalidValues = (this._invalidValues || !this._elements[i].valid);
+                          console.log(this._elements[i].valid);
+                          this.notifyPath(this._elements[i].valid);
+                        }
+                      } else if (field.match(/^fldset_/)) {
+                        // @TODO Revisit when we use <fieldset>
                       }
-                    } else if (field.match(/^fldset_/)) {
-                      // @TODO Revisit when we use <fieldset>
                     }
                   }
                   // if no errors then save the request.
