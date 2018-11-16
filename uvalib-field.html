@@ -25,13 +25,23 @@
               notify: true,
               reflectToAttribute: true
             },
-            ariaInvalid: {
+            invalidValues: {
               type: Boolean,
               value: false,
-              notify: true,
-              reflectToAttribute: true
+              notify: true
+            },
+            _ariaInvalid: {
+              type: Boolean,
+              computed: "_isInvalidValue(invalidValues,element)"
             }
           };
+        }
+
+        _isInvalidValue(invalidValues,element) {
+          console.log('invalidValues: '+invalidValues);
+          console.log(element.name+': '+element.valid);
+          console.log(invalidValues && !element.valid);
+          return invalidValues && !element.valid;
         }
 
         _changedValue(e) {
