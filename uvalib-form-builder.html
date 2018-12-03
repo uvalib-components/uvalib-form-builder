@@ -164,7 +164,7 @@
                 });
             }
 
-            _validateSection(fldIndex) {
+            _validSection(fldIndex) {
               let err = false;
               for (var key in this._elements[fldIndex]) {
                 if (key.match(/^fld_/)) {
@@ -176,14 +176,15 @@
                       this._elements[fldIndex][key].valid = false;
                       err = (err || !this._elements[fldIndex][key].valid);
                       console.log(this._elements[fldIndex][key].valid);
-                      this.notifyPath(this._elements[fldIndex][key].valid);
+//                      this.notifyPath(this._elements[fldIndex][key].valid);
                     }
                   }
                 } else if (key.match(/^fldset_/)) {
                   // @TODO Revisit when we use <fieldset>
                 }
               }
-              return err;
+              console.log('validSection:'+!err);
+              return !err;
             }
 
             _buttonClicked(e) {
@@ -193,7 +194,8 @@
                   for (var i=0; i<this._elements.length; i++) {
                     let field = this._elements[i].webform_key;
                     if (field.match(/^sect_/)) {
-                      this._invalidValues = (this._invalidValues || this._validateSection(i));
+                      console.log('validate section');
+                      this._invalidValues = (this._invalidValues || !this._validSection(i));
                     } else if (field.match(/^fld_/)) {
                       // make sure required field doesn't have empty value
                       if (this._elements[i].required && this._elements[i].value === "") {

@@ -18,7 +18,8 @@
              * The form field element.
              */
             element: {
-              type: Object
+              type: Object,
+              notify: true
             },
             value: {
               type: String,
@@ -39,8 +40,8 @@
 
         _isInvalidValue(invalidValues,element) {
           console.log('invalidValues: '+invalidValues);
-          console.log(element.name+': '+element.valid);
-          console.log(invalidValues && !element.valid);
+          console.log(element.name+' valid? '+element.valid);
+          console.log('_isInvalidValue: '+ (invalidValues && !element.valid));
           return invalidValues && !element.valid;
         }
 

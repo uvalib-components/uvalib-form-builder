@@ -15,7 +15,7 @@
       <template is="dom-if" if="[[_hasDescription(element)]]">
         <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
       </template>
-      <div id="validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
+      <div class="validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
       <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" size$="[[element.size]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}"/>
     </div>
   </template>
@@ -35,7 +35,7 @@
         return Object.assign(super.properties,{
         });
       }
-
+      // @TODO Add logic for testing different input types that use a standard text input such as email address, tel, url, etc.
     }
 
     window.customElements.define(UvalibFieldInput.is, UvalibFieldInput);
