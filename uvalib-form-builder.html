@@ -205,7 +205,7 @@
                           this._elements[i].valid = false;
                           this._invalidValues = (this._invalidValues || !this._elements[i].valid);
                           console.log(this._elements[i].valid);
-//                          this.notifyPath(this._elements[i].valid);
+                          this.notifyPath(this._elements[i].valid);
                         }
                       } else if (field.match(/^fldset_/)) {
                         // @TODO Revisit when we use <fieldset>
@@ -213,7 +213,8 @@
                     }
                   }
                   // reset the array
-                  this._elements = JSON.parse(JSON.stringify(this._elements));
+                  if (this._invalidValues)
+                    this._elements = JSON.parse(JSON.stringify(this._elements));
 
                   // if no errors then save the request.
                   if (!this._invalidValues) {
