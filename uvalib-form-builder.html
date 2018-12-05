@@ -198,20 +198,23 @@
                       this._invalidValues = (this._invalidValues || !this._validSection(i));
                     } else if (field.match(/^fld_/)) {
                       // make sure required field doesn't have empty value
-                      if (this._elements[i].required && this._elements[i].value === "") {
+                      if (this._elements[i].required) {
                         if (this._elements[i].value && this._elements[i].value !== "") {
                           this._elements[i].valid = true;
                         } else {
                           this._elements[i].valid = false;
                           this._invalidValues = (this._invalidValues || !this._elements[i].valid);
                           console.log(this._elements[i].valid);
-                          this.notifyPath(this._elements[i].valid);
+//                          this.notifyPath(this._elements[i].valid);
                         }
                       } else if (field.match(/^fldset_/)) {
                         // @TODO Revisit when we use <fieldset>
                       }
                     }
                   }
+                  // reset the array
+                  this._elements = JSON.parse(JSON.stringify(this._elements));
+
                   // if no errors then save the request.
                   if (!this._invalidValues) {
                     this.$.user.saveRequest(this._elements);
