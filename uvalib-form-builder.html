@@ -175,7 +175,7 @@
                     } else {
                       this._elements[fldIndex][key].valid = false;
                       err = (err || !this._elements[fldIndex][key].valid);
-                      console.log(this._elements[fldIndex][key].valid);
+                      console.log(key+': '+this._elements[fldIndex][key].valid);
 //                      this.notifyPath(this._elements[fldIndex][key].valid);
                     }
                   }

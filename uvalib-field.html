@@ -46,10 +46,10 @@
         }
 
         _changedValue(e) {
-          console.log('changed value');
+          //console.log('changed value');
           // @TODO need to determine how to get accurate value for a checkbox input field.
           this.value = this.shadowRoot.querySelector('#'+this.element.webform_key).value;
-          console.log(this.value);
+          //console.log(this.value);
           this.dispatchEvent(new CustomEvent('changedValue', {detail: {field_id: this.element.webform_key}, bubbles: true, composed: true}));
         }
 
