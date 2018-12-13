@@ -14,6 +14,10 @@
         }
         static get properties() {
           return {
+            tabindex: {
+              type: Number,
+              value: 0
+            },
             /**
              * The form field element.
              */
@@ -38,9 +42,18 @@
           };
         }
 
+        focus() {
+          console.log('set focus');
+          this.$$('input, select, textarea').focus();
+        }
+
         _isInvalidValue(invalidValues,element) {
           console.log('invalidValues: '+invalidValues);
-          console.log(element.name+' valid? '+element.valid);
+          if (element.name) {
+            console.log(element.name+' valid? '+element.valid);
+          } else {
+            console.log(element.type+' valid?'+element.valid);
+          }
           console.log('_isInvalidValue: '+ (invalidValues && !element.valid));
           return invalidValues && !element.valid;
         }

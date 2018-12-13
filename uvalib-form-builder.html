@@ -26,10 +26,13 @@
     <form method="post">
       <input type="hidden" name="authenticated" value="[[_authenticated]]" />
 
-      <div id="error-list" hidden$="[[!_invalidValues]]">
-        <h2>Submission Errors Found</h2>
+      <div class="errors" hidden$="[[!_invalidValues]]" aria-live$="[[_errorAlert]]">
+        <h2 id="submissionProblems">Submission Problems Identified</h2>
         <!--  insert error messages here after submit validation -->
         <!-- make sure to set aria-live="assertive" when providing error feedback -->
+        <nav id="errorList" aria-labelledby="submissionProblems" tabindex="0">
+          <ul inner-h-t-m-l="{{_errorList}}"></ul>
+        </nav>
       </div>
 
       <template is="dom-repeat" items="{{_elements}}" as="elem">
@@ -156,12 +159,25 @@
                         type: Boolean,
                         value: true
                     },
+                    _errorList: {
+                      type: String,
+                      value: "",
+                      notify: true
+                    },
                     _invalidValues: {
                       type: Boolean,
                       value: false,
                       notify: true
+                    },
+                    _errorAlert: {
+                      type: String,
+                      computed: '_ariaLive(_errorList)'
                     }
                 });
+            }
+
+            _ariaLive(_errorList) {
+              return (_errorList != "") ? 'assertive' : '';
             }
 
             _validSection(fldIndex) {
@@ -176,6 +192,7 @@
                       this._elements[fldIndex][key].valid = false;
                       err = (err || !this._elements[fldIndex][key].valid);
                       console.log(key+': '+this._elements[fldIndex][key].valid);
+                      this._errorList += '<li><a href="#'+key+'">'+this._elements[fldIndex][key].title+' - this is required</a></li>';
 //                      this.notifyPath(this._elements[fldIndex][key].valid);
                     }
                   }
@@ -189,6 +206,7 @@
 
             _buttonClicked(e) {
               this._invalidValues = false;
+              this._errorList = "";
               if (e.detail.name == 'Submit') {
                   // Loop through form fields to make sure required items have values
                   for (var i=0; i<this._elements.length; i++) {
@@ -205,23 +223,23 @@
                           this._elements[i].valid = false;
                           this._invalidValues = (this._invalidValues || !this._elements[i].valid);
                           console.log(this._elements[i].valid);
-                          this.notifyPath(this._elements[i].valid);
+//                          this.notifyPath(this._elements[i].valid);
+                          this._errorList += '<li><a href="#'+field+'">'+this._elements[i].title+' - this is required</a></li>';
                         }
                       } else if (field.match(/^fldset_/)) {
                         // @TODO Revisit when we use <fieldset>
                       }
                     }
                   }
-                  // reset the array
-                  if (this._invalidValues)
+                  // if invalid input then reset the array
+                  if (this._invalidValues) {
                     this._elements = JSON.parse(JSON.stringify(this._elements));
-
-                  // if no errors then save the request.
-                  if (!this._invalidValues) {
+                    console.log('Required fields are missing.');
+                    this.shadowRoot.querySelector('#errorList').focus();
+                  } else {
+                    // otherwise save the results
                     this.$.user.saveRequest(this._elements);
                     console.log('Request saved!')
-                  } else {
-                    console.log('Required fields are missing.');
                   }
                   console.log(this._elements);
               }

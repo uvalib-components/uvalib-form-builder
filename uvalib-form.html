@@ -48,10 +48,15 @@
                 super.ready();
             }
 
+            _focus(field) {
+              console.log('_focus');
+              this.$$('#'+field).focus(field);
+            }
+
             _setRequestor(userInfo, _elements) {
                 // @TODO needs review as we need to find field within the section that matches up...
-                console.log('setRequestor');
-                console.log(userInfo);
+                //console.log('setRequestor');
+                //console.log(userInfo);
                 for (var key in _elements) {
                     if (key.match(/^sect\_|fld\_|mkup\_|btn\_/)) {
                         // prefill user form field values if authenticated form
