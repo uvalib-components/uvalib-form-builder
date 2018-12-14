@@ -26,10 +26,9 @@
     <form method="post">
       <input type="hidden" name="authenticated" value="[[_authenticated]]" />
 
-      <div class="errors" hidden$="[[!_invalidValues]]" aria-live$="[[_errorAlert]]">
+      <div class="errors" hidden$="[[!_invalidValues]]" aria-live$="[[_alertLevel]]">
         <h2 id="submissionProblems">Submission Problems Identified</h2>
         <!--  insert error messages here after submit validation -->
-        <!-- make sure to set aria-live="assertive" when providing error feedback -->
         <nav id="errorList" aria-labelledby="submissionProblems" tabindex="0">
           <ul inner-h-t-m-l="{{_errorList}}"></ul>
         </nav>
@@ -41,23 +40,23 @@
             <h2>[[elem.title]]</h2>
               <template is="dom-repeat" items="{{_getSectionFields(elem,userInfo)}}" as="fs_elem">
                 <template is="dom-if" if="[[_isMarkup(fs_elem)]]">
-                  <uvalib-field-html-markup id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-html-markup>
+                  <uvalib-field-html-markup tabindex="0" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-html-markup>
                 </template>
                 <template is="dom-if" if="[[_isField(fs_elem)]]">
                   <template is="dom-if" if="[[_isFieldset(fs_elem)]]">
                     <uvalib-form-fieldset id="[[fs_elem.webform_key]]" element="{{fs_elem}}" invalid-values="{{_invalidValues}}"></uvalib-form-fieldset>
                   </template>
                   <template is="dom-if" if="[[_isSelect(fs_elem)]]">
-                    <uvalib-field-select id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-select>
+                    <uvalib-field-select tabindex="0" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-select>
                   </template>
                   <template is="dom-if" if="[[_isInput(fs_elem)]]">
-                    <uvalib-field-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-input>
+                    <uvalib-field-input tabindex="0" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-input>
                   </template>
                   <template is="dom-if" if="[[_isCheckbox(fs_elem)]]">
-                    <uvalib-field-checkbox id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
+                    <uvalib-field-checkbox tabindex="0" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
                   </template>
                   <template is="dom-if" if="[[_isTextarea(fs_elem)]]">
-                    <uvalib-field-textarea id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-textarea>
+                    <uvalib-field-textarea tabindex="0" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-textarea>
                   </template>
                   <template is="dom-if" if="[[_isButton(fs_elem)]]">
                     <uvalib-field-button id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-button>
@@ -169,14 +168,14 @@
                       value: false,
                       notify: true
                     },
-                    _errorAlert: {
+                    _alertLevel: {
                       type: String,
-                      computed: '_ariaLive(_errorList)'
+                      computed: '_ariaLiveAlert(_errorList)'
                     }
                 });
             }
 
-            _ariaLive(_errorList) {
+            _ariaLiveAlert(_errorList) {
               return (_errorList != "") ? 'assertive' : '';
             }
 
