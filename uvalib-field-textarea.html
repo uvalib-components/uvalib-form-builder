@@ -15,8 +15,8 @@
       <template is="dom-if" if="[[_hasDescription(element)]]">
         <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
       </template>
-      <div class="validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
-      <textarea id$="[[element.webform_key]]" name$="[[element.name]]" rows$="[[element.rows]]" cols$="[[element.cols]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}"></textarea>
+      <div id="{{_ariaDescribedBy}}" class="validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
+      <textarea id="[[element.webform_key]]" name$="[[element.name]]" rows$="[[element.rows]]" cols$="[[element.cols]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"></textarea>
     </div>
   </template>
 

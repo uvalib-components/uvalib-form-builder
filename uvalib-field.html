@@ -38,6 +38,10 @@
             _ariaInvalid: {
               type: Boolean,
               computed: "_isInvalidValue(invalidValues,element)"
+            },
+            _ariaDescribedBy: {
+              type: String,
+              computed: "_ariaInvalidLabel(invalidValues,element)"
             }
           };
         }
@@ -47,14 +51,11 @@
         }
 
         _isInvalidValue(invalidValues,element) {
-          console.log('invalidValues: '+invalidValues);
-          if (element.name) {
-            console.log(element.name+' valid? '+element.valid);
-          } else {
-            console.log(element.type+' valid?'+element.valid);
-          }
-          console.log('_isInvalidValue: '+ (invalidValues && !element.valid));
           return invalidValues && !element.valid;
+        }
+
+        _ariaInvalidLabel(invalidValues,element) {
+          return (invalidValues && !element.valid) ? element.webform_key+"-error" : "";
         }
 
         _changedValue(e) {

@@ -32,7 +32,7 @@
         <nav id="errorList" aria-labelledby="submissionProblems" tabindex="0">
           <ul>
             <template is="dom-repeat" items="[[_errors]]">
-              <li><a href="[[item.id]]" on-click="_handleAnchor">[[item.text]]</a></li>
+              <li><a href="#[[item.id]]" on-click="_handleAnchor">[[item.text]]</a></li>
             </template>
           </ul> <!--inner-h-t-m-l="{{_errorList}}"-->
         </nav>
@@ -169,30 +169,33 @@
                     },
                     _invalidValues: {
                       type: Boolean,
-                      value: false,
+                      computed: '_errorsFound(_errors)',
                       notify: true
                     },
                     _alertLevel: {
                       type: String,
-                      computed: '_ariaLiveAlert(_errorList)'
+                      computed: '_ariaLiveAlert(_errors)'
                     }
                 });
             }
 
             _handleAnchor(e) {
-              //console.log('scroll and focus');
               e.preventDefault();
               let target = e.currentTarget.getAttribute('href');
+              console.log('target: '+target);
               this.shadowRoot.querySelector(target).scrollIntoView();
               this.shadowRoot.querySelector(target).focus();
             }
 
-            _ariaLiveAlert(_errorList) {
-              return (_errorList != "") ? 'assertive' : '';
+            _errorsFound(_errors) {
+              return (_errors.length > 0) ? true : false;
+            }
+
+            _ariaLiveAlert(_errors) {
+              return (_errors.length > 0) ? 'assertive' : '';
             }
 
             _validSection(fldIndex) {
-              let err = false;
               for (var key in this._elements[fldIndex]) {
                 if (key.match(/^fld_/)) {
                   // make sure required field doesn't have empty value
@@ -201,23 +204,18 @@
                       this._elements[fldIndex][key].valid = true;
                     } else {
                       this._elements[fldIndex][key].valid = false;
-                      err = (err || !this._elements[fldIndex][key].valid);
                       console.log(key+': '+this._elements[fldIndex][key].valid);
-                      this.push('_errors',{"id":'#'+key, text: 'The '+this._elements[fldIndex][key].title+' field is empty - this is required and must be filled in.' });
-                      this._errorList += '<li><a href="#'+key+'">'+this._elements[fldIndex][key].title+' - this is required</a></li>';
-//                      this.notifyPath(this._elements[fldIndex][key].valid);
+                      this.push('_errors',{"id": key, text: 'The '+this._elements[fldIndex][key].title+' field is empty - this is required and must be filled in.' });
                     }
                   }
                 } else if (key.match(/^fldset_/)) {
                   // @TODO Revisit when we use <fieldset>
                 }
               }
-              console.log('validSection:'+!err);
-              return !err;
+              console.log('validSection: '+this._errors.length);
             }
 
             _buttonClicked(e) {
-              this._invalidValues = false;
               this._errors = [];
               this._errorList = "";
               if (e.detail.name == 'Submit') {
@@ -225,8 +223,7 @@
                   for (var i=0; i<this._elements.length; i++) {
                     let field = this._elements[i].webform_key;
                     if (field.match(/^sect_/)) {
-                      console.log('validate section');
-                      this._invalidValues = (this._invalidValues || !this._validSection(i));
+                      this._validSection(i);
                     } else if (field.match(/^fld_/)) {
                       // make sure required field doesn't have empty value
                       if (this._elements[i].required) {
@@ -234,19 +231,17 @@
                           this._elements[i].valid = true;
                         } else {
                           this._elements[i].valid = false;
-                          this._invalidValues = (this._invalidValues || !this._elements[i].valid);
-                          console.log(this._elements[i].valid);
-//                          this.notifyPath(this._elements[i].valid);
-                          this.push('_errors',{"id":'#'+field, text: 'The '+this._elements[i].title+' field is empty - this is required and must be filled in.' });
-                          this._errorList += '<li><a href="#'+field+'">'+this._elements[i].title+' - this is required</a></li>';
+                          this.push('_errors',{"id": field, text: 'The '+this._elements[i].title+' field is empty - this is required and must be filled in.' });
                         }
                       } else if (field.match(/^fldset_/)) {
                         // @TODO Revisit when we use <fieldset>
                       }
                     }
                   }
+                  this._errors = JSON.parse(JSON.stringify(this._errors));
+
                   // if invalid input then reset the array
-                  if (this._invalidValues) {
+                  if (this._errors.length > 0) {
                     this._elements = JSON.parse(JSON.stringify(this._elements));
                     console.log('Required fields are missing.');
                     this.shadowRoot.querySelector('#errorList').focus();

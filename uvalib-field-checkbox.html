@@ -17,12 +17,12 @@
           <template is="dom-if" if="[[_isRequired(element)]]"><span class="required">*</span></template>
         </div>
       </template>
-      <div class="validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
+      <div id="[[_ariaDescribedBy]]" class="validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
       <template is="dom-if" if="[[!_isChecked(element)]]">
-        <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value="1" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}"/>
+        <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value="1" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
       </template>
       <template is="dom-if" if="[[_isChecked(element)]]">
-        <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value="1" on-change="_changedValue" checked aria-invalid$="{{_ariaInvalid}}"/>
+        <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value="1" on-change="_changedValue" checked aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
       </template>
     <label for$="[[element.webform_key]]">[[element.title]]</label>
     </div>
