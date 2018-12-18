@@ -167,11 +167,6 @@
                       value: function(){return []},
                       notify: true
                     },
-                    _errorList: {
-                      type: String,
-                      value: "",
-                      notify: true
-                    },
                     _invalidValues: {
                       type: Boolean,
                       value: false,
@@ -184,8 +179,12 @@
                 });
             }
 
-            _handleAnchor() {
-              console.log('scroll and focus');
+            _handleAnchor(e) {
+              //console.log('scroll and focus');
+              e.preventDefault();
+              let target = e.currentTarget.getAttribute('href');
+              this.shadowRoot.querySelector(target).scrollIntoView();
+              this.shadowRoot.querySelector(target).focus();
             }
 
             _ariaLiveAlert(_errorList) {
@@ -204,7 +203,7 @@
                       this._elements[fldIndex][key].valid = false;
                       err = (err || !this._elements[fldIndex][key].valid);
                       console.log(key+': '+this._elements[fldIndex][key].valid);
-                      this.push('_errors',{"id":'#'+key, text: this._elements[fldIndex][key].title+' - this is required' });
+                      this.push('_errors',{"id":'#'+key, text: 'The '+this._elements[fldIndex][key].title+' field is empty - this is required and must be filled in.' });
                       this._errorList += '<li><a href="#'+key+'">'+this._elements[fldIndex][key].title+' - this is required</a></li>';
 //                      this.notifyPath(this._elements[fldIndex][key].valid);
                     }
@@ -238,7 +237,7 @@
                           this._invalidValues = (this._invalidValues || !this._elements[i].valid);
                           console.log(this._elements[i].valid);
 //                          this.notifyPath(this._elements[i].valid);
-                          this.push('_errors',{"id":'#'+field, text: this._elements[i].title+' - this is required' });
+                          this.push('_errors',{"id":'#'+field, text: 'The '+this._elements[i].title+' field is empty - this is required and must be filled in.' });
                           this._errorList += '<li><a href="#'+field+'">'+this._elements[i].title+' - this is required</a></li>';
                         }
                       } else if (field.match(/^fldset_/)) {

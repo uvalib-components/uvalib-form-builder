@@ -43,8 +43,7 @@
         }
 
         focus() {
-          console.log('set focus');
-          this.$$('input, select, textarea').focus();
+          this.shadowRoot.querySelector('input, select, textarea').focus();
         }
 
         _isInvalidValue(invalidValues,element) {
