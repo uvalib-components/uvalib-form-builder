@@ -30,7 +30,11 @@
         <h2 id="submissionProblems">Submission Problems Identified</h2>
         <!--  insert error messages here after submit validation -->
         <nav id="errorList" aria-labelledby="submissionProblems" tabindex="0">
-          <ul inner-h-t-m-l="{{_errorList}}"></ul>
+          <ul>
+            <template is="dom-repeat" items="[[_errors]]">
+              <li><a href="[[item.id]]" on-click="_handleAnchor">[[item.text]]</a></li>
+            </template>
+          </ul> <!--inner-h-t-m-l="{{_errorList}}"-->
         </nav>
       </div>
 
@@ -158,6 +162,11 @@
                         type: Boolean,
                         value: true
                     },
+                    _errors: {
+                      type: Array,
+                      value: function(){return []},
+                      notify: true
+                    },
                     _errorList: {
                       type: String,
                       value: "",
@@ -173,6 +182,10 @@
                       computed: '_ariaLiveAlert(_errorList)'
                     }
                 });
+            }
+
+            _handleAnchor() {
+              console.log('scroll and focus');
             }
 
             _ariaLiveAlert(_errorList) {
@@ -191,6 +204,7 @@
                       this._elements[fldIndex][key].valid = false;
                       err = (err || !this._elements[fldIndex][key].valid);
                       console.log(key+': '+this._elements[fldIndex][key].valid);
+                      this.push('_errors',{"id":'#'+key, text: this._elements[fldIndex][key].title+' - this is required' });
                       this._errorList += '<li><a href="#'+key+'">'+this._elements[fldIndex][key].title+' - this is required</a></li>';
 //                      this.notifyPath(this._elements[fldIndex][key].valid);
                     }
@@ -205,6 +219,7 @@
 
             _buttonClicked(e) {
               this._invalidValues = false;
+              this._errors = [];
               this._errorList = "";
               if (e.detail.name == 'Submit') {
                   // Loop through form fields to make sure required items have values
@@ -223,6 +238,7 @@
                           this._invalidValues = (this._invalidValues || !this._elements[i].valid);
                           console.log(this._elements[i].valid);
 //                          this.notifyPath(this._elements[i].valid);
+                          this.push('_errors',{"id":'#'+field, text: this._elements[i].title+' - this is required' });
                           this._errorList += '<li><a href="#'+field+'">'+this._elements[i].title+' - this is required</a></li>';
                         }
                       } else if (field.match(/^fldset_/)) {
