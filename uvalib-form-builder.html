@@ -27,14 +27,14 @@
       <input type="hidden" name="authenticated" value="[[_authenticated]]" />
 
       <div class="errors" hidden$="[[!_invalidValues]]" aria-live$="[[_alertLevel]]">
-        <h2 id="submissionProblems">Submission Problems Identified</h2>
+        <div id="submissionProblems">An error has occurred. Please address the following <span inner-h-t-m-l="[[_errors.length]]"></span> problems and re-submit the form.</div>
         <!--  insert error messages here after submit validation -->
         <nav id="errorList" aria-labelledby="submissionProblems" tabindex="0">
           <ul>
             <template is="dom-repeat" items="[[_errors]]">
               <li><a href="#[[item.id]]" on-click="_handleAnchor">[[item.text]]</a></li>
             </template>
-          </ul> <!--inner-h-t-m-l="{{_errorList}}"-->
+          </ul>
         </nav>
       </div>
 
@@ -195,7 +195,12 @@
               return (_errors.length > 0) ? 'assertive' : '';
             }
 
-            _validSection(fldIndex) {
+            _validateEmail(email) {
+              var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+              return re.test(email);
+            }
+
+            _validateSection(fldIndex) {
               for (var key in this._elements[fldIndex]) {
                 if (key.match(/^fld_/)) {
                   // make sure required field doesn't have empty value
@@ -206,6 +211,14 @@
                       this._elements[fldIndex][key].valid = false;
                       console.log(key+': '+this._elements[fldIndex][key].valid);
                       this.push('_errors',{"id": key, text: 'The '+this._elements[fldIndex][key].title+' field is empty - this is required and must be filled in.' });
+                    }
+                  }
+                  // check that email field contains valid structured address if it is not empty
+                  if ((this._elements[fldIndex][key].type == 'email') && this._elements[fldIndex][key].valid) {
+                    if (!this._validateEmail(this._elements[fldIndex][key].value)) {
+                      console.log(key+': '+this._elements[fldIndex][key].valid);
+                      this._elements[fldIndex][key].valid = false;
+                      this.push('_errors',{"id": key, text: 'The '+this._elements[fldIndex][key].title+' field input does not look like an email address - please check it.' });
                     }
                   }
                 } else if (key.match(/^fldset_/)) {
@@ -223,7 +236,7 @@
                   for (var i=0; i<this._elements.length; i++) {
                     let field = this._elements[i].webform_key;
                     if (field.match(/^sect_/)) {
-                      this._validSection(i);
+                      this._validateSection(i);
                     } else if (field.match(/^fld_/)) {
                       // make sure required field doesn't have empty value
                       if (this._elements[i].required) {
@@ -233,9 +246,17 @@
                           this._elements[i].valid = false;
                           this.push('_errors',{"id": field, text: 'The '+this._elements[i].title+' field is empty - this is required and must be filled in.' });
                         }
-                      } else if (field.match(/^fldset_/)) {
-                        // @TODO Revisit when we use <fieldset>
                       }
+                      // check that email field contains valid structured address if it is not empty
+                      if ((this._elements[i].type == 'email') && this._elements[i].valid) {
+                        if (!this._validateEmail(this._elements[i].value)) {
+                          console.log(field+': '+this._elements[i].valid);
+                          this._elements[i].valid = false;
+                          this.push('_errors',{"id": field, text: 'The '+this._elements[i].title+' field input does not look like an email address - please check it.' });
+                        }
+                      }
+                    } else if (field.match(/^fldset_/)) {
+                      // @TODO Revisit when we use <fieldset>
                     }
                   }
                   this._errors = JSON.parse(JSON.stringify(this._errors));
