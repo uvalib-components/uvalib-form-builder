@@ -158,20 +158,25 @@
                         type: String,
                         computed: '_getConfirmationPagePath(_elements)'
                     },
-                    _noSubmitButton: {
-                        type: Boolean,
-                        value: true
-                    },
+                    /**
+                     * list of field ids containing errors, each with an appropriate message.
+                     */
                     _errors: {
                       type: Array,
                       value: function(){return []},
                       notify: true
                     },
+                    /**
+                     * Indicator there there are fields with missing or invalid data.
+                     */
                     _invalidValues: {
                       type: Boolean,
                       computed: '_errorsFound(_errors)',
                       notify: true
                     },
+                    /**
+                     * Appropriate aria-live attribute value in the event of a form submission error.
+                     */
                     _alertLevel: {
                       type: String,
                       computed: '_ariaLiveAlert(_errors)'
@@ -179,99 +184,116 @@
                 });
             }
 
+            /**
+             * Handle click event for getting customer between an error link and the corresponding input field.
+             */
             _handleAnchor(e) {
               e.preventDefault();
               let target = e.currentTarget.getAttribute('href');
-              console.log('target: '+target);
               this.shadowRoot.querySelector(target).scrollIntoView();
               this.shadowRoot.querySelector(target).focus();
             }
 
+            /**
+             * Indicator that errors were discovered when client side validation performed.
+             * @return Boolean
+             */
             _errorsFound(_errors) {
               return (_errors.length > 0) ? true : false;
             }
 
+            /**
+             * If errors exist then the aria-live attribute for the error content should be set to assertive.
+             * @return String
+             */
             _ariaLiveAlert(_errors) {
               return (_errors.length > 0) ? 'assertive' : '';
             }
 
-            _validateEmail(email) {
-              var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-              return re.test(email);
+            /**
+             * Validate that any required field is not empty.
+             */
+            _validateRequired(key,fldObj) {
+              if (fldObj.value && fldObj.value !== "") {
+                fldObj.valid = true;
+              } else {
+                fldObj.valid = false;
+//                console.log(key+': '+fldObj.valid);
+                this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field is empty - this is required and must be filled in.' });
+              }
             }
 
+            /**
+             * Test that an email input type field contains a string that represents a validly formatted email address.
+             */
+            _validateEmail(key,fldObj) {
+              var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+              if (!emailRegExp.test(fldObj.value)) {
+//                console.log(key+': '+fldObj.valid);
+                fldObj.valid = false;
+                this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field input does not look like an email address - please check the value you entered.' });
+              }
+            }
+
+            /**
+             * Validate input fields found in a form section.
+             */
             _validateSection(fldIndex) {
               for (var key in this._elements[fldIndex]) {
                 if (key.match(/^fld_/)) {
-                  // make sure required field doesn't have empty value
                   if (this._elements[fldIndex][key].required) {
-                    if (this._elements[fldIndex][key].value && this._elements[fldIndex][key].value !== "") {
-                      this._elements[fldIndex][key].valid = true;
-                    } else {
-                      this._elements[fldIndex][key].valid = false;
-                      console.log(key+': '+this._elements[fldIndex][key].valid);
-                      this.push('_errors',{"id": key, text: 'The '+this._elements[fldIndex][key].title+' field is empty - this is required and must be filled in.' });
-                    }
+                    this._validateRequired(key,this._elements[fldIndex][key]);
                   }
-                  // check that email field contains valid structured address if it is not empty
                   if ((this._elements[fldIndex][key].type == 'email') && this._elements[fldIndex][key].valid) {
-                    if (!this._validateEmail(this._elements[fldIndex][key].value)) {
-                      console.log(key+': '+this._elements[fldIndex][key].valid);
-                      this._elements[fldIndex][key].valid = false;
-                      this.push('_errors',{"id": key, text: 'The '+this._elements[fldIndex][key].title+' field input does not look like an email address - please check it.' });
-                    }
+                    this._validateEmail(key,this._elements[fldIndex][key]);
                   }
                 } else if (key.match(/^fldset_/)) {
                   // @TODO Revisit when we use <fieldset>
                 }
               }
-              console.log('validSection: '+this._errors.length);
             }
 
+            /**
+             * Actions to be performed when a button is clicked.
+             */
             _buttonClicked(e) {
-              this._errors = [];
-              this._errorList = "";
               if (e.detail.name == 'Submit') {
-                  // Loop through form fields to make sure required items have values
-                  for (var i=0; i<this._elements.length; i++) {
-                    let field = this._elements[i].webform_key;
-                    if (field.match(/^sect_/)) {
-                      this._validateSection(i);
-                    } else if (field.match(/^fld_/)) {
-                      // make sure required field doesn't have empty value
-                      if (this._elements[i].required) {
-                        if (this._elements[i].value && this._elements[i].value !== "") {
-                          this._elements[i].valid = true;
-                        } else {
-                          this._elements[i].valid = false;
-                          this.push('_errors',{"id": field, text: 'The '+this._elements[i].title+' field is empty - this is required and must be filled in.' });
-                        }
-                      }
-                      // check that email field contains valid structured address if it is not empty
-                      if ((this._elements[i].type == 'email') && this._elements[i].valid) {
-                        if (!this._validateEmail(this._elements[i].value)) {
-                          console.log(field+': '+this._elements[i].valid);
-                          this._elements[i].valid = false;
-                          this.push('_errors',{"id": field, text: 'The '+this._elements[i].title+' field input does not look like an email address - please check it.' });
-                        }
-                      }
-                    } else if (field.match(/^fldset_/)) {
-                      // @TODO Revisit when we use <fieldset>
+                this._errors = [];
+                this._errorList = "";
+                // Loop through form fields to make sure required items have values
+                for (var i=0; i<this._elements.length; i++) {
+                  let field = this._elements[i].webform_key;
+                  if (field.match(/^sect_/)) {
+                    this._validateSection(i);
+                  } else if (field.match(/^fld_/)) {
+                    if (this._elements[i].required) {
+                      this._validateRequired(field,this._elements[i]);
                     }
+                    if ((this._elements[i].type == 'email') && this._elements[i].valid) {
+                      this._validateEmail(field,this._elements[i]);
+                    }
+                  } else if (field.match(/^fldset_/)) {
+                    // @TODO Revisit when we use <fieldset>
                   }
-                  this._errors = JSON.parse(JSON.stringify(this._errors));
+                }
+                // need to refresh errors to make sure they get reflected
+                this._errors = JSON.parse(JSON.stringify(this._errors));
 
-                  // if invalid input then reset the array
-                  if (this._errors.length > 0) {
-                    this._elements = JSON.parse(JSON.stringify(this._elements));
-                    console.log('Required fields are missing.');
-                    this.shadowRoot.querySelector('#errorList').focus();
-                  } else {
-                    // otherwise save the results
-                    this.$.user.saveRequest(this._elements);
-                    console.log('Request saved!')
-                  }
-                  console.log(this._elements);
+                // if invalid input then reset the array
+                if (this._errors.length > 0) {
+                  this._elements = JSON.parse(JSON.stringify(this._elements));
+                  this.shadowRoot.querySelector('#errorList').focus();
+                } else {
+                  // otherwise save the results
+                  this.$.user.saveRequest(this._elements);
+                  // reset the form in case the redirect fails
+                  this._elements = this._parsePageForm(this.formPage);
+                  // redirect to the confirmation form
+                  // @TODO Can we remove the domain reference when this is live in production?
+                  window.location.replace("https://library.virginia.edu"+this._confirmationPagePath);
+                  console.log('Request saved!')
+                }
+                console.log(this._elements);
               }
             }
 
