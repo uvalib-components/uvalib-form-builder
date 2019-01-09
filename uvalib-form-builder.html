@@ -42,7 +42,7 @@
         <template is="dom-if" if="[[_isSection(elem)]]">
           <div class="section" hidden$="{{!_showField(elem,_refresh)}}">
             <h2>[[elem.title]]</h2>
-              <template is="dom-repeat" items="{{_getSectionFields(elem,userInfo)}}" as="fs_elem">
+              <template is="dom-repeat" items="{{_getSectionFields(elem)}}" as="fs_elem">
                 <template is="dom-if" if="[[_isMarkup(fs_elem)]]">
                   <uvalib-field-html-markup tabindex="0" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-html-markup>
                 </template>
@@ -217,9 +217,14 @@
               if (fldObj.value && fldObj.value !== "") {
                 fldObj.valid = true;
               } else {
-                fldObj.valid = false;
-//                console.log(key+': '+fldObj.valid);
-                this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field is empty - this is required and must be filled in.' });
+                // Check to see if the field is visible before indicating an empty required field is invalid.
+                if (!this._showField(fldObj)) {
+                  fldObj.valid = true;
+                } else {
+                  fldObj.valid = false;
+  //                console.log(key+': '+fldObj.valid);
+                  this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field is empty - this is required and must be filled in.' });
+                }
               }
             }
 
@@ -241,7 +246,7 @@
             _validateSection(fldIndex) {
               for (var key in this._elements[fldIndex]) {
                 if (key.match(/^fld_/)) {
-                  if (this._elements[fldIndex][key].required) {
+                  if (this._elements[fldIndex][key]._required || this._elements[fldIndex][key].required) {
                     this._validateRequired(key,this._elements[fldIndex][key]);
                   }
                   if ((this._elements[fldIndex][key].type == 'email') && this._elements[fldIndex][key].valid) {
@@ -266,7 +271,7 @@
                   if (field.match(/^sect_/)) {
                     this._validateSection(i);
                   } else if (field.match(/^fld_/)) {
-                    if (this._elements[i].required) {
+                    if (this._elements[i]._required || this._elements[i].required) {
                       this._validateRequired(field,this._elements[i]);
                     }
                     if ((this._elements[i].type == 'email') && this._elements[i].valid) {
@@ -290,7 +295,7 @@
                   this._elements = this._parsePageForm(this.formPage);
                   // redirect to the confirmation form
                   // @TODO Can we remove the domain reference when this is live in production?
-                  window.location.replace("https://library.virginia.edu"+this._confirmationPagePath);
+                  window.location.replace(this._confirmationPagePath);
                   console.log('Request saved!')
                 }
                 console.log(this._elements);
@@ -330,6 +335,48 @@
             }
 
             /**
+             * Set the value of a field depending on its type.
+             */
+            _preprocessField(fldObj,user) {
+              fldObj.valid = true;
+              // for text field make sure the type matches up with the HTML input expected
+              if (fldObj.type && fldObj.type == 'textfield') {
+                  fldObj.type = 'text';
+              }
+              // if the field should be auto-filled then do so...
+              if (fldObj.data_auto_fill) {
+                if (fldObj.data_source == 'userInfo') {
+                  // if the field is a select, radio or checkbox then we need to set the value differently;
+                  // otherwise the field's value is set to the user property value.
+                  switch (fldObj.type) {
+                    case 'select':
+                      // look for an option that contains some portion of the value it should be
+                      // @TODO this may require review depending on values that ITS has for patrons in new LDAP
+                      let setVal = new RegExp(user[fldObj.data_source_field].toLowerCase());
+                      for (let opt in fldObj.options) {
+                        if (setVal.test(fldObj.options[opt].toLowerCase())) {
+                          fldObj.default_value = fldObj.options[opt];
+                        }
+                      }
+                      break;
+                    case 'radios':
+                      break;
+                    case 'checkbox':
+                      fldObj.checked = (user[fldObj.data_source_field]) ? true : false;
+                      break;
+                    case 'button':
+                      break;
+                    case 'text':
+                    case 'textarea':
+                    case 'tel':
+                    case 'email':
+                      fldObj.value = user[fldObj.data_source_field];
+                  }
+                }
+              }
+            }
+
+            /**
              * Returns web form definition for the form page object.
              * @return Array
              */
@@ -341,19 +388,13 @@
                         if (key.match(/^sect_/)) {
                           for (var skey in form[key]) {
                             if (skey.match(/^fld_|fldset_/)) {
-                              form[key][skey].valid = true;
-                              if (form[key][skey].type && form[key][skey].type == 'textfield') {
-                                form[key][skey].type = 'text';
-                              }
+                              this._preprocessField(form[key][skey],this.userInfo);
                             }
                           }
                         }
                         if (key.match(/^sect\_|fld\_|fldset\_|mkup\_|btn\_|authenticated|confirmation/)) {
                             fields.push(form[key]);
-                            form[key].valid = true;
-                            if (form[key].type && form[key].type == 'textfield') {
-                                form[key].type = 'text';
-                            }
+                            this._preprocessField(form[key],this.userInfo);
                         }
                     }
                 }

@@ -36,12 +36,6 @@
                 };
             }
 
-            static get observers() {
-                return [
-                    '_setRequestor(userInfo,_elements)'
-                ]
-            }
-
             ready() {
                 this.addEventListener('changedValue', this._valueChanged);
                 this.addEventListener('clickedButton', this._buttonClicked);
@@ -51,35 +45,6 @@
             _focus(field) {
               console.log('_focus');
               this.$$('#'+field).focus(field);
-            }
-
-            _setRequestor(userInfo, _elements) {
-                // @TODO needs review as we need to find field within the section that matches up...
-                //console.log('setRequestor');
-                //console.log(userInfo);
-                for (var key in _elements) {
-                    if (key.match(/^sect\_|fld\_|mkup\_|btn\_/)) {
-                        // prefill user form field values if authenticated form
-                        if (userInfo) {
-                            if (key.match(/^fld_uva_computing_id/)) {
-                                console.log('computing id');
-                                _elements[key].value = userInfo.computing_id;
-                                this.$.fld_uva_computing_id.value = userInfo.computing_id;
-                                this.shadowRoot.querySelector('#fld_uva_computing_id').value = userInfo.computing_id;
-                            } else if (key.match(/^fld_name/)) {
-                                _elements[key].value = userInfo.name;
-                            } else if (key.match(/^fld_email_address/)) {
-                                _elements[key].value = userInfo.email;
-                            } else if (key.match(/^fld_phone_number/)) {
-                                _elements[key].value = userInfo.phone;
-                            } else if (key.match(/^fld_university_affiliation/)) {
-                                _elements[key].value = userInfo.affiliation;
-                            } else if (key.match(/^fld_university_department_or_school/)) {
-                                _elements[key].value = userInfo.department_school;
-                            }
-                        }
-                    }
-                }
             }
 
             _valueChanged(e) {

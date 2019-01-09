@@ -71,15 +71,9 @@
         }
 
         _isRequired(el) {
-          return el.required || (el.required_error && el.required_error != "");
+          return el.required || el._required;
         }
 
-        /**
-         * The field needs to be visually flagged as required.
-         */
-        required() {
-
-        }
       }
     });
   </script>
