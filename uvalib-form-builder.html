@@ -356,6 +356,7 @@
                       for (let opt in fldObj.options) {
                         if (setVal.test(fldObj.options[opt].toLowerCase())) {
                           fldObj.default_value = fldObj.options[opt];
+                          fldObj.value = fldObj.options[opt];
                         }
                       }
                       break;
