@@ -71,6 +71,9 @@
         }
 
         _isRequired(el) {
+          // @TODO this needs to be adjusted to take into account any conditional logic around another input field.
+          // For example, I just discovered that the publisher field for purchase recommendation form is required
+          // for a book and optional for a music score.
           return el.required || el._required;
         }
 

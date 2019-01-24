@@ -292,10 +292,11 @@
                   // otherwise save the results
                   this.$.user.saveRequest(this._elements);
                   // reset the form in case the redirect fails
-                  this._elements = this._parsePageForm(this.formPage);
+//                  this._elements = this._parsePageForm(this.formPage);
+//                  this._elements = JSON.parse(JSON.stringify(this._elements));
                   // redirect to the confirmation form
                   // @TODO Can we remove the domain reference when this is live in production?
-                  window.location.replace(this._confirmationPagePath);
+//                  window.location.replace("https://library.virginia.edu"+this._confirmationPagePath);
                   console.log('Request saved!')
                 }
                 console.log(this._elements);
