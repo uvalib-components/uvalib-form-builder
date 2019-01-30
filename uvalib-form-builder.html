@@ -53,6 +53,9 @@
                   <template is="dom-if" if="[[_isSelect(fs_elem)]]">
                     <uvalib-field-select id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-select>
                   </template>
+                  <template is="dom-if" if="[[_isRadios(fs_elem)]]">
+                    <uvalib-field-radios id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-radios>
+                  </template>
                   <template is="dom-if" if="[[_isInput(fs_elem)]]">
                     <uvalib-field-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-input>
                   </template>
@@ -75,6 +78,9 @@
         <template is="dom-if" if="[[_isField(elem)]]">
           <template is="dom-if" if="[[_isSelect(elem)]]">
             <uvalib-field-select id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-select>
+          </template>
+          <template is="dom-if" if="[[_isRadios(elem)]]">
+            <uvalib-field-radios id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-radios>
           </template>
           <template is="dom-if" if="[[_isInput(elem)]]">
             <uvalib-field-input id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-input>
@@ -351,6 +357,7 @@
                   // otherwise the field's value is set to the user property value.
                   switch (fldObj.type) {
                     case 'select':
+                    case 'radios':
                       // look for an option that contains some portion of the value it should be
                       // @TODO this may require review depending on values that ITS has for patrons in new LDAP
                       let setVal = new RegExp(user[fldObj.data_source_field].toLowerCase());
@@ -360,8 +367,6 @@
                           fldObj.value = fldObj.options[opt];
                         }
                       }
-                      break;
-                    case 'radios':
                       break;
                     case 'checkbox':
                       fldObj.checked = (user[fldObj.data_source_field]) ? true : false;
