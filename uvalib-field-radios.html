@@ -8,68 +8,24 @@
     <template>
     <custom-style>
       <style include="uvalib-theme uvalib-form-style">
-        [role=radio] {
-          display: block;
-          position: relative;
-          margin: 0.5em;
-          padding-left: 20px;
-          border: thin transparent solid;
-        }
-
-        /* This creates the visuals for the radio buttons */
-        [role=radio]::before,
-        [role=radio]::after {
-          display: block;
-          position: absolute;
-          border-radius: 50%;
-          content: '';
-        }
-
-        [role=radio]::before {
-          top: 0;
-          left: 0;
-          width: 14px;
-          height: 14px;
-          border: 1px solid #000;
-          background: #fff;
-        }
-
-        [role=radio][aria-checked=true]::after {
-          top: 3px;
-          left: 3px;
-          border: 5px solid #000;
-          content: '';
-        }
-
-        #codeex{
-          background-color: #F1F1F1 ;
-          padding:10px;
-        }
       </style>
     </custom-style>
 
-    <div id="[[element.webform_key]]" class="form-field" role="radiogroup" aria-labelledby="[[element.webform_key]]_label">
-      <label id="[[element.webform_key]]_label" class="field-label">[[element.title]]<template is="dom-if" if="[[_isRequired(element)]]"><span class="required">*</span></template></label>
+    <fieldset id="radioGroup" class="form-field">
+      <legend class="field-label">[[element.title]]<template is="dom-if" if="[[_isRequired(element)]]"><span class="required" aria-hidden="true">*</span><span class="hidden">required</span></template></legend>
       <template is="dom-if" if="[[_hasDescription(element)]]">
         <div class="field-label">
           <span inner-h-t-m-l="[[element.description.markup]]"></span>
         </div>
       </template>
       <div id="{{_ariaDescribedBy}}" class="validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
-      <div id="radioGroup">
       <template is="dom-repeat" items="{{_getOptions(element)}}" as="option">
-        <div role="radio" aria-checked$="{{_isChecked(option,element.value)}}" tabindex$="{{_setTabIndex(option,element.value)}}" title$="[[option]]">
-          [[option]]
-        </div>
+        <input type="radio" id$="[[_optionStripped(option)]]" name$="[[element.name]]" value$="[[option]]" on-change="_changed" checked$="{{_isChecked(option,element.value)}}">
+        <label for$="[[_optionStripped(option)]]">[[option]]</label><br>
       </template>
-      </div>
-    </div>
+    </fieldset>
 
 
-      <!-- template is="dom-repeat" items="{{_getOptions(element)}}" as="option">
-        <input type="radio" id$="[[element.webform_key]]-[[option]]" name$="[[element.name]]" value$="[[option]]" on-change="_changedValue" checked$="[[_isChecked(option,element.value)]]">
-        <label for$="[[element.webform_key]]-[[option]]">[[option]]</label><br/>
-      </template -->
     </template>
 
     <script>
@@ -81,190 +37,32 @@
          * @polymer
          * @demo demo/uvalib-field-radios.html
          */
-        class UvalibFieldRadios extends Polymer.mixinBehaviors([Polymer.IronA11yKeysBehavior],UvalibField(Polymer.Element)) {
+        class UvalibFieldRadios extends UvalibField(Polymer.Element) {
             static get is() {
                 return 'uvalib-field-radios';
             }
             static get properties() {
                 return Object.assign(super.properties, {
-                  _KEYCODE: {
-                    type: Object,
-                    value: function() { return {DOWN: 40, LEFT: 37, RIGHT: 39, SPACE: 32, UP: 38}}
-                  }
                 });
             }
-            get keyBindings() {
-              return {
-                'down': '_keyDownRadioGroup',
-                'right': '_keyDownRadioGroup',
-                'up': '_keyDownRadioGroup',
-                'left': '_keyDownRadioGroup',
-                'space': '_keyDownRadioGroup'
-              };
-            }
             ready() {
-              this.addEventListener('click', this._clickRadioGroup);
-//              this.addEventListener('keydown', this._keyDownRadioGroup);
-              this.addEventListener('focus', this._focusRadioButton);
-              this.addEventListener('blur', this._blurRadioButton);
               super.ready();
             }
 
-            _clickRadioGroup(e) {
-              var type = e.type;
-
-              if (type === 'click') {
-                // If either enter or space is pressed, execute the funtion
-                console.log(e);
-                var node = e.currentTarget;
-                console.log(node);
-
-                var radioButton = this._firstRadioButton(node);
-
-                while (radioButton) {
-                  this._setRadioButton(radioButton, "false");
-                  radioButton = this._nextRadioButton(radioButton);
-                }
-
-                this._setRadioButton(node, "true");
-
-                e.preventDefault();
-                e.stopPropagation();
-              }
-            }
-
-            _keyDownRadioGroup(e) {
-              e.preventDefault();
-              e.stopPropagation();
-              var type = e.type;
-              var next = false;
-
-              if(type === "keydown"){
-                var node = this.$.radioGroup; //e.currentTarget;
-                switch (e.detail.keyboardEvent.keyCode) {
-                  case this._KEYCODE.DOWN:
-                  case this._KEYCODE.RIGHT:
-                    console.log("next");
-                    var next = this._nextRadioButton(node);
-                    if (!next) next = this._firstRadioButton(node); //if node is the last node, node cycles to first.
-                    break;
-
-                  case this._KEYCODE.UP:
-                  case this._KEYCODE.LEFT:
-                    console.log("previous");
-                    next = this._previousRadioButton(node);
-                    if (!next) next = this._lastRadioButton(node); //if node is the last node, node cycles to first.
-                    break;
-
-                  case this._KEYCODE.SPACE:
-                    console.log("space");
-                    next = node;
-                    console.log(next);
-                    break;
-                }
-
-                if (next) {
-                  var radioButton = this._firstRadioButton(node);
-
-                  while (radioButton) {
-                    this._setRadioButton(radioButton, "false");
-                    radioButton = this._nextRadioButton(radioButton);
-                  }
-
-                  this._setRadioButton(next, "true");
+            _changed(e) {
+              for (var key in this.element.options) {
+                var val = this._optionStripped(this.element.options[key]);
+                this.$.radioGroup.querySelector('#'+val).checked = false;
+                if (e.target.id == val) {
+                  console.log('checked');
+                  this.$.radioGroup.querySelector('#'+val).checked = true;
                 }
               }
-            }
-
-            _focusRadioButton(e) {
-              e.currentTarget.className += ' focus';
-            }
-            _blurRadioButton(e) {
-              e.currentTarget.className = e.currentTarget.className.replace(' focus','');
-            }
-
-            _firstRadioButton(node) {
-              var first = node.parentNode.firstChild;
-
-              while(first) {
-                if (first.nodeType === Node.ELEMENT_NODE) {
-                  if (first.getAttribute("role") === 'radio') return first;
-                }
-                first = first.nextElementSibling;
-              }
-
-              return null;
-            }
-            _lastRadioButton(node) {
-              var last = node.parentNode.lastChild;
-
-              while(last) {
-                if (last.nodeType === Node.ELEMENT_NODE) {
-                  if (last.getAttribute("role") === 'radio') return last;
-                }
-                last = last.previousElementSibling;
-              }
-
-              return last;
-            }
-            _nextRadioButton(node) {
-              var next = node.nextElementSibling;
-
-              while(next) {
-                if (next.nodeType === Node.ELEMENT_NODE) {
-                  if (next.getAttribute("role") === 'radio') return next;
-                }
-                next = next.nextElementSibling;
-              }
-
-              return null;
-            }
-            _previousRadioButton(node) {
-              var prev = node.previousElementSibling;
-
-              while(prev) {
-                if (prev.nodeType === Node.ELEMENT_NODE) {
-                  if (prev.getAttribute("role") === 'radio') return prev;
-                }
-                prev = prev.previousElementSibling;
-              }
-
-              return null;
-            }
-            _getImage(node) {
-              var child = node.firstChild;
-
-              while(child) {
-                if (child.nodeType === Node.ELEMENT_NODE) {
-                  if (child.tagName === 'IMG') return child;
-                }
-                child = child.nextElementSibling;
-              }
-
-              return null;
-            }
-            _setRadioButton(node, state) {
-              var image = this._getImage(node);
-
-              if (state == 'true') {
-                node.setAttribute('aria-checked', 'true')
-                node.tabIndex = 0;
-                node.focus();
-                // set the form field value as well.
-                this.element.value = node.getAttribute('title');
-              }
-              else {
-                node.setAttribute('aria-checked', 'false')
-                node.tabIndex = -1;
-              }
+              console.log(this.element);
             }
 
             _isChecked(option,value) {
               return (option == value);
-            }
-
-            _setTabIndex(option,value) {
-              return (option == value) ? "0" : "-1";
             }
 
             _getOptions(el) {
@@ -275,6 +73,9 @@
               return opts;
             }
 
+            _optionStripped(option) {
+              return option.replace(/[^A-Za-z0-9]/g,"");
+            }
         }
 
         window.customElements.define(UvalibFieldRadios.is, UvalibFieldRadios);

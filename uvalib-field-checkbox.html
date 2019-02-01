@@ -14,7 +14,7 @@
       <template is="dom-if" if="[[_hasDescription(element)]]">
         <div class="field-label">
           <span inner-h-t-m-l="[[element.description.markup]]"></span>
-          <template is="dom-if" if="[[_isRequired(element)]]"><span class="required">*</span></template>
+          <template is="dom-if" if="[[_isRequired(element)]]"><span class="required" aria-hidden="true">*</span></template>
         </div>
       </template>
       <div id="[[_ariaDescribedBy]]" class="validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
