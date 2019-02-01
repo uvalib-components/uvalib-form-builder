@@ -56,11 +56,13 @@
         </div>
       </template>
       <div id="{{_ariaDescribedBy}}" class="validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
+      <div id="radioGroup">
       <template is="dom-repeat" items="{{_getOptions(element)}}" as="option">
-        <div role="radio" aria-checked$="{{_isChecked(option,element.value)}}" tabindex$="{{_setTabIndex(option,element.value)}}">
+        <div role="radio" aria-checked$="{{_isChecked(option,element.value)}}" tabindex$="{{_setTabIndex(option,element.value)}}" title$="[[option]]">
           [[option]]
         </div>
       </template>
+      </div>
     </div>
 
 
@@ -113,7 +115,7 @@
 
               if (type === 'click') {
                 // If either enter or space is pressed, execute the funtion
-
+                console.log(e);
                 var node = e.currentTarget;
                 console.log(node);
 
@@ -134,13 +136,11 @@
             _keyDownRadioGroup(e) {
               e.preventDefault();
               e.stopPropagation();
-              console.log(e);
               var type = e.type;
-              console.log(type);
               var next = false;
 
               if(type === "keydown"){
-                var node = e.currentTarget;
+                var node = this.$.radioGroup; //e.currentTarget;
                 switch (e.detail.keyboardEvent.keyCode) {
                   case this._KEYCODE.DOWN:
                   case this._KEYCODE.RIGHT:
@@ -159,6 +159,7 @@
                   case this._KEYCODE.SPACE:
                     console.log("space");
                     next = node;
+                    console.log(next);
                     break;
                 }
 
@@ -189,7 +190,7 @@
                 if (first.nodeType === Node.ELEMENT_NODE) {
                   if (first.getAttribute("role") === 'radio') return first;
                 }
-                first = first.nextSibling;
+                first = first.nextElementSibling;
               }
 
               return null;
@@ -201,31 +202,31 @@
                 if (last.nodeType === Node.ELEMENT_NODE) {
                   if (last.getAttribute("role") === 'radio') return last;
                 }
-                last = last.previousSibling;
+                last = last.previousElementSibling;
               }
 
               return last;
             }
             _nextRadioButton(node) {
-              var next = node.nextSibling;
+              var next = node.nextElementSibling;
 
               while(next) {
                 if (next.nodeType === Node.ELEMENT_NODE) {
                   if (next.getAttribute("role") === 'radio') return next;
                 }
-                next = next.nextSibling;
+                next = next.nextElementSibling;
               }
 
               return null;
             }
             _previousRadioButton(node) {
-              var prev = node.previousSibling;
+              var prev = node.previousElementSibling;
 
               while(prev) {
                 if (prev.nodeType === Node.ELEMENT_NODE) {
                   if (prev.getAttribute("role") === 'radio') return prev;
                 }
-                prev = prev.previousSibling;
+                prev = prev.previousElementSibling;
               }
 
               return null;
@@ -237,7 +238,7 @@
                 if (child.nodeType === Node.ELEMENT_NODE) {
                   if (child.tagName === 'IMG') return child;
                 }
-                child = child.nextSibling;
+                child = child.nextElementSibling;
               }
 
               return null;
@@ -249,6 +250,8 @@
                 node.setAttribute('aria-checked', 'true')
                 node.tabIndex = 0;
                 node.focus();
+                // set the form field value as well.
+                this.element.value = node.getAttribute('title');
               }
               else {
                 node.setAttribute('aria-checked', 'false')
