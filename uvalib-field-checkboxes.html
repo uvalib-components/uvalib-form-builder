@@ -3,14 +3,14 @@
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
 <link rel="import" href="uvalib-form-style.html">
 
-<dom-module id="uvalib-field-radios">
+<dom-module id="uvalib-field-checkboxes">
     <template>
     <custom-style>
       <style include="uvalib-theme uvalib-form-style">
       </style>
     </custom-style>
 
-    <fieldset id="radioGroup" class="form-field">
+    <fieldset id="checkboxGroup" class="form-field">
       <legend class="field-label">[[element.title]]<template is="dom-if" if="[[_isRequired(element)]]"><span class="required" aria-hidden="true">*</span><span class="hidden">required</span></template></legend>
       <template is="dom-if" if="[[_hasDescription(element)]]">
         <div class="field-label">
@@ -19,7 +19,7 @@
       </template>
       <div id="{{_ariaDescribedBy}}" class="validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
       <template is="dom-repeat" items="{{_getOptions(element)}}" as="option">
-        <input type="radio" id$="[[_optionStripped(option)]]" name$="[[element.name]]" value$="[[option]]" on-change="_changedValue" checked$="{{_isChecked(option,element.value)}}">
+        <input type="checkbox" id$="[[_optionStripped(option)]]" name$="[[element.name]]" value$="[[option]]" on-change="_changedValue" checked$="{{_isChecked(option,element.value)}}">
         <label for$="[[_optionStripped(option)]]">[[option]]</label><br>
       </template>
     </fieldset>
@@ -29,16 +29,16 @@
 
     <script>
         /**
-         * `uvalib-field-radios`
-         * Component that generates radio button input field.
+         * `uvalib-field-checkboxes`
+         * Component that generates check box group input fields.
          *
          * @customElement
          * @polymer
-         * @demo demo/uvalib-field-radios.html
+         * @demo demo/uvalib-field-checkboxes.html
          */
-        class UvalibFieldRadios extends UvalibField(Polymer.Element) {
+        class UvalibFieldCheckboxes extends UvalibField(Polymer.Element) {
             static get is() {
-                return 'uvalib-field-radios';
+                return 'uvalib-field-checkboxes';
             }
             static get properties() {
                 return Object.assign(super.properties, {
@@ -59,8 +59,12 @@
               }
               return opts;
             }
+
+            _optionStripped(option) {
+              return option.replace(/[^A-Za-z0-9]/g,"");
+            }
         }
 
-        window.customElements.define(UvalibFieldRadios.is, UvalibFieldRadios);
+        window.customElements.define(UvalibFieldCheckboxes.is, UvalibFieldCheckboxes);
     </script>
 </dom-module>

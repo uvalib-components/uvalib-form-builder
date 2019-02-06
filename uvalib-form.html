@@ -76,6 +76,10 @@
                 return (el.type && el.type == "checkbox");
             }
 
+            _isCheckboxes(el) {
+                return (el.type && el.type == "checkboxes");
+            }
+
             _isField(el) {
                 return (el.type && (el.type == "email" || el.type == "tel" || el.type == "text" || el.type == "select" || el.type == "textarea" || el.type == "radios" || el.type == "checkbox" || el.type == "fieldset" || el.type == "webform_actions"));
             }

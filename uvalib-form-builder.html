@@ -62,6 +62,9 @@
                   <template is="dom-if" if="[[_isCheckbox(fs_elem)]]">
                     <uvalib-field-checkbox id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
                   </template>
+                  <template is="dom-if" if="[[_isCheckboxes(fs_elem)]]">
+                    <uvalib-field-checkboxes id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkboxes>
+                  </template>
                   <template is="dom-if" if="[[_isTextarea(fs_elem)]]">
                     <uvalib-field-textarea id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-textarea>
                   </template>
@@ -87,6 +90,9 @@
           </template>
           <template is="dom-if" if="[[_isCheckbox(elem)]]">
             <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
+          </template>
+          <template is="dom-if" if="[[_isCheckboxes(elem)]]">
+            <uvalib-field-checkboxes id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkboxes>
           </template>
           <template is="dom-if" if="[[_isTextarea(elem)]]">
             <uvalib-field-textarea id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-textarea>
