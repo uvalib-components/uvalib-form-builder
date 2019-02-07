@@ -4,13 +4,14 @@
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
 <link rel="import" href="uvalib-form.html">
 <link rel="import" href="uvalib-form-style.html">
-<link rel="import" href="uvalib-form-fieldset.html">
+<link rel="import" href="uvalib-field-html-markup.html">
 <link rel="import" href="uvalib-field-select.html">
 <link rel="import" href="uvalib-field-input.html">
 <link rel="import" href="uvalib-field-textarea.html">
 <link rel="import" href="uvalib-field-checkbox.html">
-<link rel="import" href="uvalib-field-button.html">
+<link rel="import" href="uvalib-field-checkboxes.html">
 <link rel="import" href="uvalib-field-radios.html">
+<link rel="import" href="uvalib-field-button.html">
 
 <dom-module id="uvalib-form-builder">
   <template>
@@ -44,7 +45,7 @@
             <h2>[[elem.title]]</h2>
               <template is="dom-repeat" items="{{_getSectionFields(elem)}}" as="fs_elem">
                 <template is="dom-if" if="[[_isMarkup(fs_elem)]]">
-                  <uvalib-field-html-markup tabindex="0" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-html-markup>
+                  <uvalib-field-html-markup id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-html-markup>
                 </template>
                 <template is="dom-if" if="[[_isField(fs_elem)]]">
                   <template is="dom-if" if="[[_isFieldset(fs_elem)]]">
