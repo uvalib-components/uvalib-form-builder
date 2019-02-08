@@ -81,11 +81,11 @@
             }
 
             _isField(el) {
-                return (el.type && (el.type == "email" || el.type == "tel" || el.type == "text" || el.type == "select" || el.type == "textarea" || el.type == "radios" || el.type == "checkbox" || el.type == "fieldset" || el.type == "webform_actions"));
+                return (el.type && (el.type == "hidden" || el.type == "email" || el.type == "tel" || el.type == "text" || el.type == "select" || el.type == "textarea" || el.type == "radios" || el.type == "checkbox" || el.type == "fieldset" || el.type == "webform_actions"));
             }
 
-            _isFieldset(el) {
-                return (el.type && el.type == "fieldset");
+            _isHidden(el) {
+                return (el.type && el.type == "hidden");
             }
 
             _isInput(el) {

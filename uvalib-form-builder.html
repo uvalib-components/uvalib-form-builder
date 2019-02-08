@@ -7,6 +7,7 @@
 <link rel="import" href="uvalib-field-html-markup.html">
 <link rel="import" href="uvalib-field-select.html">
 <link rel="import" href="uvalib-field-input.html">
+<link rel="import" href="uvalib-field-hidden.html">
 <link rel="import" href="uvalib-field-textarea.html">
 <link rel="import" href="uvalib-field-checkbox.html">
 <link rel="import" href="uvalib-field-checkboxes.html">
@@ -48,8 +49,8 @@
                   <uvalib-field-html-markup id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-html-markup>
                 </template>
                 <template is="dom-if" if="[[_isField(fs_elem)]]">
-                  <template is="dom-if" if="[[_isFieldset(fs_elem)]]">
-                    <uvalib-form-fieldset id="[[fs_elem.webform_key]]" element="{{fs_elem}}" invalid-values="{{_invalidValues}}"></uvalib-form-fieldset>
+                  <template is="dom-if" if="[[_isHidden(fs_elem)]]">
+                    <uvalib-field-hidden id="[[fs_elem.webform_key]]" element="{{fs_elem}}" invalid-values="{{_invalidValues}}"></uvalib-field-hidden>
                   </template>
                   <template is="dom-if" if="[[_isSelect(fs_elem)]]">
                     <uvalib-field-select id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-select>
@@ -80,6 +81,9 @@
           <uvalib-field-html-markup id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-html-markup>
         </template>
         <template is="dom-if" if="[[_isField(elem)]]">
+          <template is="dom-if" if="[[_isHidden(elem)]]">
+            <uvalib-field-hidden id="[[elem.webform_key]]" element="{{elem}}" invalid-values="{{_invalidValues}}"></uvalib-field-hidden>
+          </template>
           <template is="dom-if" if="[[_isSelect(elem)]]">
             <uvalib-field-select id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-select>
           </template>
@@ -384,6 +388,7 @@
                     case 'textarea':
                     case 'tel':
                     case 'email':
+                    case 'hidden':
                       fldObj.value = user[fldObj.data_source_field];
                   }
                 }
