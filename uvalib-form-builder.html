@@ -258,6 +258,18 @@
             }
 
             /**
+             * Test that a telephone number input type field contains a string that represents a validly formatted telephone number.
+             */
+            _validatePhone(key,fldObj) {
+              var phoneRegExp = /((?:\+|00)[17](?: |\-)?|(?:\+|00)[1-9]\d{0,2}(?: |\-)?|(?:\+|00)1\-\d{3}(?: |\-)?)?(0\d|\([0-9]{3}\)|[1-9]{0,3})(?:((?: |\-)[0-9]{2}){4}|((?:[0-9]{2}){4})|((?: |\-)[0-9]{3}(?: |\-)[0-9]{4})|([0-9]{7}))/;
+              if (!phoneRegExp.test(fldObj.value)) {
+//                console.log(key+': '+fldObj.valid);
+                fldObj.valid = false;
+                this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field input does not look like a phone number - please check the value you entered.' });
+              }
+            }
+
+            /**
              * Validate input fields found in a form section.
              */
             _validateSection(fldIndex) {
@@ -268,6 +280,9 @@
                   }
                   if ((this._elements[fldIndex][key].type == 'email') && this._elements[fldIndex][key].valid) {
                     this._validateEmail(key,this._elements[fldIndex][key]);
+                  }
+                  if ((this._elements[fldIndex][key].type == 'tel') && this._elements[fldIndex][key].valid) {
+                    this._validatePhone(key,this._elements[fldIndex][key]);
                   }
                 } else if (key.match(/^fldset_/)) {
                   // @TODO Revisit when we use <fieldset>

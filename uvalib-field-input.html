@@ -18,6 +18,7 @@
       </template>
       <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" size$="[[element.size]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
       <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
+      <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{!_ariaInvalid}}">[[element.syntax_error]]</div>
     </div>
   </template>
 
