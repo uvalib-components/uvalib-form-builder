@@ -1,12 +1,13 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="uvalib-field.html">
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
+<link rel="import" href="../uvalib-theme/uvalib-fonts.html">
 <link rel="import" href="uvalib-form-style.html">
 
 <dom-module id="uvalib-field-textarea">
   <template>
     <custom-style>
-      <style include="uvalib-theme uvalib-form-style">
+      <style include="uvalib-theme uvalib-fonts uvalib-form-style">
       </style>
     </custom-style>
 
@@ -15,8 +16,8 @@
       <template is="dom-if" if="[[_hasDescription(element)]]">
         <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
       </template>
-      <div id="{{_ariaDescribedBy}}" class="validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
       <textarea id="[[element.webform_key]]" name$="[[element.name]]" rows$="[[element.rows]]" cols$="[[element.cols]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"></textarea>
+      <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
     </div>
   </template>
 

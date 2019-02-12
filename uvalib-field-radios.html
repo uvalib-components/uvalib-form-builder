@@ -1,12 +1,13 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="uvalib-field.html">
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
+<link rel="import" href="../uvalib-theme/uvalib-fonts.html">
 <link rel="import" href="uvalib-form-style.html">
 
 <dom-module id="uvalib-field-radios">
     <template>
     <custom-style>
-      <style include="uvalib-theme uvalib-form-style">
+      <style include="uvalib-theme uvalib-fonts uvalib-form-style">
       </style>
     </custom-style>
 
@@ -17,11 +18,11 @@
           <span inner-h-t-m-l="[[element.description.markup]]"></span>
         </div>
       </template>
-      <div id="{{_ariaDescribedBy}}" class="validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
       <template is="dom-repeat" items="{{_getOptions(element)}}" as="option">
         <input type="radio" id$="[[_optionStripped(option)]]" name$="[[element.name]]" value$="[[option]]" on-change="_changedValue" checked$="{{_isChecked(option,element.value)}}">
         <label for$="[[_optionStripped(option)]]">[[option]]</label><br>
       </template>
+      <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
     </fieldset>
 
 
