@@ -39,6 +39,10 @@
               type: Boolean,
               computed: "_isInvalidValue(invalidValues,element)"
             },
+            _syntaxError: {
+              type: Boolean,
+              computed: "_isSyntaxError(invalidValues,element)"
+            },
             _ariaDescribedBy: {
               type: String,
               computed: "_ariaInvalidLabel(invalidValues,element)"
@@ -50,12 +54,16 @@
           this.shadowRoot.querySelector('input, select, textarea').focus();
         }
 
+        _ariaInvalidLabel(invalidValues,element) {
+          return (invalidValues && !element.valid) ? element.webform_key+"-error" : "";
+        }
+
         _isInvalidValue(invalidValues,element) {
           return invalidValues && !element.valid;
         }
 
-        _ariaInvalidLabel(invalidValues,element) {
-          return (invalidValues && !element.valid) ? element.webform_key+"-error" : "";
+        _isSyntaxError(invalidValues,element) {
+          return (invalidValues && !element.valid && element.required && element.value != '');
         }
 
         _changedValue(e) {
