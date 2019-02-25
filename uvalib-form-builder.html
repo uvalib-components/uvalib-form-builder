@@ -380,7 +380,7 @@
                 let auth = _.find(els, {
                     title: 'authenticated'
                 });
-                return (auth.value && auth.value == "yes") ? true : false;
+                return (auth && auth.value && auth.value == "yes") ? true : false;
             }
 
             /**
@@ -391,7 +391,7 @@
                 let path = _.find(els, {
                     title: 'confirmation page path'
                 });
-                return path.value;
+                return (path && path.value)? path.value: null;
             }
 
             /**
