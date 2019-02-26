@@ -15,7 +15,7 @@
       <template is="dom-if" if="[[_hasDescription(element)]]">
         <div class="field-label">
           <span inner-h-t-m-l="[[element.description.markup]]"></span>
-          <template is="dom-if" if="[[_isRequired(element)]]"><span class="required" aria-hidden="true">*</span></template>
+          <template is="dom-if" if="[[_isRequired(element)]]"><span class="required" aria-hidden="true">*</span><span class="hidden">required</span></template>
         </div>
       </template>
       <template is="dom-if" if="[[!_isChecked(element)]]">

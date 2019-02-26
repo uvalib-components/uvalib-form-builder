@@ -12,7 +12,7 @@
     </custom-style>
 
       <div class="form-field">
-        <label class="field-label" for$="[[element.webform_key]]">[[element.title]]<template is="dom-if" if="[[_isRequired(element)]]"><span class="required" aria-hidden="true">*</span></template></label>
+        <label class="field-label" for$="[[element.webform_key]]">[[element.title]]<template is="dom-if" if="[[_isRequired(element)]]"><span class="required" aria-hidden="true">*</span><span class="hidden">required</span></template></label>
         <template is="dom-if" if="[[_hasDescription(element)]]">
           <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
         </template>
