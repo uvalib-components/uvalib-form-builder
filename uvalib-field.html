@@ -39,10 +39,6 @@
               type: Boolean,
               computed: "_isInvalidValue(invalidValues,element)"
             },
-            _syntaxError: {
-              type: Boolean,
-              computed: "_isSyntaxError(invalidValues,element)"
-            },
             _ariaDescribedBy: {
               type: String,
               computed: "_ariaInvalidLabel(invalidValues,element)"
@@ -60,10 +56,6 @@
 
         _isInvalidValue(invalidValues,element) {
           return invalidValues && !element.valid;
-        }
-
-        _isSyntaxError(invalidValues,element) {
-          return (invalidValues && !element.valid && element.required && element.value != '');
         }
 
         _changedValue(e) {
