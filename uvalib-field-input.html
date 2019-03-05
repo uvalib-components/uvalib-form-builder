@@ -17,7 +17,7 @@
         <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
       </template>
       <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" size$="[[element.size]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
-      <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{!_ariaInvalid}}"><span hidden$="{{!_isSyntaxError}}">[[element.required_error]]</span> <span hidden$="{{_isSyntaxError}}">[[element.syntax_error]]</span></div>
+      <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{!_ariaInvalid}}"><span hidden="{{_syntaxInvalid}}">[[element.required_error]]</span> <span hidden$="{{!_syntaxInvalid}}">[[element.syntax_error]]</span></div>
     </div>
   </template>
 
@@ -36,7 +36,6 @@
         return Object.assign(super.properties,{
         });
       }
-      // @TODO Add logic for testing different input types that use a standard text input such as email address, tel, url, etc.
     }
 
     window.customElements.define(UvalibFieldInput.is, UvalibFieldInput);

@@ -42,6 +42,10 @@
             _ariaDescribedBy: {
               type: String,
               computed: "_ariaInvalidLabel(invalidValues,element)"
+            },
+            _syntaxInvalid: {
+              type: Boolean,
+              computed: "_isInvalidSyntax(invalidValues,element)"
             }
           };
         }
@@ -56,6 +60,9 @@
 
         _isInvalidValue(invalidValues,element) {
           return invalidValues && !element.valid;
+        }
+        _isInvalidSyntax(invalidValues,element) {
+          return invalidValues && !element.valid && (element.syntax_issue);
         }
 
         _changedValue(e) {

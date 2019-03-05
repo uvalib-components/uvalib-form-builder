@@ -119,6 +119,8 @@
                     return this._testState(item.states.visible);
                 } else if (item.states && item.states.required) {
                     return this._testState(item.states.required);
+                } else if (item.states && items.states.invisible) {
+                   return !this._iTestState(item.states.invisible);
                 }
             }
 
@@ -144,6 +146,34 @@
                         val = state[key].value;
                     if (!this.shadowRoot.querySelector('#' + id) || this.shadowRoot.querySelector('#' + id).value != val) {
                         test = false;
+                        break;
+                    }
+                }
+                return test;
+            }
+
+            _iTestState(state) {
+                //console.log("state test:");
+                //console.log(state);
+                if (Array.isArray(state)) {
+                    for (var i = 0; i < state.length; i = i + 2) {
+                        if (this._iTestField(state[i])) return true;
+                    }
+                    return false;
+                } else {
+                    return this._iTestField(state);
+                }
+            }
+
+            _iTestField(state) {
+                //console.log('field test:');
+                var test = false;
+                // very error prone test - assuming much
+                for (var key in state) {
+                    var id = key.replace(/.*"(.*)".*/, "$1"),
+                        val = state[key].value;
+                    if (this.shadowRoot.querySelector('#' + id) && this.shadowRoot.querySelector('#' + id).value == val) {
+                        test = true;
                         break;
                     }
                 }
