@@ -103,7 +103,9 @@
               this.value = 0;
             }
           } else {
-            this.value = this.shadowRoot.querySelector('#'+this.element.webform_key).value;
+            // trim leading and trailing whitespace from the content entered
+            this.value = this.shadowRoot.querySelector('#'+this.element.webform_key).value.trim();
+            this.shadowRoot.querySelector('#'+this.element.webform_key).value = this.value;
           }
           //console.log(this.value);
           this.dispatchEvent(new CustomEvent('changedValue', {detail: {field_id: this.element.webform_key}, bubbles: true, composed: true}));
