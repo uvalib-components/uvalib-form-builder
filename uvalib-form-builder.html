@@ -401,7 +401,6 @@
              */
             _preprocessField(fldObj,user) {
               fldObj.valid = true;
-              fldObj.syntax_error = '';
               // for text field make sure the type matches up with the HTML input expected
               if (fldObj.type && fldObj.type == 'textfield') {
                   fldObj.type = 'text';
