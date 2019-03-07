@@ -19,8 +19,8 @@
         <select id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}">
           <template is="dom-repeat" items="{{_getOptions(element)}}" as="option">
             <template is="dom-if" if="[[_isValidOption(option)]]">
-              <template is="dom-if" if="[[_selectedValue(element,option)]]"><option selected value$="[[option]]">[[option]]</option></template>
-              <template is="dom-if" if="[[!_selectedValue(element,option)]]"><option value$="[[option]]">[[option]]</option></template>
+              <template is="dom-if" if="[[_selectedValue(element,option)]]"><option selected value$="[[_optionValue(option)]]">[[option]]</option></template>
+              <template is="dom-if" if="[[!_selectedValue(element,option)]]"><option value$="[[_optionValue(option)]]">[[option]]</option></template>
             </template>
           </template>
         </select>
@@ -46,6 +46,21 @@
 
       _getOptions(obj) {
         return _.values(obj.options);
+      }
+
+      /**
+       * Make sure that a select list with "choose one" or "select one" has an empty string value.
+       * This makes sure that submitting the form doesn't see the prompt option as an allowed value
+       * for a required input field.
+       */
+      _optionValue(opt) {
+        var selectorPromptRegExp = /(choose|select) one/i;
+        if (selectorPromptRegExp.test(opt)) {
+          this.element.value = "";
+          return "";
+        } else {
+          return opt;
+        }
       }
 
       _isValidOption(value) {
