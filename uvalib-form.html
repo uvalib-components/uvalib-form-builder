@@ -112,19 +112,28 @@
                 return (el.type && el.type == "textarea");
             }
 
+            _requireField(item, refresh) {
+              // @TODO I think we need to pass the required status like the show/hide as some fields are conditionally required.
+
+            }
+
             _showField(item, refresh) {
                 //console.log('_showField');
-                if (!item.states) return true;
-                else if (item.states && item.states.visible) {
-                    return this._testState(item.states.visible);
+                if (!item.states) {
+                  return true;
+                } else if (item.states && item.states.visible && item.states.invisible) {
+                  return (this._testState(item.states.invisible)) ? false : this._testState(item.states.visible);
+                } else if (item.states && item.states.invisible) {
+                  return !this._testState(item.states.invisible);
+                } else if (item.states && item.states.visible) {
+                  return this._testState(item.states.visible);
                 } else if (item.states && item.states.required) {
-                    return this._testState(item.states.required);
-                } else if (item.states && items.states.invisible) {
-                   return !this._iTestState(item.states.invisible);
+                  return this._testState(item.states.required);
                 }
             }
 
             _testState(state) {
+              // @TODO add a coinditional parameter to handle invisible???
                 //console.log("state test:");
                 //console.log(state);
                 if (Array.isArray(state)) {
@@ -138,6 +147,7 @@
             }
 
             _testField(state) {
+              // @TODO add a condition parameter to handle invisible???
                 //console.log('field test:');
                 var test = true;
                 // very error prone test - assuming much
@@ -146,34 +156,6 @@
                         val = state[key].value;
                     if (!this.shadowRoot.querySelector('#' + id) || this.shadowRoot.querySelector('#' + id).value != val) {
                         test = false;
-                        break;
-                    }
-                }
-                return test;
-            }
-
-            _iTestState(state) {
-                //console.log("state test:");
-                //console.log(state);
-                if (Array.isArray(state)) {
-                    for (var i = 0; i < state.length; i = i + 2) {
-                        if (this._iTestField(state[i])) return true;
-                    }
-                    return false;
-                } else {
-                    return this._iTestField(state);
-                }
-            }
-
-            _iTestField(state) {
-                //console.log('field test:');
-                var test = false;
-                // very error prone test - assuming much
-                for (var key in state) {
-                    var id = key.replace(/.*"(.*)".*/, "$1"),
-                        val = state[key].value;
-                    if (this.shadowRoot.querySelector('#' + id) && this.shadowRoot.querySelector('#' + id).value == val) {
-                        test = true;
                         break;
                     }
                 }
