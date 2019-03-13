@@ -259,7 +259,7 @@
                 if (!emailRegExp.test(fldObj.value)) {
                   fldObj.syntax_issue = true;
                   // when testing for a syntax error append the error to an existing error if appropriate; otherwise add it to the error list.
-                  if (!fldObj.valid) {
+                  if (this._errors[key]) {
                     this._errors[key].text += ' And it'+error_msg;
                   } else {
                     fldObj.valid = false;
@@ -285,7 +285,7 @@
                 if (!phoneRegExp.test(fldObj.value)) {
                   fldObj.syntax_issue = true;
                   // when testing for a syntax error append the error to an existing error if appropriate; otherwise add it to the error list.
-                  if (!fldObj.valid) {
+                  if (this._errors[key]) {
                     this._errors[key].text += ' And it'+error_msg;
                   } else {
                     fldObj.valid = false;

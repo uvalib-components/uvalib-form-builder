@@ -114,7 +114,6 @@
 
             _requireField(item, refresh) {
               // @TODO I think we need to pass the required status like the show/hide as some fields are conditionally required.
-
             }
 
             _showField(item, refresh) {
@@ -133,33 +132,32 @@
             }
 
             _testState(state) {
-              // @TODO add a coinditional parameter to handle invisible???
-                //console.log("state test:");
-                //console.log(state);
-                if (Array.isArray(state)) {
-                    for (var i = 0; i < state.length; i = i + 2) {
-                        if (this._testField(state[i])) return true;
-                    }
-                    return false;
-                } else {
-                    return this._testField(state);
-                }
+              //console.log("state test:");
+              //console.log(state);
+              if (Array.isArray(state)) {
+                  for (var i = 0; i < state.length; i = i + 2) {
+                      if (this._testField(state[i])) return true;
+                  }
+                  return false;
+              } else {
+                  return this._testField(state);
+              }
             }
 
             _testField(state) {
-              // @TODO add a condition parameter to handle invisible???
-                //console.log('field test:');
-                var test = true;
-                // very error prone test - assuming much
-                for (var key in state) {
-                    var id = key.replace(/.*"(.*)".*/, "$1"),
-                        val = state[key].value;
-                    if (!this.shadowRoot.querySelector('#' + id) || this.shadowRoot.querySelector('#' + id).value != val) {
-                        test = false;
-                        break;
-                    }
-                }
-                return test;
+              //console.log('field test:');
+              var test = true;
+              // very error prone test - assuming much
+              for (var key in state) {
+                  var id = key.replace(/.*"(.*)".*/, "$1"),
+                      val = state[key].value;
+                  if (!this.shadowRoot.querySelector('#' + id) || this.shadowRoot.querySelector('#' + id).value != val) {
+                      test = false;
+                      break;
+                  }
+                  // @TODO We should probably test to see if the input field is marked as hidden and have the test fail in that condition as well
+              }
+              return test;
             }
 
         }
