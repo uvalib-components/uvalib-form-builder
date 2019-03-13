@@ -81,7 +81,7 @@
             }
 
             _isField(el) {
-                return (el.type && (el.type == "hidden" || el.type == "email" || el.type == "tel" || el.type == "text" || el.type == "select" || el.type == "textarea" || el.type == "radios" || el.type == "checkbox" || el.type == "fieldset" || el.type == "webform_actions"));
+                return (el.type && (el.type == "hidden" || el.type == "email" || el.type == "tel" || el.type == "text" || el.type == "select" || el.type == "textarea" || el.type == "radios" || el.type == "container" || el.type == "checkbox" || el.type == "fieldset" || el.type == "webform_actions"));
             }
 
             _isHidden(el) {
@@ -110,6 +110,10 @@
 
             _isTextarea(el) {
                 return (el.type && el.type == "textarea");
+            }
+
+            _isSectionSelect(el) {
+                return (el.type && el.type == "container");
             }
 
             _requireField(item, refresh) {
