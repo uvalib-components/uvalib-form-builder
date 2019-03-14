@@ -75,7 +75,7 @@
                     <uvalib-field-button id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}" is-hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-button>
                   </template>
                   <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
-                    <uvalib-sis-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" is-hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-sis-input>
+                    <uvalib-sis-input counter="[[_counter]] "id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" is-hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-sis-input>
                   </template>
                 </template>
     </template>
@@ -110,7 +110,7 @@
             <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}" is-hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-button>
           </template>
           <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
-            <uvalib-sis-input id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" is-hidden$="{{!_showField(elem,_refresh)}}"></uvalib-sis-input>
+            <uvalib-sis-input counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" is-hidden$="{{!_showField(elem,_refresh)}}"></uvalib-sis-input>
           </template>
     </template>
     </template>
@@ -204,6 +204,11 @@
                     _alertLevel: {
                       type: String,
                       computed: '_ariaLiveAlert(_errors)'
+                    },
+                    _counter: {
+                      type: Number,
+                      value:0,
+                      notify: true
                     }
                 });
             }
@@ -238,7 +243,15 @@
              * Validate that any required field is not empty.
              */
             _validateRequired(key,fldObj) {
-              if (fldObj.value && fldObj.value !== "") {
+              if (fldObj.validated!=null) {
+                if (fldObj.validated) {
+                  fldObj.valid = true;
+                } else {
+                  fldObj.valid = false;
+                  this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field is empty - this is required and must be filled in.' });
+                }
+                fldObj.showMessages = true
+              } else if (fldObj.value && fldObj.value !== "") {
                 fldObj.valid = true;
               } else {
                 // Check to see if the field is visible before indicating an empty required field is invalid.
@@ -367,6 +380,7 @@
                   window.location.replace("https://library.virginia.edu"+this._confirmationPagePath);
                   console.log('Request saved!')
                 }
+                this._counter = this._counter+1;
                 console.log(this._elements);
               }
             }
