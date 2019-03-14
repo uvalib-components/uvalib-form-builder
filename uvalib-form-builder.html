@@ -238,7 +238,15 @@
              * Validate that any required field is not empty.
              */
             _validateRequired(key,fldObj) {
-              if (fldObj.value && fldObj.value !== "") {
+              if (fldObj.validated!=null) {
+                if (fldObj.validated) {
+                  fldObj.valid = true;
+                } else {
+                  fldObj.valid = false;
+                  this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field is empty - this is required and must be filled in.' });
+                }
+                fldObj.showMessages = true
+              } else if (fldObj.value && fldObj.value !== "") {
                 fldObj.valid = true;
               } else {
                 // Check to see if the field is visible before indicating an empty required field is invalid.
