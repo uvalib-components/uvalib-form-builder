@@ -35,6 +35,11 @@
               value: false,
               notify: true
             },
+            isHidden: {
+              type: Boolean,
+              value: false,
+              notify: true
+            },
             _ariaInvalid: {
               type: Boolean,
               computed: "_isInvalidValue(invalidValues,element)"
@@ -121,10 +126,9 @@
         }
 
         _isRequired(el) {
-          // @TODO this needs to be adjusted to take into account any conditional logic around another input field.
-          // For example, I just discovered that the publisher field for purchase recommendation form is required
-          // for a book and optional for a music score.
-          return el.required || el._required;
+          // if the input field is actually being hidden then we shouldn't require a value for it
+          //return (this.isHidden) && (el.required || el._required);
+          return (el.required || el._required);
         }
 
       }

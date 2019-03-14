@@ -54,28 +54,28 @@
                     <uvalib-field-hidden id="[[fs_elem.webform_key]]" element="{{fs_elem}}" invalid-values="{{_invalidValues}}"></uvalib-field-hidden>
                   </template>
                   <template is="dom-if" if="[[_isSelect(fs_elem)]]">
-                    <uvalib-field-select id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-select>
+                    <uvalib-field-select id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}" is-hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-select>
                   </template>
                   <template is="dom-if" if="[[_isRadios(fs_elem)]]">
-                    <uvalib-field-radios id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-radios>
+                    <uvalib-field-radios id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}" is-hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-radios>
                   </template>
                   <template is="dom-if" if="[[_isInput(fs_elem)]]">
-                    <uvalib-field-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-input>
+                    <uvalib-field-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}" is-hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-input>
                   </template>
                   <template is="dom-if" if="[[_isCheckbox(fs_elem)]]">
-                    <uvalib-field-checkbox id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
+                    <uvalib-field-checkbox id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}" is-hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-checkbox>
                   </template>
                   <template is="dom-if" if="[[_isCheckboxes(fs_elem)]]">
-                    <uvalib-field-checkboxes id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkboxes>
+                    <uvalib-field-checkboxes id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}" is-hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-checkboxes>
                   </template>
                   <template is="dom-if" if="[[_isTextarea(fs_elem)]]">
-                    <uvalib-field-textarea id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-textarea>
+                    <uvalib-field-textarea id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}" is-hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-textarea>
                   </template>
                   <template is="dom-if" if="[[_isButton(fs_elem)]]">
-                    <uvalib-field-button id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-button>
+                    <uvalib-field-button id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}" is-hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-button>
                   </template>
                   <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
-                    <uvalib-sis-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-sis-input>
+                    <uvalib-sis-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" is-hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-sis-input>
                   </template>
                 </template>
     </template>
@@ -89,28 +89,28 @@
             <uvalib-field-hidden id="[[elem.webform_key]]" element="{{elem}}" invalid-values="{{_invalidValues}}"></uvalib-field-hidden>
           </template>
           <template is="dom-if" if="[[_isSelect(elem)]]">
-            <uvalib-field-select id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-select>
+            <uvalib-field-select id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}" is-hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-select>
           </template>
           <template is="dom-if" if="[[_isRadios(elem)]]">
-            <uvalib-field-radios id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-radios>
+            <uvalib-field-radios id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}" is-hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-radios>
           </template>
           <template is="dom-if" if="[[_isInput(elem)]]">
-            <uvalib-field-input id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-input>
+            <uvalib-field-input id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}" is-hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-input>
           </template>
           <template is="dom-if" if="[[_isCheckbox(elem)]]">
-            <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
+            <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}" is-hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-checkbox>
           </template>
           <template is="dom-if" if="[[_isCheckboxes(elem)]]">
-            <uvalib-field-checkboxes id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkboxes>
+            <uvalib-field-checkboxes id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}" is-hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-checkboxes>
           </template>
           <template is="dom-if" if="[[_isTextarea(elem)]]">
-            <uvalib-field-textarea id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-textarea>
+            <uvalib-field-textarea id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}" is-hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-textarea>
           </template>
           <template is="dom-if" if="[[_isButton(elem)]]">
-            <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-button>
+            <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}" is-hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-button>
           </template>
           <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
-            <uvalib-sis-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-sis-input>
+            <uvalib-sis-input id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" is-hidden$="{{!_showField(elem,_refresh)}}"></uvalib-sis-input>
           </template>
     </template>
     </template>
