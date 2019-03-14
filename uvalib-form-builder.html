@@ -75,7 +75,7 @@
                     <uvalib-field-button id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-button>
                   </template>
                   <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
-                    <uvalib-sis-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-sis-input>
+                    <uvalib-sis-input counter="[[_counter]] "id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-sis-input>
                   </template>
                 </template>
     </template>
@@ -110,7 +110,7 @@
             <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-button>
           </template>
           <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
-            <uvalib-sis-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-sis-input>
+            <uvalib-sis-input counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-sis-input>
           </template>
     </template>
     </template>
@@ -204,6 +204,11 @@
                     _alertLevel: {
                       type: String,
                       computed: '_ariaLiveAlert(_errors)'
+                    },
+                    _counter: {
+                      type: Number,
+                      value:0,
+                      notify: true
                     }
                 });
             }
@@ -375,6 +380,7 @@
                   window.location.replace("https://library.virginia.edu"+this._confirmationPagePath);
                   console.log('Request saved!')
                 }
+                this._counter = this._counter+1;
                 console.log(this._elements);
               }
             }
