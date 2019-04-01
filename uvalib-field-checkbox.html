@@ -19,10 +19,10 @@
         </div>
       </template>
       <template is="dom-if" if="[[!_isChecked(element)]]">
-        <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value="1" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
+        <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_ariaRequired(element)]]" value="1" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
       </template>
       <template is="dom-if" if="[[_isChecked(element)]]">
-        <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value="1" on-change="_changedValue" checked aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
+        <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_ariaRequired(element)]]" value="1" on-change="_changedValue" checked aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
       </template>
       <label for$="[[element.webform_key]]">[[element.title]]</label>
       <div id="[[_ariaDescribedBy]]" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>

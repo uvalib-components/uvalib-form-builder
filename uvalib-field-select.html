@@ -16,7 +16,7 @@
         <template is="dom-if" if="[[_hasDescription(element)]]">
           <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
         </template>
-        <select id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_isRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}">
+        <select id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_ariaRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}">
           <template is="dom-repeat" items="{{_getOptions(element)}}" as="option">
             <template is="dom-if" if="[[_isValidOption(option)]]">
               <template is="dom-if" if="[[_selectedValue(element,option)]]"><option selected value$="[[_optionValue(option)]]">[[option]]</option></template>
