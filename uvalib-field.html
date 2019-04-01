@@ -41,8 +41,12 @@
               notify: true
             },
             _ariaInvalid: {
-              type: Boolean,
+              type: String,
               computed: "_isInvalidValue(invalidValues,element)"
+            },
+            _hideMessage: {
+              type: Boolean,
+              computed: "_hideErrorMessage(invalidValues,element)"
             },
             _ariaDescribedBy: {
               type: String,
@@ -64,8 +68,12 @@
         }
 
         _isInvalidValue(invalidValues,element) {
-          return (invalidValues && !element.valid);
+          return (invalidValues && !element.valid) ? 'true' : 'false';
         }
+        _hideErrorMessage(invalidValues,element) {
+          return (invalidValues && !element.valid) ? false : true;
+        }
+
         _isInvalidSyntax(invalidValues,element) {
           return invalidValues && !element.valid && (element.syntax_issue);
         }

@@ -22,7 +22,7 @@
         <input type="radio" id$="[[_optionStripped(option)]]" name$="[[element.name]]" value$="[[option]]" on-change="_changedValue" checked$="{{_isChecked(option,element.value)}}">
         <label for$="[[_optionStripped(option)]]">[[option]]</label><br>
       </template>
-      <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{!_ariaInvalid}}">[[element.required_error]]</div>
+      <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{_hideMessage}}">[[element.required_error]]</div>
     </fieldset>
 
 
