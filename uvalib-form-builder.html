@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../uva-helper-libs/lodash.html">
 <link rel="import" href="../uvalib-account/uvalib-account-user.html">
 <link rel="import" href="../uva-models/uva-library.html">
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
@@ -343,6 +344,7 @@
              * Actions to be performed when a button is clicked.
              */
             _buttonClicked(e) {
+              console.log(this.userInfo);
               if (e.detail.name == 'Submit') {
                 this._errors = [];
                 this._errorList = "";
@@ -421,6 +423,7 @@
              * Set the value of a field depending on its type.
              */
             _preprocessField(fldObj,user) {
+              let setVal;
               fldObj.valid = true;
               // for text field make sure the type matches up with the HTML input expected
               if (fldObj.type && fldObj.type == 'textfield') {
@@ -433,14 +436,29 @@
                   // otherwise the field's value is set to the user property value.
                   switch (fldObj.type) {
                     case 'select':
-                    case 'radios':
                       // look for an option that contains some portion of the value it should be
                       // @TODO this may require review depending on values that ITS has for patrons in new LDAP
-                      let setVal = new RegExp(user[fldObj.data_source_field].toLowerCase());
+                      setVal = new RegExp(user[fldObj.data_source_field].toLowerCase());
                       for (let opt in fldObj.options) {
                         let setVal2 = new RegExp(fldObj.options[opt].toLowerCase());
                         if (setVal.test(fldObj.options[opt].toLowerCase()) || setVal2.test(user[fldObj.data_source_field].toLowerCase())) {
-//                        if (setVal.test(fldObj.options[opt].toLowerCase())) {
+                          fldObj.default_value = fldObj.value = fldObj.options[opt];
+                        }
+                      }
+                      // if after this there is no value/choose one/select one and there is an Other... option in select
+                      // then set value to Other...
+                      if (((fldObj.value == '') || (fldObj.value == 'Choose one') || (fldObj.value == 'Select one')) && _.has(fldObj.options, 'Other...')) {
+                        console.log('Other...')
+                        fldObj.default_value = fldObj.value = 'Other...';
+                      }
+                      break;
+                    case 'radios':
+                      // look for an option that contains some portion of the value it should be
+                      // @TODO this may require review depending on values that ITS has for patrons in new LDAP
+                      setVal = new RegExp(user[fldObj.data_source_field].toLowerCase());
+                      for (let opt in fldObj.options) {
+                        let setVal2 = new RegExp(fldObj.options[opt].toLowerCase());
+                        if (setVal.test(fldObj.options[opt].toLowerCase()) || setVal2.test(user[fldObj.data_source_field].toLowerCase())) {
                           fldObj.default_value = fldObj.options[opt];
                           fldObj.value = fldObj.options[opt];
                         }
