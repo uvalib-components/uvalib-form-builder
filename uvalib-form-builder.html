@@ -251,9 +251,17 @@
                   fldObj.valid = false;
                   this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field is empty - this is required and must be filled in.' });
                 }
-                fldObj.showMessages = true
+                fldObj.showMessages = true;
               } else if (fldObj.value && fldObj.value !== "") {
                 fldObj.valid = true;
+                // check if the field type is a select and make sure the value is not choose one or select one
+                if (fldObj.type == 'select') {
+                  var selectorPromptRegExp = /(choose|select) one/i;
+                  if (selectorPromptRegExp.test(fldObj.value)) {
+                    fldObj.valid = false;
+                    this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field option is invalid - a selection must be made from the list.' });
+                  }
+                }
               } else {
                 // Check to see if the field is visible before indicating an empty required field is invalid.
                 if (!this._showField(fldObj)) {
