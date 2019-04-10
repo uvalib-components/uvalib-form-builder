@@ -55,7 +55,6 @@
        */
       _optionValue(opt) {
         var selectorPromptRegExp = /(choose|select) one/i;
-        console.log('in optionValue');
         if (selectorPromptRegExp.test(opt)) {
           this.element.value = ""; // set value of input to empty to insure not valid during submission
           return "";
