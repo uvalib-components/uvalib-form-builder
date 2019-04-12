@@ -383,17 +383,23 @@
                   this.shadowRoot.querySelector('#errorList').focus();
                 } else {
                   // otherwise save the results
-                  this.$.user.saveRequest(this._elements);
-                  // reset the form in case the redirect fails
-                  this._elements = this._parsePageForm(this.formPage);
-                  this._elements = JSON.parse(JSON.stringify(this._elements));
-                  // redirect to the confirmation form
-                  // @TODO Can we remove the domain reference when this is live in production?
-                  window.location.replace("https://library.virginia.edu"+this._confirmationPagePath);
-                  console.log('Request saved!')
+                  this.$.user.saveRequest(this._elements)
+                    .then(results => {
+                      console.log(results);
+                      if (results.requestPathWrite) {
+                        // redirect to the confirmation form
+                        // @TODO Can we remove the domain reference when this is live in production?
+                        window.location.replace("https://library.virginia.edu"+this._confirmationPagePath);
+                      } else {
+                        this.push('_errors',{"id": 'btn_submit', text: 'Unable to submit your request at this time. Please wait a minute and try again. ('+results.message+')' });
+                      }
+                    })
+                    .catch(error => {
+                      console.log(error);
+                    });
                 }
                 this._counter = this._counter+1;
-                console.log(this._elements);
+                //console.log(this._elements);
               }
             }
 
@@ -511,7 +517,7 @@
                         }
                     }
                 }
-                console.log(fields);
+                //console.log(fields);
                 return fields;
             }
 
