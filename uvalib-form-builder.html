@@ -31,7 +31,9 @@
       <input type="hidden" name="authenticated" value="[[_authenticated]]" />
 
       <div class="errors" hidden$="[[!_invalidValues]]" aria-live$="[[_alertLevel]]">
-        <div id="submissionProblems">An error has occurred. Please address the following <span inner-h-t-m-l="[[_errors.length]]"></span> problems and re-submit the form.</div>
+        <div id="submissionProblems">A problem has occurred.
+          <div class="errorCount" hidden$="[[_firebaseProblem]]">Please address the following <span inner-h-t-m-l="[[_errors.length]]"></span> <span inner-h-t-m-l="[[_errorString(_errors.length)]]"></span> and re-submit the form.</div>
+        </div>
         <!--  insert error messages here after submit validation -->
         <nav id="errorList" aria-labelledby="submissionProblems" tabindex="0">
           <ul>
@@ -210,8 +212,17 @@
                       type: Number,
                       value:0,
                       notify: true
+                    },
+                    _firebaseProblem: {
+                      type: Boolean,
+                      value: false,
+                      notify: true
                     }
                 });
+            }
+
+            _errorString(count) {
+              return (count == 1) ? 'error' : 'errors';
             }
 
             /**
@@ -385,13 +396,16 @@
                   // otherwise save the results
                   this.$.user.saveRequest(this._elements)
                     .then(results => {
-                      console.log(results);
                       if (results.requestPathWrite) {
                         // redirect to the confirmation form
                         // @TODO Can we remove the domain reference when this is live in production?
                         window.location.replace("https://library.virginia.edu"+this._confirmationPagePath);
                       } else {
-                        this.push('_errors',{"id": 'btn_submit', text: 'Unable to submit your request at this time. Please wait a minute and try again. ('+results.message+')' });
+                        console.log(results.message); // This may not be a useful message to display to patrons but we can always view Firebase logs to see technical errors.
+                        this._firebaseProblem = true;
+                        this.push('_errors',{"id": 'btn_submit', text: 'Unable to submit your request at this time. Please wait a minute and try again.' });
+                        this._errors = JSON.parse(JSON.stringify(this._errors));
+                        this.shadowRoot.querySelector('#errorList').focus();
                       }
                     })
                     .catch(error => {
