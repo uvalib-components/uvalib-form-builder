@@ -8,6 +8,7 @@
 <link rel="import" href="uvalib-field-html-markup.html">
 <link rel="import" href="uvalib-field-select.html">
 <link rel="import" href="uvalib-field-input.html">
+<link rel="import" href="uvalib-field-file.html">
 <link rel="import" href="uvalib-field-hidden.html">
 <link rel="import" href="uvalib-field-textarea.html">
 <link rel="import" href="uvalib-field-checkbox.html">
@@ -31,7 +32,7 @@
       <input type="hidden" name="authenticated" value="[[_authenticated]]" />
 
       <div class="errors" hidden$="[[!_invalidValues]]" aria-live$="[[_alertLevel]]">
-        <div id="submissionProblems">A problem has occurred. 
+        <div id="submissionProblems">A problem has occurred.
           <div class="errorCount" hidden$="[[_firebaseProblem]]">Please address the following <span inner-h-t-m-l="[[_errors.length]]"></span> <span inner-h-t-m-l="[[_errorString(_errors.length)]]"></span> and re-submit the form.</div>
         </div>
         <!--  insert error messages here after submit validation -->
@@ -65,6 +66,9 @@
                   <template is="dom-if" if="[[_isInput(fs_elem)]]">
                     <uvalib-field-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-input>
                   </template>
+                  <template is="dom-if" if="[[_isFile(fs_elem)]]">
+                    <uvalib-field-file id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-file>
+                  </template>
                   <template is="dom-if" if="[[_isCheckbox(fs_elem)]]">
                     <uvalib-field-checkbox id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
                   </template>
@@ -78,7 +82,7 @@
                     <uvalib-field-button id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-button>
                   </template>
                   <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
-                    <uvalib-sis-input counter="[[_counter]] "id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-sis-input>
+                    <uvalib-sis-input counter="[[_counter]] "id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" show-alternate$="{{fs_elem.show_alternate}}"></uvalib-sis-input>
                   </template>
                 </template>
     </template>
@@ -99,6 +103,9 @@
           </template>
           <template is="dom-if" if="[[_isInput(elem)]]">
             <uvalib-field-input id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-input>
+          </template>
+          <template is="dom-if" if="[[_isFile(elem)]]">
+            <uvalib-field-file id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-file>
           </template>
           <template is="dom-if" if="[[_isCheckbox(elem)]]">
             <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
@@ -392,6 +399,7 @@
                 if (this._errors.length > 0) {
                   this._elements = JSON.parse(JSON.stringify(this._elements));
                   this.shadowRoot.querySelector('#errorList').focus();
+                  this.shadowRoot.querySelector('#btn_submit').submitted = false;
                 } else {
                   // otherwise save the results
                   this.$.user.saveRequest(this._elements)
@@ -406,6 +414,7 @@
                         this.push('_errors',{"id": 'btn_submit', text: 'Unable to submit your request at this time. Please wait a minute and try again.' });
                         this._errors = JSON.parse(JSON.stringify(this._errors));
                         this.shadowRoot.querySelector('#errorList').focus();
+                        this.shadowRoot.querySelector('#btn_submit').submitted = false;
                       }
                     })
                     .catch(error => {
@@ -531,7 +540,7 @@
                         }
                     }
                 }
-                //console.log(fields);
+                console.log(fields);
                 return fields;
             }
 

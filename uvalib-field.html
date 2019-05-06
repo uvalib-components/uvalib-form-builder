@@ -110,6 +110,9 @@
               this.shadowRoot.querySelector('#'+this.element.webform_key).checked = false;
               this.value = 0;
             }
+          } else if (this.element.type == "file") {
+            this.element.files = this.shadowRoot.querySelector('#'+this.element.webform_key).files;
+            console.log(this.element);
           } else {
             // trim leading and trailing whitespace from the content entered
             this.value = this.shadowRoot.querySelector('#'+this.element.webform_key).value.trim();
@@ -120,7 +123,7 @@
         }
 
         _optionStripped(option) {
-          let opt = option.replace(/[^A-Za-z0-9]/g,"");
+          let opt = option.replace(/[^A-Za-z0-9]/g,"_");
           return (opt.charAt(0).match(/[0-9]/)) ? 'a'+opt : opt;
         }
 
@@ -136,7 +139,6 @@
         _ariaRequired(el) {
           return (this._isRequired(el)) ? 'true' : 'false';
         }
-
       }
     });
   </script>
