@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../google-recaptcha/google-recaptcha.html">
 <link rel="import" href="../uva-helper-libs/lodash.html">
 <link rel="import" href="../uvalib-account/uvalib-account-user.html">
 <link rel="import" href="../uva-models/uva-library.html">
@@ -28,7 +29,7 @@
 
     <uvalib-account-user id="user" auto="[[_authenticated]]" contact-info="{{userInfo}}"></uvalib-account-user>
 
-    <form method="post">
+    <form method="post" hidden$="[[!_visible]]">
       <input type="hidden" name="authenticated" value="[[_authenticated]]" />
 
       <div class="errors" hidden$="[[!_invalidValues]]" aria-live$="[[_alertLevel]]">
@@ -116,11 +117,14 @@
           <template is="dom-if" if="[[_isTextarea(elem)]]">
             <uvalib-field-textarea id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-textarea>
           </template>
-          <template is="dom-if" if="[[_isButton(elem)]]">
-            <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-button>
-          </template>
           <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
             <uvalib-sis-input counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-sis-input>
+          </template>
+          <template is="dom-if" if="[[_isCaptcha(elem)]]">
+            <google-recaptcha id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></google-recaptcha>
+          </template>
+          <template is="dom-if" if="[[_isButton(elem)]]">
+            <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-button>
           </template>
     </template>
     </template>
@@ -224,10 +228,28 @@
                       type: Boolean,
                       value: false,
                       notify: true
+                    },
+                    _visible: {
+                        type: Boolean,
+                        computed: '_readyToDisplayForm(_authenticated,userInfo)',
+                        notify: true
                     }
                 });
             }
 
+            _readyToDisplayForm(_authenticated,userInfo) {
+              // If the form is NetBadge protected make sure the user has
+              // authenticated before displaying the form
+              if (_authenticated) {
+                if (userInfo && userInfo.computing_id != '') {
+                  return true;
+                } else {
+                  return false;
+                }
+              } else {
+                return true;
+              }
+            }
             _errorString(count) {
               return (count == 1) ? 'error' : 'errors';
             }

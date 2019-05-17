@@ -75,6 +75,10 @@
                 return (el.type && el.type == "webform_actions");
             }
 
+            _isCaptcha(el) {
+                return (el.type && el.type == "captcha");
+            }
+            
             _isCheckbox(el) {
                 return (el.type && el.type == "checkbox");
             }
