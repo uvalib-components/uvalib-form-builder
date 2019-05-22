@@ -1,5 +1,4 @@
 <link rel="import" href="../polymer/polymer-element.html">
-<link rel="import" href="../google-recaptcha/google-recaptcha.html">
 <link rel="import" href="../uva-helper-libs/lodash.html">
 <link rel="import" href="../uvalib-account/uvalib-account-user.html">
 <link rel="import" href="../uva-models/uva-library.html">
@@ -119,9 +118,6 @@
           </template>
           <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
             <uvalib-sis-input counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-sis-input>
-          </template>
-          <template is="dom-if" if="[[_isCaptcha(elem)]]">
-            <google-recaptcha id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></google-recaptcha>
           </template>
           <template is="dom-if" if="[[_isButton(elem)]]">
             <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-button>
