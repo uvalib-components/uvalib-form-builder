@@ -16,14 +16,7 @@
         <template is="dom-if" if="[[_hasDescription(element)]]">
           <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
         </template>
-        <select id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_ariaRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}">
-          <template is="dom-repeat" items="{{_getOptions(element)}}" as="option">
-            <template is="dom-if" if="[[_isValidOption(option)]]">
-              <template is="dom-if" if="[[_selectedValue(element,option)]]"><option selected value$="[[_optionValue(option)]]">[[option]]</option></template>
-              <template is="dom-if" if="[[!_selectedValue(element,option)]]"><option value$="[[_optionValue(option)]]">[[option]]</option></template>
-            </template>
-          </template>
-        </select>
+        <select id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_ariaRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"></select>
         <div id="[[_ariaDescribedBy]]" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{_hideMessage}}">[[element.required_error]]</div>
       </div>
   </template>
@@ -41,6 +34,26 @@
       static get is() { return 'uvalib-field-select'; }
       static get properties() {
         return Object.assign(super.properties,{
+        });
+      }
+
+      static get observers() {
+        return [
+          '_elementChanged(element)'
+        ]
+      }
+
+      _elementChanged(element) {
+        let select = this.shadowRoot.querySelector('select');
+        select.innerHTML = "";
+        this._getOptions(element).forEach(o=>{
+          if (this._isValidOption(o)) {
+            let option = document.createElement('option');
+            option.textContent = o;
+            option.value = this._optionValue(o);
+            if (this._selectedValue(element,o)) option.setAttribute('selected',true);
+            select.appendChild(option);
+          }
         });
       }
 
