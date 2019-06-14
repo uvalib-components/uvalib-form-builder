@@ -6,9 +6,7 @@
     "polymer": "Polymer/polymer#^2.0.0",
     "uvalib-elements": "uvalib-components/uvalib-elements#master",
     "google-recaptcha": "Zecat/google-recaptcha#^0.2.2",
-    "paper-time-input": "^2.0.4",
     "vaadin-date-picker": "^4.0.0",
-    "web-animations-js": "^2.3.1",
     "vaadin-time-picker": "^2.0.0"
   },
   "devDependencies": {

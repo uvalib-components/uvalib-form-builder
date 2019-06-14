@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../google-recaptcha/google-recaptcha.html">
 <link rel="import" href="../uva-helper-libs/lodash.html">
 <link rel="import" href="../uvalib-account/uvalib-account-user.html">
 <link rel="import" href="../uva-models/uva-library.html">
@@ -69,6 +70,9 @@
                   <template is="dom-if" if="[[_isFile(fs_elem)]]">
                     <uvalib-field-file id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-file>
                   </template>
+                  <template is="dom-if" if="[[_isDateTime(fs_elem)]]">
+                    <uvalib-field-datetime id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-datetime>
+                  </template>
                   <template is="dom-if" if="[[_isCheckbox(fs_elem)]]">
                     <uvalib-field-checkbox id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
                   </template>
@@ -107,6 +111,9 @@
           <template is="dom-if" if="[[_isFile(elem)]]">
             <uvalib-field-file id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-file>
           </template>
+          <template is="dom-if" if="[[_isDateTime(elem)]]">
+            <uvalib-field-datetime id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-datetime>
+          </template>
           <template is="dom-if" if="[[_isCheckbox(elem)]]">
             <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
           </template>
@@ -119,8 +126,12 @@
           <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
             <uvalib-sis-input counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-sis-input>
           </template>
+          <template is="dom-if" if="[[_isCaptcha(elem)]]">
+            <google-recaptcha id="[[elem.webform_key]]" name="[[elem.webform_key]]" hidden$="{{!_showField(elem,_refresh)}}" sitekey="[[_recaptchaSiteKey]]" value="{{elem.value}}"></google-recaptcha>
+          </template>
           <template is="dom-if" if="[[_isButton(elem)]]">
             <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-field-button>
+            <div id="networkConnection" hidden="[[!_lostNetworkConnection]]">[[_networkConnectionMsg]]</div>
           </template>
     </template>
     </template>
@@ -229,8 +240,70 @@
                         type: Boolean,
                         computed: '_readyToDisplayForm(_authenticated,userInfo)',
                         notify: true
+                    },
+                    _recaptchaSiteKey: {
+                      type: String,
+                      value: "6Le7LKUUAAAAALhuLdQO6j-WJWU2m1EfSHUplBP3"
+                    },
+                    _lostNetworkConnection: {
+                      type: Boolean,
+                      value: false,
+                      notify: true
+                    },
+                    _networkConnectionMsg: {
+                      type: String,
+                      value: "",
+                      notify: true
                     }
                 });
+            }
+
+            ready() {
+              this.addEventListener('offline',this._isOnline);
+              this.addEventListener('online',this._isOnline);
+              super.ready();
+            }
+
+            _isOnline() {
+              this._lostNetworkConnection = true;
+              this._networkConnectionMsg = "Please connect to internet to submit.";
+              console.log('navigator.onLine: '+navigator.onLine);
+              if (navigator.onLine) {
+                fetch("https://api.library.virginia.edu/online.json")
+                .then((response) => {
+                  if (response.ok) {
+                    this._isFirebaseAvailable();
+                  } else {
+                    console.log('form builder online check web status: '+response.statusText);
+                    this._isFirebaseAvailable();
+                  }
+                }).catch((err) => {
+                  console.log('form builder online check error: '+err.message);
+                  this.shadowRoot.querySelector('#btn_submit').submitted = true; // submit button disabled
+                  this._lostNetworkConnection = true;
+                  this._networkConnectionMsg = "Please connect to internet to submit.";
+                });
+              } else {
+                this.shadowRoot.querySelector('#btn_submit').submitted = true; // submit button disabled
+                this._lostNetworkConnection = true;
+                this._networkConnectionMsg = "Please connect to internet to submit.";
+              }
+            }
+
+            _isFirebaseAvailable() {
+              var connectedRef = firebase.database().ref(".info/connected");
+              connectedRef.on("value", function(snap) {
+                console.log('isFirebaseAvailable: '+ snap.val());
+                if (snap.val() === true) {
+                  this._lostNetworkConnection = false;
+                  this._networkConnectionMsg = "";
+                  this.shadowRoot.querySelector('#btn_submit').submitted = false; // submit button enabled
+                } else {
+                  this.shadowRoot.querySelector('#btn_submit').submitted = true; // submit button disabled
+                  this._lostNetworkConnection = true;
+                  this._networkConnectionMsg = "Service temporarily unavailable. Please try again later.";
+                }
+              });
             }
 
             _readyToDisplayForm(_authenticated,userInfo) {
