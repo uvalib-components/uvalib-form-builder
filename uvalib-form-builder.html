@@ -131,7 +131,7 @@
           </template>
           <template is="dom-if" if="[[_isButton(elem)]]">
             <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}" submitted="{{!_online}}"></uvalib-field-button>
-            <div id="networkConnection" hidden$="{{_isOnline(_online)}}">[[_offlineMessage(_online,_networkConnectionMsg)]]</div>
+            <div id="networkConnection" hidden$="{{_online}}">[[_offlineMessage(_online,_networkConnectionMsg)]]</div>
           </template>
     </template>
     </template>
@@ -257,8 +257,9 @@
             }
 
             ready() {
-              window.addEventListener('offline',this._checkOnline);
-              window.addEventListener('online',this._checkOnline);
+              window.addEventListener('offline',this._checkOnline.bind(this));
+              window.addEventListener('online',this._checkOnline.bind(this));
+              this._checkOnline();
               super.ready();
             }
 
@@ -310,6 +311,7 @@
                   this._networkConnectionMsg = checkNetwork.msg;
               } else {
                 console.log("offline");
+                this._online = false;
                 this._networkConnectionMsg = "Please connect to internet to submit.";
               }
             }
