@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../google-recaptcha/google-recaptcha.html">
 <link rel="import" href="../uva-helper-libs/lodash.html">
+<link rel="import" href="../uvalib-account/uvalib-account-app.html">
 <link rel="import" href="../uvalib-account/uvalib-account-user.html">
 <link rel="import" href="../uva-models/uva-library.html">
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
@@ -27,6 +28,7 @@
 
     <uva-library path="web/forms" items="{{formPage}}" filter="{{_formFilter}}"></uva-library>
 
+    <uvalib-account-app></uvalib-account-app>
     <uvalib-account-user id="user" auto="[[_authenticated]]" contact-info="{{userInfo}}"></uvalib-account-user>
 
     <form method="post" hidden$="[[!_visible]]">
@@ -130,7 +132,7 @@
             <google-recaptcha id="[[elem.webform_key]]" name="[[elem.webform_key]]" hidden$="{{!_showField(elem,_refresh)}}" sitekey="[[_recaptchaSiteKey]]" value="{{elem.value}}"></google-recaptcha>
           </template>
           <template is="dom-if" if="[[_isButton(elem)]]">
-            <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}" submitted="{{!_online}}"></uvalib-field-button>
+            <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}" disabled="{{!_online}}"></uvalib-field-button>
             <div id="networkConnection" hidden$="{{_online}}">[[_offlineMessage(_online,_networkConnectionMsg)]]</div>
           </template>
     </template>
@@ -267,52 +269,24 @@
               return (!online) ? msg : "";
             }
 
-            _isOnline(online) {
-              return !online;
-            }
-
             _checkOnline() {
-              var connectedRef = firebase.database().ref(".info/connected");
               this._online = navigator.onLine;
               console.log('online: '+this._online);
               if (this._online) {
-                console.log("online");
-                var checkNetwork =
-                  fetch("https://api.library.virginia.edu/online.json")
-                  .then((response) => {
-                    if (response.ok) {
-                      connectedRef.on("value", function(snap) {
-                        if (snap.val() === true) {
-                          console.log("firebase: online");
-                          return {"on": false, "msg": ""};
-                        } else {
-                          console.log("firebase: offline");
-                          return {"on": false, "msg": "Service temporarily unavailable. Please try again later."};
-                        }
-                      });
-                    } else {
-                      connectedRef.on("value", function(snap) {
-                        if (snap.val() === true) {
-                          console.log("firebase: online, uva: offline");
-                          return {"on": false, "msg": ""};
-                        } else {
-                          console.log("firebase: offline, uva: offline");
-                          return {"on": false, "msg": "Service temporarily unavailable. Please try again later."};
-                        }
-                      });
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("error");
-                    return {"on": false, "msg": "Please connect to internet to submit."};
-                  });
-                  console.log("promise returned");
-                  this._online = checkNetwork.on;
-                  this._networkConnectionMsg = checkNetwork.msg;
+                fetch("https://api.library.virginia.edu/online.json")
+                .then((response) => {
+                  this._networkConnectionMsg = "";
+                })
+                .catch((err) => {
+                  console.log("error");
+                  console.log(err.name);
+                  console.log(err.message);
+                  this._online = false;
+                  this._networkConnectionMsg = "Please connect to a different wireless network to submit.";
+                });
               } else {
-                console.log("offline");
                 this._online = false;
-                this._networkConnectionMsg = "Please connect to internet to submit.";
+                this._networkConnectionMsg = "Offline. Please connect to internet to submit.";
               }
             }
 

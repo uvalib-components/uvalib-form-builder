@@ -26,7 +26,7 @@
     </custom-style>
 
     <div class="form-field button">
-      <input class$="[[element.submit__label]]" type="button" disabled="[[submitted]]" id$="[[element.webform_key]]" name$="[[element.submit__label]]" value$="{{element.submit__label}}" on-click="_clickedButton" />
+      <input class$="[[element.submit__label]]" type="button" disabled="[[disabled]]" id$="[[element.webform_key]]" name$="[[element.submit__label]]" value$="{{element.submit__label}}" on-click="_clickedButton" />
       <template is="dom-if" if="[[_isSubmitButton()]]">
         <paper-spinner alt="Sending request, please wait." active="[[submitted]]"></paper-spinner>
       </template>
@@ -51,13 +51,18 @@
             value: false,
             notify: true,
             reflectToAttribute: true
+          },
+          disabled: {
+            type: Boolean,
+            value: false
           }
         });
       }
 
+
       _clickedButton(e) {
         console.log('clicked button');
-        this.submitted = (this._isSubmitButton()) ? true : false; // if submit button clicked we want to activate spinner
+        this.disabled = this.submitted = (this._isSubmitButton()) ? true : false; // if submit button clicked we want to activate spinner
         console.log(this.submitted);
         this.dispatchEvent(new CustomEvent('clickedButton', {detail: {field_id: this.element.webform_key, name: this.element.submit__label}, bubbles: true, composed: true}));
       }
