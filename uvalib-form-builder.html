@@ -271,7 +271,6 @@
 
             _checkOnline() {
               this._online = navigator.onLine;
-              console.log('online: '+this._online);
               if (this._online) {
                 fetch("https://api.library.virginia.edu/online.json")
                 .then((response) => {
@@ -286,7 +285,7 @@
                 });
               } else {
                 this._online = false;
-                this._networkConnectionMsg = "Offline. Please connect to internet to submit.";
+                this._networkConnectionMsg = "Please connect to internet to submit.";
               }
             }
 
