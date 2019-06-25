@@ -259,9 +259,10 @@
             }
 
             ready() {
-              window.addEventListener('offline',this._checkOnline.bind(this));
-              window.addEventListener('online',this._checkOnline.bind(this));
-              this._checkOnline();
+              // @TODO Revisit the idea of checking offline for forms once IE support is ended.
+//              window.addEventListener('offline',this._checkOnline.bind(this));
+//              window.addEventListener('online',this._checkOnline.bind(this));
+//              this._checkOnline();
               super.ready();
             }
 
