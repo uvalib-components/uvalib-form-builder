@@ -75,10 +75,6 @@
                 return (el.type && el.type == "webform_actions");
             }
 
-            _isCaptcha(el) {
-                return (el.type && el.type == "captcha");
-            }
-
             _isCheckbox(el) {
                 return (el.type && el.type == "checkbox");
             }
@@ -131,7 +127,6 @@
             }
 
             _showField(item, refresh) {
-                //console.log('_showField');
                 if (!item.states) {
                   return true;
                 } else if (item.states && item.states.visible && item.states.invisible) {

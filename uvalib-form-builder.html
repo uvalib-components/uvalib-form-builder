@@ -23,6 +23,11 @@
   <template>
     <custom-style>
       <style include="uvalib-theme uvalib-form-style">
+        uvalib-field-datetime {
+          width: 100%;
+          height: 100px;
+          border: 1px solid red;
+        }
       </style>
     </custom-style>
 
@@ -73,7 +78,7 @@
                     <uvalib-field-file id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-file>
                   </template>
                   <template is="dom-if" if="[[_isDateTime(fs_elem)]]">
-                    <uvalib-field-datetime id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-datetime>
+                    <uvalib-field-datetime id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}" syntax-error="{{fs_elem.syntax_error}}"></uvalib-field-datetime>
                   </template>
                   <template is="dom-if" if="[[_isCheckbox(fs_elem)]]">
                     <uvalib-field-checkbox id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
@@ -114,7 +119,7 @@
             <uvalib-field-file id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-file>
           </template>
           <template is="dom-if" if="[[_isDateTime(elem)]]">
-            <uvalib-field-datetime id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-datetime>
+            <uvalib-field-datetime id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}" syntax-error="{{elem.syntax_error}}"></uvalib-field-datetime>
           </template>
           <template is="dom-if" if="[[_isCheckbox(elem)]]">
             <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
@@ -128,14 +133,16 @@
           <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
             <uvalib-sis-input counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-sis-input>
           </template>
-          <template is="dom-if" if="[[_isCaptcha(elem)]]">
-            <google-recaptcha id="[[elem.webform_key]]" name="[[elem.webform_key]]" hidden$="{{!_showField(elem,_refresh)}}" sitekey="[[_recaptchaSiteKey]]" value="{{elem.value}}"></google-recaptcha>
-          </template>
-          <template is="dom-if" if="[[_isButton(elem)]]">
-            <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}" disabled="{{!_online}}"></uvalib-field-button>
-            <div id="networkConnection" hidden$="{{_online}}">[[_offlineMessage(_online,_networkConnectionMsg)]]</div>
-          </template>
     </template>
+    </template>
+    <template is="dom-if" if="[[_hasCaptcha]]">
+      <google-recaptcha force-in-body id="captcha" name="captcha" sitekey="[[_recaptchaSiteKey]]" value="{{_captchaValue}}"></google-recaptcha>
+    </template>
+    <template is="dom-repeat" items="{{_elements}}" as="elem">
+      <template is="dom-if" if="[[_isButton(elem)]]">
+        <uvalib-field-button id="[[elem.webform_key]]" element="{{elem}}" hidden$="{{!_showField(elem,_refresh)}}" disabled="{{!_online}}"></uvalib-field-button>
+        <div id="networkConnection" hidden$="{{_online}}">[[_offlineMessage(_online,_networkConnectionMsg)]]</div>
+      </template>
     </template>
     </form>
 
@@ -199,6 +206,13 @@
                         computed: '_isFormAuthenticated(_elements)'
                     },
                     /**
+                     * Form captcha indicator.
+                     */
+                    _hasCaptcha: {
+                        type: Boolean,
+                        computed: '_doesFormHaveCaptcha(_elements)'
+                    },
+                    /**
                      * Form confirmation page path.
                      */
                     _confirmationPagePath: {
@@ -245,7 +259,11 @@
                     },
                     _recaptchaSiteKey: {
                       type: String,
-                      value: "6Le7LKUUAAAAALhuLdQO6j-WJWU2m1EfSHUplBP3"
+                      computed: '_getSitekey(_elements)'
+                    },
+                    _captchaValue: {
+                      type: String,
+                      value: ""
                     },
                     _online: {
                       type: Boolean,
@@ -520,6 +538,29 @@
                     title: 'authenticated'
                 });
                 return (auth && auth.value && auth.value == "yes") ? true : false;
+            }
+
+            /**
+             * Check authenticated field value to determine if form has captcha.
+             * @return Boolean
+             */
+            _doesFormHaveCaptcha(els) {
+                let captcha = _.find(els, {
+                    type: 'captcha'
+                });
+                return (captcha && captcha.sitekey && captcha.sitekey != "") ? true : false;
+            }
+
+            /**
+             * Returns sitekey value if found; otherwise a generic developer key value.
+             * @return String
+             */
+            _getSitekey(els) {
+                let captcha = _.find(els, {
+                    type: 'captcha'
+                });
+                // returns developer key if no valid sitekey value is found
+                return (captcha && captcha.sitekey && captcha.sitekey != "") ? captcha.sitekey : '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
             }
 
             /**
