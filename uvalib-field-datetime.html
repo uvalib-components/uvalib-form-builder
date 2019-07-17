@@ -10,14 +10,27 @@
   <template>
     <custom-style>
       <style include="uvalib-theme uvalib-fonts uvalib-form-style">
+        :root {
+          --vaadin-date-picker-overlay: {
+            max-height: 300px;
+          };
+        }
         :host {
           display: block;
         }
-        .grid-main {
+        :host([small-screen]) .grid-main {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: 1fr;
           grid-gap: 10px;
           grid-auto-rows: auto;
+          margin-bottom: 0;
+        }
+        .grid-main {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          grid-gap: 10px;
+          grid-auto-rows: auto;
+          margin-bottom: 0;
         }
       </style>
     </custom-style>
@@ -26,9 +39,17 @@
         <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
       </template>
       <div class="grid-main">
-        <vaadin-date-picker id="date" label="{{_setLabel(dateLabel,numberChoice)}}" min="[[_today()]]" initial-position="[[_daysOut(minimumDaysOut)]]" placeholder="MM/DD/YYYY" required="[[dateRequired]]"></vaadin-date-picker>
-        <vaadin-time-picker hidden="{{hideStartTime}}" id="start" name="startTime" label="[[startTimeLabel]]" step="[[_convertToSeconds(minuteStep)]]" placeholder="HH:MM AM/PM" required="[[startTimeRequired]]"></vaadin-time-picker>
-        <vaadin-time-picker hidden="{{hideEndTime}}" id="end" name="endTime" label="[[endTimeLabel]]" step="[[_convertToSeconds(minuteStep)]]" placeholder="HH:MM AM/PM" required="[[endTimeRequired]]"></vaadin-time-picker>
+        <vaadin-date-picker id="date" label="[[_labelForDate]]" min="[[_today()]]" initial-position="[[_daysOut(minimumDaysOut)]]"
+         placeholder="MM/DD/YYYY" required="[[dateRequired]]" value="{{value.date}}" invalid="{{_dateError}}">
+        </vaadin-date-picker>
+        <vaadin-time-picker hidden="{{hideStartTime}}" id="start" name="startTime" label="[[startTimeLabel]]"
+         step="[[_convertToSeconds(minuteStep)]]" placeholder="HH:MM AM/PM" required="[[startTimeRequired]]"
+         value="{{value.startTime}}" invalid="{{_startTimeError}}">
+        </vaadin-time-picker>
+        <vaadin-time-picker hidden="{{hideEndTime}}" id="end" name="endTime" label="[[endTimeLabel]]"
+         step="[[_convertToSeconds(minuteStep)]]" placeholder="HH:MM AM/PM" required="[[endTimeRequired]]"
+         value="{{value.endTime}}" invalid="{{_endTimeError}}">
+        </vaadin-time-picker>
       </div>
       <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{_hideMessage}}"><span hidden="{{_syntaxInvalid}}">[[element.required_error]]</span> <span hidden$="{{!_syntaxInvalid}}">[[element.syntax_error]]</span></div>
     </div>
@@ -47,6 +68,15 @@
       static get is() { return 'uvalib-field-datetime'; }
       static get properties() {
         return Object.assign(super.properties,{
+          /**
+           * Values entered for the date, start time, and end time. Only values for displayed input elements should be used.
+           */
+          value: {
+            type: Object,
+            value: function() {return {date: "", startTime: "", endTime: ""};},
+            reflectToAttribute: true,
+            notify: true
+          },
           /**
            * Number to display if "choice" should be in the label name; useful if this component is used in loop to allow for multiple options
            */
@@ -69,11 +99,18 @@
             value: ""
           },
           /**
-           *
+           * actual label to be displayed based on the properties set
            */
           _labelForDate: {
             type: String,
-            computed: "_setLabel(dateLabel,numberChoice)"
+            computed: '_setLabel(dateLabel, numberChoice)'
+          },
+          /**
+           * indicates invalid date value entered
+           */
+          _dateError: {
+            type: Boolean,
+            value: false
           },
           /**
            * indicates that the date input is required
@@ -90,16 +127,16 @@
             value: "Start time"
           },
           /**
-           * value entered for the start time input
-           */
-          startTimeValue: {
-            type: String,
-            value: ""
-          },
-          /**
            * indicates the start time input should not be displayed
            */
           hideStartTime: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           *  indicates start time entered is invalid
+           */
+          _startTimeError: {
             type: Boolean,
             value: false
           },
@@ -118,13 +155,6 @@
             value: "End time"
           },
           /**
-           * value entered for the end time input
-           */
-          endTimeValue: {
-            type: String,
-            value: ""
-          },
-          /**
            * indicates the end time input should not be displayed
            */
           hideEndTime: {
@@ -135,6 +165,13 @@
            * indicates the end time input is required
            */
           endTimeRequired: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           *  indicates end time value entered is invalid
+           */
+          _endTimeError: {
             type: Boolean,
             value: false
           },
@@ -156,18 +193,44 @@
       }
 
       ready() {
+        // time and date both use same changed event
+        this.addEventListener('value-changed',this._valueChanged);
+        this.addEventListener('_date-error-changed',this._setErrorMsg);
+        this.addEventListener('_start-time-error-changed',this._setErrorMsg);
+        this.addEventListener('_end-time-error-changed',this._setErrorMsg);
         super.ready();
+        if (this.element) {
+          this.numberChoice = (this.element.number_choice) ? this.element.number_choice : this.numberChoice;
+          
+        }
         if (!this.hideStartTime) {
           this._setTimeFields('#start');
         }
         if (!this.hideEndTime) {
           this._setTimeFields('#end');
         }
-        this._setLabel(this.dateLabel,this.numberChoice);
       }
 
       _convertToSeconds(minutes) {
         return minutes * 60;
+      }
+
+      _changeInvalid(e) {
+        // @TODO check the event to determine which input field is invalid
+        // @TODO set the appropriate error message property value
+        console.log('_dateTimeChangeInvalid:');
+        console.log(e);
+        this.invalidValues = true;
+      }
+
+      _valueChanged(e) {
+        console.log('_valueChanged:');
+        console.log(this.value.date);
+        console.log(this.value.startTime);
+        console.log(this.value.endTime);
+//        console.log(this.element);
+//        console.log('element syntax issue: '+this.element.syntax_issue);
+//        console.log('element syntax error: '+this.element.syntax_error);
       }
 
       _daysOut(minDaysOut) {
@@ -204,8 +267,7 @@
           return i + "th";
       }
 
-      _setLabel(dateLabel,numberChoice) {
-        console.log('in _setLabel: '+dateLabel+' '+numberChoice)
+      _setLabel(dateLabel, numberChoice) {
         if (dateLabel != "") {
           return dateLabel;
         } else {
@@ -213,7 +275,15 @@
         }
       }
 
-      _setTimeFields(timeField){
+      _setErrorMsg(e) {
+        this.element.syntax_issue = this._dateError || this._startTimeError || this._endTimeError;
+        this.element.syntax_error = (this.element.syntax_issue) ? "The " + this._labelForDate + " has potential issues. " : "";
+        this.element.syntax_error += (this._dateError) ? "Please check its date input. " : "";
+        this.element.syntax_error += (this._startTimeError) ? "Please check its " + this.startTimeLabel + ". " : "";
+        this.element.syntax_error += (this._endTimeError) ? "Please check its " + this.endTimeLabel + ". " : "";
+      }
+
+      _setTimeFields(timeField) {
           var timePicker = this.shadowRoot.querySelector(timeField);
           timePicker.i18n = {
             formatTime: function(timeObject) {
@@ -231,7 +301,7 @@
               if (timeString) {
                 const parts = /^(\d{1,2})(?::(\d{1,2}))?(?:\s(\w{2}))?$/.exec(timeString);
                 return parts && {
-                  hours: parseInt(parts[1]) + ((parts[3] == 'PM' || parts[3] == 'pm') ? 12 : 0),
+                  hours: parseInt(parts[1]) + (((parts[3] == 'PM') || (parts[3] == 'pm')) ? 12 : 0),
                   minutes: parts[2]
                 };
               }
