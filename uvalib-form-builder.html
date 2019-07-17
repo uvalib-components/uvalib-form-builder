@@ -509,6 +509,7 @@
                         this._errors = JSON.parse(JSON.stringify(this._errors));
                         this.shadowRoot.querySelector('#errorList').focus();
                         this.shadowRoot.querySelector('#btn_submit').submitted = false;
+                        this.shadowRoot.querySelector('#btn_submit').disabled = false;
                       }
                     })
                     .catch(error => {
