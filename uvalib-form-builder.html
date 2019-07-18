@@ -20,6 +20,7 @@
 <!-- link rel="import" href="uvalib-field-session-datetime.html" -->
 <link rel="import" href="uvalib-field-button.html">
 <link rel="import" href="../uvalib-sis-input/uvalib-sis-input.html">
+<link rel="import" href="../app-storage/app-localstorage/app-localstorage-document.html">
 
 <dom-module id="uvalib-form-builder">
   <template>
@@ -28,6 +29,7 @@
       </style>
     </custom-style>
 
+    <app-localstorage-document key="uvalib-header-height" data="{{_headerHeight}}" session-only></app-localstorage-document>
     <uva-library path="web/forms" items="{{formPage}}" filter="{{_formFilter}}"></uva-library>
 
     <uvalib-account-app></uvalib-account-app>
@@ -281,6 +283,10 @@
                     _networkConnectionMsg: {
                       type: String,
                       value: ""
+                    },
+                    _headerHeight: {
+                      type:String,
+                      value:"0"
                     }
                 });
             }
@@ -501,6 +507,10 @@
                 if (this._errors.length > 0) {
                   this._elements = JSON.parse(JSON.stringify(this._elements));
                   this.shadowRoot.querySelector('#errorList').focus();
+                  // Scroll the form-builder into view since the error message shows up at the top
+                  this.scrollIntoView();
+                  // Adjust the scroll position for the header height, and we want to show the previous element (should be a label or heading)
+                  window.scroll(0,window.scrollY-parseInt(this._headerHeight)-parseInt(this.previousElementSibling.offsetHeight)-5);
                   this.shadowRoot.querySelector('#btn_submit').submitted = false;
                   this.shadowRoot.querySelector('#btn_submit').disabled = false;
                 } else {
