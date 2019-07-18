@@ -4,6 +4,8 @@
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
 <link rel="import" href="../uvalib-theme/uvalib-fonts.html">
 <link rel="import" href="uvalib-form-style.html">
+<link rel="import" href="uvalib-form-style-vaadin-text-field.html">
+<link rel="import" href="uvalib-form-style-vaadin-time-picker.html">
 <link rel="import" href="uvalib-field.html">
 
 <dom-module id="uvalib-field-datetime">
@@ -42,11 +44,11 @@
         <vaadin-date-picker id="date" label="[[_labelForDate]]" min="[[_today()]]" initial-position="[[_daysOut(minimumDaysOut)]]"
          placeholder="MM/DD/YYYY" required="[[dateRequired]]" value="{{value.date}}" invalid="{{_dateError}}">
         </vaadin-date-picker>
-        <vaadin-time-picker hidden="{{hideStartTime}}" id="start" name="startTime" label="[[startTimeLabel]]"
+        <vaadin-time-picker hidden="{{hideStartTime}}" id="startTime" name="startTime" label="[[_labelForStartTime]]"
          step="[[_convertToSeconds(minuteStep)]]" placeholder="HH:MM AM/PM" required="[[startTimeRequired]]"
          value="{{value.startTime}}" invalid="{{_startTimeError}}">
         </vaadin-time-picker>
-        <vaadin-time-picker hidden="{{hideEndTime}}" id="end" name="endTime" label="[[endTimeLabel]]"
+        <vaadin-time-picker hidden="{{hideEndTime}}" id="endTime" name="endTime" label="[[_labelForEndTime]]"
          step="[[_convertToSeconds(minuteStep)]]" placeholder="HH:MM AM/PM" required="[[endTimeRequired]]"
          value="{{value.endTime}}" invalid="{{_endTimeError}}">
         </vaadin-time-picker>
@@ -92,18 +94,11 @@
             value: ""
           },
           /**
-           * value entered for the date input
-           */
-          dateValue: {
-            type: String,
-            value: ""
-          },
-          /**
-           * actual label to be displayed based on the properties set
+           * actual date label to be displayed based on the properties set
            */
           _labelForDate: {
             type: String,
-            computed: '_setLabel(dateLabel, numberChoice)'
+            computed: '_setDateLabel(dateLabel, numberChoice)'
           },
           /**
            * indicates invalid date value entered
@@ -124,7 +119,14 @@
            */
           startTimeLabel: {
             type: String,
-            value: "Start time"
+            value: ""
+          },
+          /**
+           * actual start time label to be displayed based on the properties set
+           */
+          _labelForStartTime: {
+            type: String,
+            computed: '_setTimeLabel(startTimeLabel,"Start time")'
           },
           /**
            * indicates the start time input should not be displayed
@@ -152,7 +154,14 @@
            */
           endTimeLabel: {
             type: String,
-            value: "End time"
+            value: ""
+          },
+          /**
+           * actual end time label to be displayed based on the properties set
+           */
+          _labelForEndTime: {
+            type: String,
+            computed: '_setTimeLabel(endTimeLabel,"End time")'
           },
           /**
            * indicates the end time input should not be displayed
@@ -201,13 +210,13 @@
         super.ready();
         if (this.element) {
           this.numberChoice = (this.element.number_choice) ? this.element.number_choice : this.numberChoice;
-          
+
         }
         if (!this.hideStartTime) {
-          this._setTimeFields('#start');
+          this._setTimeFields('#startTime');
         }
         if (!this.hideEndTime) {
-          this._setTimeFields('#end');
+          this._setTimeFields('#endTime');
         }
       }
 
@@ -267,12 +276,16 @@
           return i + "th";
       }
 
-      _setLabel(dateLabel, numberChoice) {
-        if (dateLabel != "") {
+      _setDateLabel(dateLabel, numberChoice) {
+        if (dateLabel && dateLabel != "") {
           return dateLabel;
         } else {
-          return (numberChoice != 0) ? this._ordinalSuffixOf(numberChoice)+ " choice": "Date";
+          return (numberChoice && numberChoice != 0) ? this._ordinalSuffixOf(numberChoice)+ " choice": "Date";
         }
+      }
+
+      _setTimeLabel(timeLabel,defaultLabel) {
+        return (timeLabel && timeLabel != "") ? timeLabel : defaultLabel;
       }
 
       _setErrorMsg(e) {

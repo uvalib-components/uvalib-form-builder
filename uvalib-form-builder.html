@@ -24,7 +24,7 @@
 <dom-module id="uvalib-form-builder">
   <template>
     <custom-style>
-      <style include="uvalib-theme uvalib-form-style">
+      <style include="uvalib-theme uvalib-form-style uvalib-form-style-vaadin">
       </style>
     </custom-style>
 
@@ -75,9 +75,12 @@
                     <uvalib-field-file id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-file>
                   </template>
                   <template is="dom-if" if="[[_isDateTime(fs_elem)]]">
-                    <uvalib-field-datetime id="[[fs_elem.webform_key]]" element="{{fs_elem}}"
-                      value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"
-                      invalid-values="{{_invalidValues}}" syntax-error="{{fs_elem.syntax_error}}">
+                    <uvalib-field-datetime id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}"
+                      number-choice="[[fs_elem.number_choice]]" date-label="[[fs_elem.date_label]]" date-required="[[fs_elem.date_required]]"
+                      start-time-label="[[fs_elem.start_time_label]]" hide-start-time="[[fs_elem.hide_start_time]]" start-time-required="[[fs_elem.start_time_required]]"
+                      end-time-label="[[fs_elem.end_time_label]]" hide-end-time="[[fs_elem.hide_end_time]]" end-time-required="[[fs_elem.end_time_required]]"
+                      minimum-days-out="[[fs_elem.minimum_days_out]]" minute-step="[[fs_elem.minute_step]]"
+                      hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}" syntax-error="{{fs_elem.syntax_error}}">
                     </uvalib-field-datetime>
                   </template>
                   <template is="dom-if" if="[[_isCheckbox(fs_elem)]]">
@@ -119,7 +122,13 @@
             <uvalib-field-file id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-file>
           </template>
           <template is="dom-if" if="[[_isDateTime(elem)]]">
-            <uvalib-field-datetime id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}" syntax-error="{{elem.syntax_error}}"></uvalib-field-datetime>
+            <uvalib-field-datetime id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}"
+              number-choice="[[elem.number_choice]]" date-label="[[elem.date_label]]" date-required="[[elem.date_required]]"
+              start-time-label="[elem.start_time_label]" hide-start-time="[[elem.hide_start_time]]" start-time-required="[[elem.start_time_required]]"
+              end-time-label="[elem.end_time_label]" hide-end-time="[[elem.hide_end_time]]" end-time-required="[[elem.end_time_required]]"
+              minimum-days-out="[[elem.minimum_days_out]]" minute-step="[[elem.minute_step]]"
+              hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}" syntax-error="{{elem.syntax_error}}">
+            </uvalib-field-datetime>
           </template>
           <template is="dom-if" if="[[_isCheckbox(elem)]]">
             <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
