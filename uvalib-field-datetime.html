@@ -208,10 +208,9 @@
         this.addEventListener('_start-time-error-changed',this._setErrorMsg);
         this.addEventListener('_end-time-error-changed',this._setErrorMsg);
         super.ready();
-        if (this.element) {
-          this.numberChoice = (this.element.number_choice) ? this.element.number_choice : this.numberChoice;
-
-        }
+//        if (this.element) {
+//          this.numberChoice = (this.element.number_choice) ? this.element.number_choice : this.numberChoice;
+//        }
         if (!this.hideStartTime) {
           this._setTimeFields('#startTime');
         }
@@ -221,7 +220,7 @@
       }
 
       _convertToSeconds(minutes) {
-        return minutes * 60;
+        return (minutes && minutes > 0) ? minutes * 60 : 60;
       }
 
       _changeInvalid(e) {
