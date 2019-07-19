@@ -25,7 +25,7 @@
 <dom-module id="uvalib-form-builder">
   <template>
     <custom-style>
-      <style include="uvalib-theme uvalib-form-style uvalib-form-style-vaadin">
+      <style include="uvalib-theme uvalib-form-style">
       </style>
     </custom-style>
 
@@ -508,7 +508,8 @@
                   this._elements = JSON.parse(JSON.stringify(this._elements));
                   this.shadowRoot.querySelector('#errorList').focus();
                   // Scroll the form-builder into view since the error message shows up at the top
-                  this.scrollIntoView();
+//                  this.scrollIntoView();
+                  this.shadowRoot.querySelector('#errorList').scrollIntoView();
                   // Adjust the scroll position for the header height, and we want to show the previous element (should be a label or heading)
                   window.scroll(0,window.scrollY-parseInt(this._headerHeight)-parseInt(this.previousElementSibling.offsetHeight)-5);
                   this.shadowRoot.querySelector('#btn_submit').submitted = false;

@@ -25,8 +25,11 @@
       <demo-snippet>
         <template>
           <uvalib-account-user id="accountuser" signed-in="{{signedIn}}" user-data="{{userData}}" contact-info="{{contactInfo}}"></uvalib-account-user>
+          <div style="background-color: orange; color: black; padding-bottom: 200px;">header...</div>
           <paper-button onclick="accountuser.signInWithNetbadge()" hidden$="[[signedIn]]" raised>Sign In with Netbadge</paper-button>
+          <div style="background-color: white; color: blue; padding-bottom: 300px;">some content...</div>
           <uvalib-form-builder form-id="purchase_requests"></uvalib-form-builder>
+          <div style="background-color: blue; color: white; padding-bottom: 300px;">footer...</div>
         </template>
       </demo-snippet>
     </div>
