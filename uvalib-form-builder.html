@@ -528,10 +528,9 @@
                 // if invalid input then reset the array
                 if (this._errors.length > 0) {
                   this._elements = JSON.parse(JSON.stringify(this._elements));
-                  this.shadowRoot.querySelector('#errorList').focus();
                   // Scroll the form-builder into view since the error message shows up at the top
-//                  this.scrollIntoView();
                   this.shadowRoot.querySelector('#errorList').scrollIntoView();
+                  this.shadowRoot.querySelector('#errorList').focus();
                   // Adjust the scroll position for the header height, and we want to show the previous element (should be a label or heading)
                   window.scroll(0,window.scrollY-parseInt(this._headerHeight)-parseInt(this.previousElementSibling.offsetHeight)-5);
                   this.shadowRoot.querySelector('#btn_submit').submitted = false;
