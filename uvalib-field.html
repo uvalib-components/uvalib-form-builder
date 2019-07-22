@@ -134,6 +134,10 @@
           return (el.description && el.description.markup && el.description.markup!='');
         }
 
+        _hasTitle(el) {
+          return (el.title && el.title!='');
+        }
+
         _isRequired(el) {
           // if the input field is actually being hidden then we shouldn't require a value for it
           return (el.required || el._required);

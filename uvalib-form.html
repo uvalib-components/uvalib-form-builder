@@ -82,12 +82,16 @@
             _isCheckboxes(el) {
                 return (el.type && el.type == "checkboxes");
             }
+            /**
+             * Date/time is used in Drupal Webform builder for indicating the
+             * group of date, start, and end times as a single complex input.
+             */
             _isDateTime(el) {
                 return (el.type && el.type == "datetime");
             }
 
             _isField(el) {
-                return (el.type && (el.type == "hidden" || el.type == "datetime" || el.type == "file" || el.type == "number" || el.type == "email" || el.type == "tel" || el.type == "text" || el.type == "select" || el.type == "textarea" || el.type == "radios" || el.type == "container" || el.type == "checkbox" || el.type == "checkboxes" || el.type == "fieldset" || el.type == "webform_actions"));
+                return (el.type && (el.type == "hidden" || el.type == "datelist" || el.type == "datetime" || el.type == "file" || el.type == "number" || el.type == "email" || el.type == "tel" || el.type == "text" || el.type == "select" || el.type == "textarea" || el.type == "radios" || el.type == "container" || el.type == "checkbox" || el.type == "checkboxes" || el.type == "fieldset" || el.type == "webform_actions"));
             }
 
             _isFile(el) {
@@ -122,8 +126,20 @@
                 return (el.type && el.type == "textarea");
             }
 
+            /**
+             * Container is used in Drupal Webform builder for indicating the
+             * group of course inputs: term, course, section, title, meeting time,
+             * etc. and prompts to select from multiple sections if they exist.
+             */
             _isSectionSelect(el) {
                 return (el.type && el.type == "container");
+            }
+            /**
+             * Date List is used in Drupal Webform builder for indicating the
+             * severl date/time options for a session, e.g. 1st, 2nd, and 3rd choices.
+             */
+            _isSessionDateTimes(el) {
+              return (el.type && el.type == "datelist");
             }
 
             _showField(item, refresh) {
