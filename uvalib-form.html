@@ -176,11 +176,20 @@
               for (var key in state) {
                   var id = key.replace(/.*"(.*)".*/, "$1"),
                       val = state[key].value;
+                  // need to handle checkbox group state/values
+                  var chkBoxGrp = id.split(/\[|\]/);
+                  if (chkBoxGrp.length == 3) {
+                    if (!this.shadowRoot.querySelector('#' + chkBoxGrp[0]) || !(chkBoxGrp[1] in this.shadowRoot.querySelector('#' + chkBoxGrp[0]).value)) {
+                      test = false;
+                      break;
+                    }
+                  } else
+                  // this works for simple input types where the value doesn't have multiple options
                   if (!this.shadowRoot.querySelector('#' + id) || this.shadowRoot.querySelector('#' + id).value != val) {
                       test = false;
                       break;
                   }
-                  // @TODO We should probably test to see if the input field is marked as hidden and have the test fail in that condition as well
+
               }
               return test;
             }
