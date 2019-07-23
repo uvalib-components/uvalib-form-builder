@@ -42,7 +42,6 @@
       }
 
       _fileExtensions(el) {
-        console.log('_fileExtensions');
         let list = (el.file_extensions && el.file_extensions.length > 0) ? '.'+el.file_extensions.replace(/ /g,',.') : '';
         list += (list != '') ? ',' : '';
         list += (el.accept && el.accept != '') ? el.accept : '';
