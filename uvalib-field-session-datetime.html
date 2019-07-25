@@ -1,9 +1,9 @@
 <link rel="import" href="../polymer/polymer-element.html">
-<link rel="import" href="uvalib-field.html">
-<link rel="import" href="uvalib-field-datetime.html">
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
 <link rel="import" href="../uvalib-theme/uvalib-fonts.html">
 <link rel="import" href="uvalib-form-style.html">
+<link rel="import" href="uvalib-field.html">
+<link rel="import" href="uvalib-field-datetime.html">
 
 <dom-module id="uvalib-field-session-datetime">
   <template>
@@ -16,8 +16,8 @@
       <label class="field-label">[[sessionLabel]]</label>
       <template is="dom-if" if="[[includeSessionLength]]">
         <div class="form-field">
-          <label class="field-label" for$="[[element.webform_key]][[item]]">Length (minutes)<span class="required" aria-hidden="true">*</span><span class="hidden">required</span></label>
-          <input type="number" step="5" min="[[minSessionLength]]" id="sessionLength" name="sessionLength" required aria-required value="{{value.sessionLength::change}}" on-change="_sessionLengthChanged" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
+          <label class="field-label" for="sessionLength">Length (minutes)<span class="required" aria-hidden="true">*</span><span class="hidden">required</span></label>
+          <input type="number" step="5" id="sessionLength" name="sessionLength" required aria-required value="{{value.sessionLength::change}}" on-change="_sessionLengthChanged" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
           <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{_hideMessage}}"><span hidden="{{_syntaxInvalid}}">Please enter the number of minutes for the session length.</span> <span hidden$="{{!_syntaxInvalid}}">Digits are only allowed for this input.</span></div>
         </div>
       </template>
@@ -43,11 +43,14 @@
       static get is() { return 'uvalib-field-session-datetime'; }
       static get properties() {
         return Object.assign(super.properties,{
+          /**
+           * Values entered for the session length and multiple date/time choices.
+           */
           value: {
             type: Object,
             value: function() {return {sessionLength: "", sessionDateTime: []};},
-            notify: true,
-            reflectToAttribute: true
+            reflectToAttribute: true,
+            notify: true
           },
           /**
            * used for template dom-repeat of the number of sessions displayed and their values input
@@ -69,13 +72,6 @@
           includeSessionLength: {
             type: Boolean,
             value: false
-          },
-          /**
-           * the minimum number of minutes expected session length
-           */
-          minSessionLength: {
-            type: Number,
-            value: 30
           },
           /**
            * number of choices to display for a session
@@ -157,6 +153,7 @@
         for (var i=0; i < this.numberChoices; i++) {
           this._datetimes[i] = { nth: i+1, preferredDateTime: {date: "", startTime: "", endTime: ""}};
         }
+        console.log(this.value);
       }
 
       _compareNumberChoices(choicesRequired, numberChoices) {
@@ -172,26 +169,13 @@
       }
 
       _sessionLengthChanged(e) {
-        var num = new RegExp(/^\d+$/);
-        this.value.sessionLength = this.value.sessionLength.trim();
         console.log(this.value.sessionLength);
-        if (this.includeSessionLength) {
-          if (num.test(this.value.sessionLength)) {
-            if (this.value.sessionLength <= this.minSessionLength) {
-              this._syntaxInvalid = false;
-              this._hideMessage = false;
-            }
-          } else {
-            this._syntaxInvalid = true;
-            this._hideMessage = false;
-          }
-        }
       }
 
       _preferredDateTimeChanged(e) {
         this.value.sessionDateTime = this._datetimes;
         console.log(this.value.sessionDateTime);
-}
+      }
     }
 
     window.customElements.define(UvalibFieldSessionDatetime.is, UvalibFieldSessionDatetime);

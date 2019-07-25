@@ -116,6 +116,9 @@
           } else if (this.element.type == "datetime") {
             // @TODO what needs to be done when something is changed on this complex input type?
             // Check date valid, check start time valid, check end time valid depending on properties?
+          } else if (this.element.type == "datelist") {
+            // @TODO what needs to be done when something is changed on this complex input type?
+            // Check length is number, date valid, check start time valid, check end time valid depending on properties?
           } else {
             // trim leading and trailing whitespace from the content entered
             this.value = this.shadowRoot.querySelector('#'+this.element.webform_key).value.trim();

@@ -99,13 +99,13 @@
                   </template>
                   <template is="dom-if" if="[[_isSessionDateTimes(fs_elem)]]">
                     <uvalib-field-session-datetime id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}"
-                      number-choices="[[fs_elem.number_choices]]" num-choices-required="[[fs_elem.num_choices_required]]"
-                      include-session-length="[[fs_elem.include_session_length]]" min-session-length="[[fs_elem.min_session_length]]"
-                      session-label="[[fs_elem.session_label]]" date-required="[[fs_elem.date_required]]"
-                      hide-start-time="[[fs_elem.hide_start_time]]" start-time-required="[[fs_elem.start_time_required]]"
-                      hide-end-time="[[fs_elem.hide_end_time]]" end-time-required="[[fs_elem.end_time_required]]"
-                      minimum-days-out="[[fs_elem.minimum_days_out]]" minute-step="[[fs_elem.minute_step]]"
-                      hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}" syntax-error="{{fs_elem.syntax_error}}">
+                      number-choices$="[[fs_elem.number_choices]]" num-choices-required$="[[fs_elem.num_choices_required]]"
+                      include-session-length$="[[fs_elem.include_session_length]]"
+                      session-label$="[[fs_elem.session_label]]" date-required$="[[fs_elem.date_required]]"
+                      hide-start-time$="[[fs_elem.hide_start_time]]" start-time-required$="[[fs_elem.start_time_required]]"
+                      hide-end-time$="[[fs_elem.hide_end_time]]" end-time-required$="[[fs_elem.end_time_required]]"
+                      minimum-days-out$="[[fs_elem.minimum_days_out]]" minute-step$="[[fs_elem.minute_step]]"
+                      hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}">
                     </uvalib-field-session-datetime>
                   </template>
                   <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
@@ -155,7 +155,7 @@
           <template is="dom-if" if="[[_isSessionDateTimes(elem)]]">
             <uvalib-field-session-datetime id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}"
               number-choices="[[elem.number_choices]]" num-choices-required="[[elem.num_choices_required]]"
-              include-session-length="[[elem.include_session_length]]" min-session-length="[[elem.min_session_length]]"
+              include-session-length="[[elem.include_session_length]]"
               session-label="[[elem.session_label]]" date-required="[[elem.date_required]]"
               hide-start-time="[[elem.hide_start_time]]" start-time-required="[[elem.start_time_required]]"
               hide-end-time="[[elem.hide_end_time]]" end-time-required="[[elem.end_time_required]]"
