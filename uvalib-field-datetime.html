@@ -209,9 +209,6 @@
         this.addEventListener('_start-time-error-changed',this._setErrorMsg);
         this.addEventListener('_end-time-error-changed',this._setErrorMsg);
         super.ready();
-//        if (this.element) {
-//          this.numberChoice = (this.element.number_choice) ? this.element.number_choice : this.numberChoice;
-//        }
         if (!this.hideStartTime) {
           this._setTimeFields('#startTime');
         }
@@ -234,9 +231,7 @@
 
       _valueChanged(e) {
         console.log('_valueChanged:');
-        console.log(this.value.date);
-        console.log(this.value.startTime);
-        console.log(this.value.endTime);
+        console.log(this.value);
         this.dispatchEvent(new CustomEvent('date-time-change', {bubbles: true, composed: true, detail: {dateTime: this.value}}));
       }
 
