@@ -17,7 +17,7 @@
       <template is="dom-if" if="[[includeSessionLength]]">
         <div class="form-field">
           <label class="field-label" for="sessionLength">Length (minutes)<span class="required" aria-hidden="true">*</span><span class="hidden">required</span></label>
-          <input type="number" step="5" id="sessionLength" name="sessionLength" required aria-required value="{{value.sessionLength::change}}" on-change="_sessionLengthChanged" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
+          <input type="number" min="0" step="5" id="sessionLength" name="sessionLength" required aria-required value="{{value.sessionLength::change}}" on-change="_sessionLengthChanged" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
           <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{_hideMessage}}"><span hidden="{{_syntaxInvalid}}">Please enter the number of minutes for the session length.</span> <span hidden$="{{!_syntaxInvalid}}">Digits are only allowed for this input.</span></div>
         </div>
       </template>
