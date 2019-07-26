@@ -369,6 +369,8 @@
               e.preventDefault();
               let target = e.currentTarget.getAttribute('href');
               this.shadowRoot.querySelector(target).scrollIntoView();
+              // Adjust the scroll position for the header height, and we want to show the previous element (should be a label or heading)
+              window.scroll(0,window.scrollY-parseInt(this._headerHeight)-parseInt(this.shadowRoot.querySelector(target).offsetHeight)-5);
               this.shadowRoot.querySelector(target).focus();
             }
 

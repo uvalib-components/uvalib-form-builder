@@ -50,7 +50,8 @@
             type: Object,
             value: function() {return {sessionLength: "", sessionDateTime: []};},
             reflectToAttribute: true,
-            notify: true
+            notify: true,
+            observer: '_validateValue'
           },
           /**
            * used for template dom-repeat of the number of sessions displayed and their values input
@@ -153,9 +154,16 @@
         for (var i=0; i < this.numberChoices; i++) {
           this._datetimes[i] = { nth: i+1, preferredDateTime: {date: "", startTime: "", endTime: ""}};
         }
-        console.log(this.value);
       }
 
+      _validateValue() {
+        if (typeof this.value === 'object' && this.value !== null) {
+          if (!this.value.hasOwnProperty('sessionLength')) this.set('value.sessionLength', "");
+          if (!this.value.hasOwnProperty('sessionDateTime')) this.set('value.sessionDateTime', []);
+        } else {
+          this.set('value', {sessionLength: "", sessionDateTime: []});
+        }
+      }
       _compareNumberChoices(choicesRequired, numberChoices) {
         return (choicesRequired > numberChoices) ? numberChoices : choicesRequired;
       }
@@ -169,12 +177,13 @@
       }
 
       _sessionLengthChanged(e) {
-        console.log(this.value.sessionLength);
+        this.set('value.sessionLength', this.shadowRoot.querySelector('#sessionLength').value);
       }
 
       _preferredDateTimeChanged(e) {
-        this.value.sessionDateTime = this._datetimes;
-        console.log(this.value.sessionDateTime);
+        this.set('value.sessionDateTime', this._datetimes);
+        //this.value.sessionDateTime = this._datetimes;
+        console.log(this.value);
       }
     }
 
