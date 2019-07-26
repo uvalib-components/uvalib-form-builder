@@ -190,11 +190,14 @@
          * @polymer
          * @demo demo/index.html
          * @demo demo/purchase-request.html
+         * @demo demo/uvalib-field-button.html
          * @demo demo/uvalib-field-checkbox.html
+         * @demo demo/uvalib-form-datetime.html
+         * @demo demo/uvalib-field-file.html
          * @demo demo/uvalib-field-input.html
          * @demo demo/uvalib-field-select.html
+         * @demo demo/uvalib-form-session-datetime.html
          * @demo demo/uvalib-field-textarea.html
-         * @demo demo/uvalib-form-fieldset.html
          */
         class UvalibFormBuilder extends UvalibForm(Polymer.Element) {
             static get is() {
@@ -492,8 +495,6 @@
                   if ((this._elements[fldIndex][key].type == 'tel') && this._elements[fldIndex][key].value != '') {
                     this._validatePhone(key,this._elements[fldIndex][key]);
                   }
-                } else if (key.match(/^fldset_/)) {
-                  // @TODO Revisit when we use <fieldset>
                 }
               }
             }
@@ -519,8 +520,6 @@
                       if ((this._elements[i].type == 'email') && this._elements[i].valid) {
                         this._validateEmail(field,this._elements[i]);
                       }
-                    } else if (field.match(/^fldset_/)) {
-                      // @TODO Revisit when we use <fieldset>
                     }
                   }
                 }
@@ -694,12 +693,12 @@
                     for (var key in form) {
                         if (key.match(/^sect_/)) {
                           for (var skey in form[key]) {
-                            if (skey.match(/^fld_|fldset_/)) {
+                            if (skey.match(/^fld_/)) {
                               this._preprocessField(form[key][skey],this.userInfo);
                             }
                           }
                         }
-                        if (key.match(/^sect_|fld_|fldset_|mkup_|btn_|authenticated|confirmation/)) {
+                        if (key.match(/^sect_|fld_|mkup_|btn_|authenticated|confirmation/)) {
                             fields.push(form[key]);
                             this._preprocessField(form[key],this.userInfo);
                         }
