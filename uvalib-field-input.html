@@ -16,7 +16,9 @@
       <template is="dom-if" if="[[_hasDescription(element)]]">
         <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
       </template>
-      <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_ariaRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
+      <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]"
+        aria-required$="[[_ariaRequired(element)]]" value$="{{element.value::change}}" on-change="_changedValue"
+        aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}" min$="[[element.min]]" step$="[[element.step]]"/>
       <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{_hideMessage}}"><span hidden="{{_syntaxInvalid}}">[[element.required_error]]</span> <span hidden$="{{!_syntaxInvalid}}">[[element.syntax_error]]</span></div>
     </div>
   </template>
