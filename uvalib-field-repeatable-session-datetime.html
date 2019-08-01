@@ -40,7 +40,7 @@
     </custom-style>
 
     <template is="dom-repeat" items="{{_values}}">
-      <div class="session" hidden="[[!_show(item.nth, _occurrenceCount, _values)]]">
+      <div class="session" hidden="[[!_show(item.nth, _refresh)]]">
         <uvalib-field-session-datetime id="sessionDatetime_[[item.nth]]" value="{{item.data}}"
           number-choices="[[numberChoices]]" num-choices-required="[[numChoicesRequired]]"
           include-session-length="[[includeSessionLength]]"
@@ -49,7 +49,7 @@
           hide-end-time="[[hideEndTime]]" end-time-required="[[endTimeRequired]]"
           minimum-days-out="[[minimumDaysOut]]" minute-step="[[minuteStep]]">
         </uvalib-field-session-datetime>
-        <input hidden="[[!_showRemove(item.nth, _occurrenceCount)]]" class="remove" type="button" disabled="[[!_canRemove(item.nth, _occurrenceCount)]]"
+        <input hidden="[[!_showRemove(item.nth, _refresh)]]" class="remove" type="button" disabled="[[!_canRemove(item.nth, _refresh)]]"
           id="remove_[[item.nth]]" name="remove_[[item.nth]]" nth="[[item.nth]]" value="Remove this" on-click="_removeItem"/>
       </div>
     </template>
@@ -177,6 +177,13 @@
           minuteStep: {
             type: Number,
             value: 1
+          },
+          /**
+           * used to signal that something has changed in the form based on user interaction
+           */
+          _refresh: {
+              type: Boolean,
+              value: false
           }
         });
       }
@@ -203,20 +210,20 @@
       }
 
       _addAnotherItem(e) {
-        console.log(this._occurrenceCount);
         this._occurrenceCount += 1;
+        console.log(this._occurrenceCount);
         if (this._occurrenceCount < this.maximumOccurrences) {
           this._values[this._occurrenceCount].show = true;
           if (this._values[this._occurrenceCount].show) {
             console.log(this._values[this._occurrenceCount]);
           }
         }
-        console.log(this._occurrenceCount);
         this._disableAdd = ((this._occurrenceCount + 1) == this.maximumOccurrences) ? true : false;
+        this._refresh = !this._refresh;
       }
 
-      _canRemove(nth, count) {
-          return (count > 1 && nth <= count);
+      _canRemove(nth, refresh) {
+          return (this._occurrenceCount > 1 && nth <= this._occurrenceCount);
       }
 
       /**
@@ -237,15 +244,16 @@
         for (var i=0; i<this.maximumOccurrences; i++) {
           console.log(this._values[i]);
         }
+        this._refresh = !this._refresh;
       }
 
-      _show(nth, count, values) {
-        console.log(nth+' '+count+' '+values[nth].show);
+      _show(nth, refresh) {
+        console.log(nth+' '+this._occurrenceCount+' '+this._values[nth-1].show);
         return this._values[nth-1].show;
       }
 
-      _showRemove(nth, count) {
-        return (count > 1 && nth > 0); //(nth > 0);
+      _showRemove(nth, refresh) {
+        return (this._occurrenceCount > 1 && nth > 0); //(nth > 0);
       }
 
     }
