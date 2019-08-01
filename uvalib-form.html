@@ -134,12 +134,20 @@
             _isSectionSelect(el) {
                 return (el.type && el.type == "container");
             }
+
             /**
              * Date List is used in Drupal Webform builder for indicating the
              * severl date/time options for a session, e.g. 1st, 2nd, and 3rd choices.
              */
             _isSessionDateTimes(el) {
-              return (el.type && el.type == "datelist");
+              return ((el.type && el.type == "datelist") && (!el.maximum_occurrences || (el.maximum_occurrences && el.maximum_occurrences <= 0)));
+            }
+            
+            /**
+             * Check to see if the field is a repeatable one. There are only a few complex inputs that would repeat on a form.
+             */
+            _isRepeatableField(el) {
+              return (el.maximum_occurrences && el.maximum_occurrences > 0);
             }
 
             _showField(item, refresh) {

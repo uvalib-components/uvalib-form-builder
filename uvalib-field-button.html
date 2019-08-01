@@ -15,9 +15,13 @@
           font-weight: bold;
           border-radius: calc(var(--uvalib-main-font-size-unit)/4);
         }
-        input.Submit:hover, input.Submit:disabled {
+        input.Submit:hover {
           background-color: var(--uvalib-secondary-medium-gray);
           color: var(--uvalib-main-black);
+        }
+        input.Submit:disabled {
+          background-color: var(--uvalib-secondary-light-gray);
+          color: var(--uvalib-secondary-dark-gray);
         }
         paper-spinner {
           margin-left: 10px;

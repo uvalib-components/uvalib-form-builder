@@ -18,6 +18,7 @@
 <link rel="import" href="uvalib-field-radios.html">
 <link rel="import" href="uvalib-field-datetime.html">
 <link rel="import" href="uvalib-field-session-datetime.html">
+<link rel="import" href="uvalib-field-repeatable-session-datetime.html">
 <link rel="import" href="uvalib-field-button.html">
 <link rel="import" href="../uvalib-sis-input/uvalib-sis-input.html">
 <link rel="import" href="../app-storage/app-localstorage/app-localstorage-document.html">
@@ -111,6 +112,17 @@
                   <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
                     <uvalib-sis-input counter="[[_counter]] "id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" show-alternate$="{{fs_elem.show_alternate}}"></uvalib-sis-input>
                   </template>
+                  <template is="dom-if" if="[[_isRepeatableField(fs_elem)]]">
+                    <uvalib-field-repeatable-session-datetime id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}"
+                      maximum-occurrences="[[fs_elem.maximum_occurrences]]" include-session-length="[[fs_elem.include_session_length]]"
+                      number-choices="[[fs_elem.number_choices]]" num-choices-required="[[fs_elem.num_choices_required]]"
+                      session-label="[[fs_elem.session_label]]" date-required="[[fs_elem.date_required]]"
+                      hide-start-time="[[fs_elem.hide_start_time]]" start-time-required="[[fs_elem.start_time_required]]"
+                      hide-end-time="[[fs_elem.hide_end_time]]" end-time-required="[[fs_elem.end_time_required]]"
+                      minimum-days-out="[[fs_elem.minimum_days_out]]" minute-step="[[fs_elem.minute_step]]"
+                      hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}">
+                    </uvalib-field-repeatable-session-datetime>
+                  </template>
                 </template>
     </template>
     </div>
@@ -195,6 +207,7 @@
          * @demo demo/uvalib-form-datetime.html
          * @demo demo/uvalib-field-file.html
          * @demo demo/uvalib-field-input.html
+         * @demo demo/uvalib-field-repeatable-session-datetime.html
          * @demo demo/uvalib-field-select.html
          * @demo demo/uvalib-form-session-datetime.html
          * @demo demo/uvalib-field-textarea.html
