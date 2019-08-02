@@ -22,7 +22,7 @@
         </div>
       </template>
       <template is="dom-repeat" items="{{_datetimes}}">
-        <uvalib-field-datetime number-choice="[[item.nth]]" date-required="[[_isRequired(dateRequired,_numChoicesRequired,item.nth)]]"
+        <uvalib-field-datetime id="datetime_[[item.nth]]" number-choice="[[item.nth]]" date-required="[[_isRequired(dateRequired,_numChoicesRequired,item.nth)]]"
           hide-start-time="[[hideStartTime]]" start-time-required="[[_isRequired(startTimeRequired,_numChoicesRequired,item.nth)]]"
           hide-end-time="[[hideEndTime]]" end-time-required="[[_isRequired(endTimeRequired,_numChoicesRequired,item.nth)]]"
           minimum-days-out="[[minimumDaysOut]]" minute-step="[[minuteStep]]" value="{{item.preferredDateTime}}"></uvalib-field-datetime>
@@ -156,6 +156,14 @@
         }
       }
 
+      focus() {
+        if (this.includeSessionLength) {
+          this.shadowRoot.querySelector('#sessionLength').focus();
+        } else {
+          this.shadowRoot.querySelector('#datetime_1').focus();
+        }
+      }
+
       _validateValue() {
         if (typeof this.value === 'object' && this.value !== null) {
           if (!this.value.hasOwnProperty('sessionLength')) this.set('value.sessionLength', "");
@@ -164,7 +172,7 @@
           this.set('value', {sessionLength: "", sessionDateTime: []});
         }
       }
-      
+
       _compareNumberChoices(choicesRequired, numberChoices) {
         return (choicesRequired > numberChoices) ? numberChoices : choicesRequired;
       }
@@ -183,8 +191,8 @@
 
       _preferredDateTimeChanged(e) {
         this.set('value.sessionDateTime', this._datetimes);
-        //this.value.sessionDateTime = this._datetimes;
         console.log(this.value);
+        this.dispatchEvent(new CustomEvent('session-change', {bubbles: true, composed: true, detail: {value: this._datetimes}}));
       }
     }
 

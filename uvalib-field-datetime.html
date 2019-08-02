@@ -230,8 +230,8 @@
       }
 
       _valueChanged(e) {
-        console.log('_valueChanged:');
-        console.log(this.value);
+//        console.log('_valueChanged:');
+//        console.log(this.value);
         this.dispatchEvent(new CustomEvent('date-time-change', {bubbles: true, composed: true, detail: {dateTime: this.value}}));
       }
 
