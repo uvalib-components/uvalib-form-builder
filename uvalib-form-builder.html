@@ -120,7 +120,8 @@
                       hide-start-time="[[fs_elem.hide_start_time]]" start-time-required="[[fs_elem.start_time_required]]"
                       hide-end-time="[[fs_elem.hide_end_time]]" end-time-required="[[fs_elem.end_time_required]]"
                       minimum-days-out="[[fs_elem.minimum_days_out]]" minute-step="[[fs_elem.minute_step]]"
-                      hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}">
+                      hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"
+                      header-height="[[this._headerHeight]]">
                     </uvalib-field-repeatable-session-datetime>
                   </template>
                 </template>
@@ -175,8 +176,20 @@
               hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}" syntax-error="{{elem.syntax_error}}">
             </uvalib-field-session-datetime>
           </template>
-          <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
+          <template is="dom-if" if="[[_isSectionSelect(elem)]]">
             <uvalib-sis-input counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-sis-input>
+          </template>
+          <template is="dom-if" if="[[_isRepeatableField(elem)]]">
+            <uvalib-field-repeatable-session-datetime id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}"
+              maximum-occurrences="[[fs_elem.maximum_occurrences]]" include-session-length="[[elem.include_session_length]]"
+              number-choices="[[elem.number_choices]]" num-choices-required="[[elem.num_choices_required]]"
+              session-label="[[elem.session_label]]" date-required="[[elem.date_required]]"
+              hide-start-time="[[elem.hide_start_time]]" start-time-required="[[elem.start_time_required]]"
+              hide-end-time="[[elem.hide_end_time]]" end-time-required="[[elem.end_time_required]]"
+              minimum-days-out="[[elem.minimum_days_out]]" minute-step="[[elem.minute_step]]"
+              hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"
+              header-height="[[this._headerHeight]]">
+            </uvalib-field-repeatable-session-datetime>
           </template>
     </template>
     </template>

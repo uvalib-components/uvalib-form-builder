@@ -13,7 +13,7 @@
     </custom-style>
 
     <div class="form-field-group">
-      <label class="field-label">[[sessionLabel]]</label>
+      <label class="field-label">{{sessionLabel}}</label>
       <template is="dom-if" if="[[includeSessionLength]]">
         <div class="form-field">
           <label class="field-label" for="sessionLength">Length (minutes)<span class="required" aria-hidden="true">*</span><span class="hidden">required</span></label>
@@ -65,7 +65,9 @@
            */
           sessionLabel: {
             type: String,
-            value: "Session Date/Time"
+            value: "Session Date/Time",
+            notify: true,
+            reflectToAttribute: true
           },
           /**
            * indicates if a session length of time input field should be displayed before the date time inputs.
