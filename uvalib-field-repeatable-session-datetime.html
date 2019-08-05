@@ -235,7 +235,8 @@
        */
       _removeItem(e) {
         this._occurrenceCount -= 1;
-        var nth = e.path[0].nth;
+        var path = e.path || (e.composedPath && e.composedPath());
+        var nth = path[0].nth;
         var copy = this._values.slice(0);
         var removed = copy.splice(nth-1,1);
         for (var i=0; i<this.maximumOccurrences-1; i++) {
@@ -280,7 +281,6 @@
       }
 
       _setRemoveSessionFocus(e) {
-        console.log(e);
         var focused = '';
         // if just one session left showing
         if (e.detail.count == 0) {
@@ -290,7 +290,6 @@
         } else if (e.detail.nth == (e.detail.count+2)){
           focused = '#addOccurrence';
         }
-        console.log(focused);
         var node = this;
         setTimeout(function() {
           node.shadowRoot.querySelector(focused).scrollIntoView();
