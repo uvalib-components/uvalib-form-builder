@@ -58,7 +58,9 @@
            */
           _datetimes: {
             type: Array,
-            value: []
+            value: [],
+            reflectToAttribute: true,
+            notify: true
           },
           /**
            * the label to be used when displaying the session group of date times inputs and optional length
@@ -149,6 +151,12 @@
         });
       }
 
+      static get observers() {
+        return [
+            'sessionDateTimeChanged(value.sessionDateTime)'
+        ]
+      }
+
       ready() {
         this.addEventListener('date-time-change',this._preferredDateTimeChanged);
         super.ready();
@@ -163,6 +171,13 @@
           this.shadowRoot.querySelector('#sessionLength').focus();
         } else {
           this.shadowRoot.querySelector('#datetime_1').focus();
+        }
+      }
+
+      sessionDateTimeChanged(sessionDateTime) {
+        console.log(sessionDateTime.length);
+        if (sessionDateTime.length) {
+          this._datetimes = sessionDateTime;
         }
       }
 
