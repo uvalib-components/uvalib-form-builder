@@ -153,17 +153,14 @@
 
       static get observers() {
         return [
-            'sessionDateTimeChanged(value.sessionDateTime)'
+            '_sessionDateTimeChanged(value.sessionDateTime)'
         ]
       }
 
       ready() {
         this.addEventListener('date-time-change',this._preferredDateTimeChanged);
         super.ready();
-        this._datetimes = new Array();
-        for (var i=0; i < this.numberChoices; i++) {
-          this._datetimes[i] = { nth: i+1, preferredDateTime: {date: "", startTime: "", endTime: ""}};
-        }
+        this._initializeDateTimeArray();
       }
 
       focus() {
@@ -174,24 +171,15 @@
         }
       }
 
-      sessionDateTimeChanged(sessionDateTime) {
-        console.log(sessionDateTime.length);
-        if (sessionDateTime.length) {
-          this._datetimes = sessionDateTime;
-        }
-      }
-
-      _validateValue() {
-        if (typeof this.value === 'object' && this.value !== null) {
-          if (!this.value.hasOwnProperty('sessionLength')) this.set('value.sessionLength', "");
-          if (!this.value.hasOwnProperty('sessionDateTime')) this.set('value.sessionDateTime', []);
-        } else {
-          this.set('value', {sessionLength: "", sessionDateTime: []});
-        }
-      }
-
       _compareNumberChoices(choicesRequired, numberChoices) {
         return (choicesRequired > numberChoices) ? numberChoices : choicesRequired;
+      }
+
+      _initializeDateTimeArray() {
+        this._datetimes = new Array();
+        for (var i=0; i < this.numberChoices; i++) {
+          this._datetimes[i] = { nth: i+1, preferredDateTime: {date: "", startTime: "", endTime: ""}};
+        }
       }
 
       _isRequired(required, numChoicesRequired, nthDateTime) {
@@ -202,14 +190,30 @@
         }
       }
 
+      _preferredDateTimeChanged(e) {
+        this.set('value.sessionDateTime', this._datetimes);
+        this.dispatchEvent(new CustomEvent('session-change', {bubbles: true, composed: true, detail: {value: this._datetimes}}));
+      }
+
+      _sessionDateTimeChanged(sessionDateTime) {
+        if (sessionDateTime.length) {
+          this._datetimes = sessionDateTime.slice(0);
+        } else {
+          this._initializeDateTimeArray();
+        }
+      }
+
       _sessionLengthChanged(e) {
         this.set('value.sessionLength', this.shadowRoot.querySelector('#sessionLength').value);
       }
 
-      _preferredDateTimeChanged(e) {
-        this.set('value.sessionDateTime', this._datetimes);
-        console.log(this.value);
-        this.dispatchEvent(new CustomEvent('session-change', {bubbles: true, composed: true, detail: {value: this._datetimes}}));
+      _validateValue() {
+        if (typeof this.value === 'object' && this.value !== null) {
+          if (!this.value.hasOwnProperty('sessionLength')) this.set('value.sessionLength', "");
+          if (!this.value.hasOwnProperty('sessionDateTime')) this.set('value.sessionDateTime', []);
+        } else {
+          this.set('value', {sessionLength: "", sessionDateTime: []});
+        }
       }
     }
 

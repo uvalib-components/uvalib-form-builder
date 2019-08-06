@@ -33,7 +33,7 @@
         .remove {
           padding: 5px;
         }
-        #addOccurrence {
+        #addSession {
           margin-top: 10px;
         }
       </style>
@@ -50,10 +50,10 @@
           minimum-days-out="[[minimumDaysOut]]" minute-step="[[minuteStep]]">
         </uvalib-field-session-datetime>
         <input hidden="[[!_showRemove(item.nth, _refresh)]]" class="remove" type="button" disabled="[[!_canRemove(item.nth, _refresh)]]"
-          id="remove_[[item.nth]]" name="remove_[[item.nth]]" nth="[[item.nth]]" value="Remove this" on-click="_removeItem"/>
+          id="remove_[[item.nth]]" name="remove_[[item.nth]]" nth="[[item.nth]]" value="Remove session" on-click="_removeSession"/>
       </div>
     </template>
-    <input type="button" disabled="[[_disableAdd(_occurrenceCount, _refresh)]]" id="addOccurrence" name="addOccurrence" value="Add another" on-click="_addAnotherItem"/>
+    <input type="button" disabled="[[_disableAdd(_occurrenceCount, _refresh)]]" id="addSession" name="addSession" value="Add session" on-click="_addSession"/>
   </template>
 
   <script>
@@ -213,7 +213,7 @@
         this._values[0].show = true;
       }
 
-      _addAnotherItem(e) {
+      _addSession(e) {
         this._occurrenceCount += 1;
         if (this._occurrenceCount < this.maximumOccurrences) {
           this._values[this._occurrenceCount].show = true;
@@ -233,7 +233,7 @@
       /**
        * Remove the appropriate entry from the array and refresh the array to trigger a refresh???
        */
-      _removeItem(e) {
+      _removeSession(e) {
         this._occurrenceCount -= 1;
         var path = e.path || (e.composedPath && e.composedPath());
         var nth = path[0].nth;
@@ -245,21 +245,18 @@
         // put the removed entry to the end of the array and hide it
         removed[0].nth = this.maximumOccurrences;
         removed[0].show = false;
-        removed[0].session = {};
+        removed[0].session = {sessionLength: '', sessionDateTime: []};
         Array.prototype.push.apply(copy,removed);
         // update the session values array
         this.set('_values', copy.slice(0));
-        for (var i=0; i<this.maximumOccurrences; i++) {
-          console.log(this._values[i]);
-        }
         this._refresh = !this._refresh;
         this.dispatchEvent(new CustomEvent('session-removed', {detail: {nth: nth, count: this._occurrenceCount}}));
       }
 
       _sessionChanged(e) {
-        console.log('_sessionChanged:');
-        this.value.data = this._values;
-        console.log(this.value.data);
+        for (var i=0; i<this.maximumOccurrences; i++) {
+          this.value.data[i] = this._values[i];
+        }
       }
 
       _setSessionId(nth, refresh) {
@@ -288,7 +285,7 @@
         } else if (e.detail.nth <= (e.detail.count+1)) {
           focused = '#sessionDatetime_'+e.detail.nth;
         } else if (e.detail.nth == (e.detail.count+2)){
-          focused = '#addOccurrence';
+          focused = '#addSession';
         }
         var node = this;
         setTimeout(function() {

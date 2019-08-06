@@ -78,7 +78,8 @@
             type: Object,
             value: function() {return {date: "", startTime: "", endTime: ""};},
             reflectToAttribute: true,
-            notify: true
+            notify: true,
+            observer: '_adjustTimeValidation'
           },
           /**
            * Number to display if "choice" should be in the label name; useful if this component is used in loop to allow for multiple options
@@ -217,6 +218,15 @@
         }
       }
 
+      _adjustTimeValidation() {
+        if (this.value.startTime == '') {
+          this.shadowRoot.querySelector('#startTime').invalid = false;
+        }
+        if (this.value.endTime == '') {
+          this.shadowRoot.querySelector('#endTime').invalid = false;
+        }
+      }
+
       _convertToSeconds(minutes) {
         return (minutes && minutes > 0) ? minutes * 60 : 60;
       }
@@ -227,12 +237,6 @@
         console.log('_dateTimeChangeInvalid:');
         console.log(e);
         this.invalidValues = true;
-      }
-
-      _valueChanged(e) {
-//        console.log('_valueChanged:');
-//        console.log(this.value);
-        this.dispatchEvent(new CustomEvent('date-time-change', {bubbles: true, composed: true, detail: {dateTime: this.value}}));
       }
 
       _daysOut(minDaysOut) {
@@ -277,10 +281,6 @@
         }
       }
 
-      _setTimeLabel(timeLabel,defaultLabel) {
-        return (timeLabel && timeLabel != "") ? timeLabel : defaultLabel;
-      }
-
       _setErrorMsg(e) {
         this.element.syntax_issue = this._dateError || this._startTimeError || this._endTimeError;
         this.element.syntax_error = (this.element.syntax_issue) ? "The " + this._labelForDate + " has potential issues. " : "";
@@ -305,9 +305,12 @@
             },
             parseTime: function(timeString) {
               if (timeString) {
-                const parts = /^(\d{1,2})(?::(\d{1,2}))?(?:\s(\w{2}))?$/.exec(timeString);
+                const parts = /^(\d{1,2})(?::(\d{1,2}))?(?:\s*(\w{2}))?$/.exec(timeString.toUpperCase().trim());
+                parts[2] = (parts[2]) ? parts[2] : '00'; // if no minutes, assume at the hour
+                parts[3] = (parts[3]) ? parts[3] : 'AM'; // if no am/pm, assume AM
+                parts[1] = (parts[1] == '12' && parts[3] == 'AM') ? '0' : parts[1]; // if 12AM set hour to 0
                 return parts && {
-                  hours: parseInt(parts[1]) + (((parts[3] == 'PM') || (parts[3] == 'pm')) ? 12 : 0),
+                  hours: parseInt(parts[1]) + ((parts[3] == 'PM' && parts[1] != '12') ? 12 : 0),
                   minutes: parts[2]
                 };
               }
@@ -315,9 +318,17 @@
           };
       }
 
+      _setTimeLabel(timeLabel,defaultLabel) {
+        return (timeLabel && timeLabel != "") ? timeLabel : defaultLabel;
+      }
+
       _today() {
         var today = new Date();
         return this._formatDate(today);
+      }
+
+      _valueChanged(e) {
+        this.dispatchEvent(new CustomEvent('date-time-change', {bubbles: true, composed: true, detail: {dateTime: this.value}}));
       }
     }
 
