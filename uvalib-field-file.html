@@ -1,8 +1,10 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../vaadin-upload/vaadin-upload.html">
 <link rel="import" href="uvalib-field.html">
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
 <link rel="import" href="../uvalib-theme/uvalib-fonts.html">
 <link rel="import" href="uvalib-form-style.html">
+<link rel="import" href="uvalib-form-style-vaadin-upload.html">
 
 <dom-module id="uvalib-field-file">
   <template>
@@ -16,7 +18,8 @@
       <template is="dom-if" if="[[_hasDescription(element)]]">
         <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
       </template>
-      <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_ariaRequired(element)]]" accept$="[[_fileExtensions(element)]]" on-change="_changedValue" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
+      <vaadin-upload id="[[element.webform_key]]" form-data-name="[[element.name]]" max-files="1" files="{{files}}" no-auto max-file-size="[[_convertMegabyteToByte(element)]]" accept="[[_fileExtensions(element)]]" required$="[[_isRequired(element)]]" aria-required$="[[_ariaRequired(element)]]" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"></vaadin-upload>
+      <!-- input type$="[[element.type]]"  on-change="_changedValue"/ -->
       <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{_hideMessage}}"><span hidden="{{_syntaxInvalid}}">[[element.required_error]]</span> <span hidden$="{{!_syntaxInvalid}}">[[element.syntax_error]]</span></div>
     </div>
   </template>
@@ -37,8 +40,23 @@
           acceptedFiles: {
             type: String,
             computed: "_fileExtensions(element)"
+          },
+          files: {
+            type: Array,
+            value: []
           }
         });
+      }
+
+      ready() {
+        this.addEventListener('file-reject',this._fileRejected);
+        this.addEventListener('files-changed',this._filesChanged);
+        this.addEventListener('max-files-reached-changed',this._maxFilesReachedChanged);
+        super.ready();
+      }
+
+      _convertMegabyteToByte(el) {
+        return el.max_filesize * 1048576;
       }
 
       _fileExtensions(el) {
@@ -46,6 +64,21 @@
         list += (list != '') ? ',' : '';
         list += (el.accept && el.accept != '') ? el.accept : '';
         return list;
+      }
+
+      _fileRejected(e) {
+        console.log('_fileRejected');
+      }
+
+      _filesChanged(e) {
+        console.log('_filesChanged');
+      }
+      _maxFilesReachedChanged(e) {
+        console.log('_maxFilesReachedChanged');
+      }
+
+      uploadFile() {
+        this.shadowRoot.querySelector('#'+this.element.webform_key).uploadFiles(this.files);
       }
     }
 
