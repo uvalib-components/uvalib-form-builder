@@ -194,7 +194,7 @@
     </template>
     </template>
     <template is="dom-if" if="[[_hasCaptcha]]">
-      <google-recaptcha force-in-body id="captcha" name="captcha" sitekey="[[_recaptchaSiteKey]]" value="{{_captchaValue}}"></google-recaptcha>
+      <google-recaptcha force-in-body id="recaptcha" name="recaptcha" sitekey="[[_recaptchaSiteKey]]" value="{{_recaptchaValue}}"></google-recaptcha>
     </template>
     <template is="dom-repeat" items="{{_elements}}" as="elem">
       <template is="dom-if" if="[[_isButton(elem)]]">
@@ -323,7 +323,7 @@
                       type: String,
                       computed: '_getSitekey(_elements)'
                     },
-                    _captchaValue: {
+                    _recaptchaValue: {
                       type: String,
                       value: ""
                     },
