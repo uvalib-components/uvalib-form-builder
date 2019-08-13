@@ -194,7 +194,7 @@
     </template>
     </template>
     <template is="dom-if" if="[[_hasCaptcha]]">
-      <google-recaptcha force-in-body id="recaptcha" name="recaptcha" sitekey="[[_recaptchaSiteKey]]" value="{{_recaptchaValue}}"></google-recaptcha>
+      <google-recaptcha force-in-body id="recaptcha" name="recaptcha" sitekey="[[_recaptchaSiteKey]]" value="{{_recaptchaValue}}" required></google-recaptcha>
     </template>
     <template is="dom-repeat" items="{{_elements}}" as="elem">
       <template is="dom-if" if="[[_isButton(elem)]]">
@@ -547,6 +547,13 @@
                         this._validateEmail(field,this._elements[i]);
                       }
                     }
+                  }
+                }
+                // if recaptcha included on form then make sure valid
+                if (this._hasCaptcha) {
+                  if (!this.shadowRoot.querySelector('#recaptcha').validate()) {
+                    this.push('_errors',{"id": 'recaptcha', text: 'Please complete the Captcha process before you submit the form.' });
+
                   }
                 }
                 // need to refresh errors to make sure they get reflected
