@@ -206,9 +206,7 @@
       ready() {
         // time and date both use same changed event
         this.addEventListener('value-changed',this._valueChanged);
-        this.addEventListener('_date-error-changed',this._setErrorMsg);
-        this.addEventListener('_start-time-error-changed',this._setErrorMsg);
-        this.addEventListener('_end-time-error-changed',this._setErrorMsg);
+        this.addEventListener('invalid-changed',this._invalidChanged);
         super.ready();
         if (!this.hideStartTime) {
           this._setTimeFields('#startTime');
@@ -231,14 +229,6 @@
         return (minutes && minutes > 0) ? minutes * 60 : 60;
       }
 
-      _changeInvalid(e) {
-        // @TODO check the event to determine which input field is invalid
-        // @TODO set the appropriate error message property value
-        console.log('_dateTimeChangeInvalid:');
-        console.log(e);
-        this.invalidValues = true;
-      }
-
       _daysOut(minDaysOut) {
         var dayOutInFuture = new Date();
         dayOutInFuture.setDate(dayOutInFuture.getDate() + minDaysOut);
@@ -256,6 +246,10 @@
           mm = '0'+mm
         }
         return yyyy + '-' + mm + '-' + dd;
+      }
+
+      _invalidChanged(e) {
+        console.log(e);
       }
 
       _ordinalSuffixOf(i) {
@@ -281,14 +275,6 @@
         }
       }
 
-      _setErrorMsg(e) {
-        this.element.syntax_issue = this._dateError || this._startTimeError || this._endTimeError;
-        this.element.syntax_error = (this.element.syntax_issue) ? "The " + this._labelForDate + " has potential issues. " : "";
-        this.element.syntax_error += (this._dateError) ? "Please check its date input. " : "";
-        this.element.syntax_error += (this._startTimeError) ? "Please check its " + this.startTimeLabel + ". " : "";
-        this.element.syntax_error += (this._endTimeError) ? "Please check its " + this.endTimeLabel + ". " : "";
-      }
-
       _setTimeFields(timeField) {
           var timePicker = this.shadowRoot.querySelector(timeField);
           timePicker.i18n = {
@@ -306,13 +292,18 @@
             parseTime: function(timeString) {
               if (timeString) {
                 const parts = /^(\d{1,2})(?::(\d{1,2}))?(?:\s*(\w{2}))?$/.exec(timeString.toUpperCase().trim());
-                parts[2] = (parts[2]) ? parts[2] : '00'; // if no minutes, assume at the hour
-                parts[3] = (parts[3]) ? parts[3] : 'AM'; // if no am/pm, assume AM
-                parts[1] = (parts[1] == '12' && parts[3] == 'AM') ? '0' : parts[1]; // if 12AM set hour to 0
-                return parts && {
-                  hours: parseInt(parts[1]) + ((parts[3] == 'PM' && parts[1] != '12') ? 12 : 0),
-                  minutes: parts[2]
-                };
+                if (Array.isArray(parts)) {
+                  parts[2] = (parts[2]) ? parts[2] : '00'; // if no minutes, assume at the hour
+                  parts[3] = (parts[3]) ? parts[3] : 'AM'; // if no am/pm, assume AM
+                  parts[1] = (parts[1] == '12' && parts[3] == 'AM') ? '0' : parts[1]; // if 12AM set hour to 0
+                  console.log(parts);
+                  return parts && {
+                    hours: parseInt(parts[1]) + ((parts[3] == 'PM' && parts[1] != '12') ? 12 : 0),
+                    minutes: parts[2]
+                  };
+                } else {
+                  return timeString;
+                }
               }
             }
           };
