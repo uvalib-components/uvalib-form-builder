@@ -18,13 +18,13 @@
         <div class="form-field">
           <label class="field-label" for="sessionLength">Length (minutes)<span class="required" aria-hidden="true">*</span><span class="hidden">required</span></label>
           <input type="text" id="sessionLength" name="sessionLength" required aria-required value="{{value.sessionLength::change}}" on-change="_sessionLengthChanged" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
-          <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{_hideMessage}}"><span hidden="{{_syntaxInvalid}}">Please enter the number of minutes for the session length.</span> <span hidden$="{{!_syntaxInvalid}}">Digits are only allowed for this input.</span></div>
+          <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{_hideLengthErrorMessage}}"><span hidden="{{_syntaxInvalid}}">Please enter the number of minutes for the session length.</span></div>
         </div>
       </template>
       <template is="dom-repeat" items="{{_datetimes}}">
-        <uvalib-field-datetime id="datetime_[[item.nth]]" number-choice="[[item.nth]]" date-required="[[_isRequired(dateRequired,_numChoicesRequired,item.nth)]]"
-          hide-start-time="[[hideStartTime]]" start-time-required="[[_isRequired(startTimeRequired,_numChoicesRequired,item.nth)]]"
-          hide-end-time="[[hideEndTime]]" end-time-required="[[_isRequired(endTimeRequired,_numChoicesRequired,item.nth)]]"
+        <uvalib-field-datetime id="datetime_[[item.nth]]" number-choice="[[item.nth]]" date-required="[[_isSessionDetailRequired(dateRequired,_numChoicesRequired,item.nth)]]"
+          hide-start-time="[[hideStartTime]]" start-time-required="[[_isSessionDetailRequired(startTimeRequired,_numChoicesRequired,item.nth)]]"
+          hide-end-time="[[hideEndTime]]" end-time-required="[[_isSessionDetailRequired(endTimeRequired,_numChoicesRequired,item.nth)]]"
           minimum-days-out="[[minimumDaysOut]]" minute-step="[[minuteStep]]" value="{{item.preferredDateTime}}"></uvalib-field-datetime>
       </template>
     </div>
@@ -182,7 +182,7 @@
         }
       }
 
-      _isRequired(required, numChoicesRequired, nthDateTime) {
+      _isSessionDetailRequired(required, numChoicesRequired, nthDateTime) {
         if (required) {
           return (nthDateTime <= numChoicesRequired) ? true : false;
         } else {
@@ -204,7 +204,7 @@
       }
 
       _sessionLengthChanged(e) {
-        this.set('value.sessionLength', this.shadowRoot.querySelector('#sessionLength').value);
+        this.set('value.sessionLength', this.shadowRoot.querySelector('#sessionLength').value.trim());
       }
 
       _validateValue() {
