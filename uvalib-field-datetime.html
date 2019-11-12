@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../uva-helper-libs/moment-timezone.html">
 <link rel="import" href="../vaadin-date-picker/vaadin-date-picker.html">
 <link rel="import" href="../vaadin-time-picker/vaadin-time-picker.html">
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
@@ -43,18 +44,18 @@
       </template>
       <div class="grid-main">
         <vaadin-date-picker id="date" label="[[_labelForDate]]" min="[[_today()]]" initial-position="[[_daysOut(minimumDaysOut)]]"
-         placeholder="MM/DD/YYYY" required="[[dateRequired]]" value="{{value.date}}" invalid="{{_dateError}}">
+         placeholder="MM/DD/YYYY" required="[[dateRequired]]" value="{{value.date}}" invalid="{{_dateError}}" error-message="[[_dateErrorMsg]]">
         </vaadin-date-picker>
         <vaadin-time-picker hidden="{{hideStartTime}}" id="startTime" name="startTime" label="[[_labelForStartTime]]"
          step="[[_convertToSeconds(minuteStep)]]" placeholder="HH:MM AM/PM" required="[[startTimeRequired]]"
-         value="{{value.startTime}}" invalid="{{_startTimeError}}">
+         value="{{value.startTime}}" invalid="{{_startTimeError}}" error-message="[[_startTimeErrorMsg]]">
         </vaadin-time-picker>
         <vaadin-time-picker hidden="{{hideEndTime}}" id="endTime" name="endTime" label="[[_labelForEndTime]]"
          step="[[_convertToSeconds(minuteStep)]]" placeholder="HH:MM AM/PM" required="[[endTimeRequired]]"
-         value="{{value.endTime}}" invalid="{{_endTimeError}}">
+         value="{{value.endTime}}" invalid="{{_endTimeError}}" error-message="[[_endTimeErrorMsg]]">
         </vaadin-time-picker>
       </div>
-      <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{_hideMessage}}"><span hidden="{{_syntaxInvalid}}">[[element.required_error]]</span> <span hidden$="{{!_syntaxInvalid}}">[[element.syntax_error]]</span></div>
+      <div id="date_times" class="uvalib-icon-exclamation-circle validation-message" hidden$="[[_hideMessage(counter)]]"><span hidden="{{_syntaxInvalid}}">{{requiredError}}</span> <span hidden$="{{!_syntaxInvalid}}">{{syntaxErrors}}</span></div>
     </div>
   </template>
 
@@ -110,6 +111,13 @@
             value: false
           },
           /**
+           * invalid date error message to display
+           */
+          _dateErrorMsg: {
+            type: String,
+            value: "",
+            reflectToAttribute: true          },
+          /**
            * indicates that the date input is required
            */
           dateRequired: {
@@ -144,6 +152,13 @@
             type: Boolean,
             value: false
           },
+          /**
+           *  start time error message to display when invalid
+           */
+          _startTimeErrorMsg: {
+            type: String,
+            value: "",
+            reflectToAttribute: true          },
           /**
            * indicates the start time input is required
            */
@@ -187,6 +202,14 @@
             value: false
           },
           /**
+           *  end time error displayed when invalid
+           */
+          _endTimeErrorMsg: {
+            type: String,
+            value: "",
+            reflectToAttribute: true
+          },
+          /**
            * the number of days from today that should be highlighted on the pop-up calendar
            */
           minimumDaysOut: {
@@ -216,11 +239,23 @@
         }
       }
 
+      focus() {
+        if (this._dateErrorMsg != "") {
+          this.shadowRoot.querySelector('#date').focus();
+        } else if (this._startTimeErrorMsg != "") {
+          this.shadowRoot.querySelector('#startTime').focus();
+        } else if (this._endTimeErrorMsg != "") {
+          this.shadowRoot.querySelector('#endTime').focus();
+        } else {
+          this.shadowRoot.querySelector('#date').focus();
+        }
+      }
+
       _adjustTimeValidation() {
-        if (this.value.startTime == '') {
+        if (this.value.startTime == "") {
           this.shadowRoot.querySelector('#startTime').invalid = false;
         }
-        if (this.value.endTime == '') {
+        if (this.value.endTime == "") {
           this.shadowRoot.querySelector('#endTime').invalid = false;
         }
       }
@@ -296,7 +331,7 @@
                   parts[2] = (parts[2]) ? parts[2] : '00'; // if no minutes, assume at the hour
                   parts[3] = (parts[3]) ? parts[3] : 'AM'; // if no am/pm, assume AM
                   parts[1] = (parts[1] == '12' && parts[3] == 'AM') ? '0' : parts[1]; // if 12AM set hour to 0
-                  console.log(parts);
+                  //console.log(parts);
                   return parts && {
                     hours: parseInt(parts[1]) + ((parts[3] == 'PM' && parts[1] != '12') ? 12 : 0),
                     minutes: parts[2]
@@ -316,6 +351,99 @@
       _today() {
         var today = new Date();
         return this._formatDate(today);
+      }
+
+      _hideMessage(counter) {
+        return this._validate(counter);
+      }
+
+      _validate(counter) {
+        if (counter) {
+          this._dateErrorMsg = "";
+          this._startTimeErrorMsg = "";
+          this._endTimeErrorMsg = "";
+          this.requiredError = this._verifyRequiredDateTimeParts(this.value);
+          this.syntaxErrors = this._verifyDateTimeValues(this.value);
+          if (this.requiredError != "") {
+            this._syntaxInvalid = false;
+          }
+          if (this.syntaxErrors != "") {
+            this._syntaxInvalid = true;
+          }
+          if (this.element) {
+            this.element.valid = ((this.requiredError == "") && (this.syntaxErrors == "")) ? true : false;
+          }
+          // if errors not found then hide error message; otherwise display
+          return ((this.requiredError == "") && (this.syntaxErrors == "")) ? true : false;
+        } else {
+          return (this.element) ? this.element.valid : true;
+        }
+      }
+
+      /**
+       * Make sure the required parts of a date time field are present:
+       * returns a non-empty string containing required parts error message.
+       */
+      _verifyRequiredDateTimeParts(value) {
+        var errorMsg = new Array();
+        // if date is required then check that a value exists and is a valid date
+        if (this.dateRequired) {
+          if (value.hasOwnProperty("date") && value.date == "") {
+            this._dateErrorMsg += 'the '+this._labelForDate+' value is missing';
+            errorMsg.push(this._dateErrorMsg);
+          }
+        }
+        // if start time is required then check that a value exists and is a valid time
+        if (this.startTimeRequired && !this.hideStartTime) {
+          if (value.hasOwnProperty("startTime") && value.startTime == "") {
+            this._startTimeErrorMsg += 'the '+this._labelForStartTime+' value is missing';
+            errorMsg.push(this._startTimeErrorMsg);
+          }
+        }
+        // if end time is required then check that a value exists and is a valid time
+        if (this.endTimeRequired && !this.hideEndTime) {
+          if (value.hasOwnProperty("endTime") && value.endTime == "") {
+            this._endTimeErrorMsg += 'the '+this._labelForEndTime+' value is missing';
+            errorMsg.push(this._endTimeErrorMsg);
+          }
+        }
+        return (errorMsg.length > 0) ? errorMsg.join(', ') : '';
+      }
+
+      /**
+       * Verify date and time values to make sure they exist and are valid:
+       * values is an object passed that contains date, startTime, and endTime keys.
+       * returns a non-empty string containing data value errors.
+       */
+      _verifyDateTimeValues(value) {
+        var today = moment().format('MM-DD-YYYY');
+        var errorMsg = new Array();
+        // if date value then check it is a valid date
+        if (value.hasOwnProperty("date") && value.date != "") {
+          if (!moment(value.date).isValid()) {
+            this._dateErrorMsg += 'the '+this._labelForDate+' value is invalid';
+            errorMsg.push(this._dateErrorMsg);
+          }
+        }
+        // if start time is visible then check that a value exists and is a valid time
+        if (!this.hideStartTime) {
+          if (value.hasOwnProperty("startTime") && value.startTime != "") {
+            if (!moment(today+' '+value.startTime).isValid()) {
+              this._startTimeErrorMsg += 'the '+this._labelForStartTime+' value is invalid';
+              errorMsg.push(this._startTimeErrorMsg);
+            }
+          }
+        }
+        // if end time is visible then check that a value exists and is a valid time
+        if (!this.hideEndTime) {
+          if (value.hasOwnProperty("endTime") && value.endTime != "") {
+            if (!moment(today+' '+value.endTime).isValid()) {
+              this._endTimeErrorMsg += 'the '+this._labelForEndTime+' value is invalid';
+              errorMsg.push(this._endTimeErrorMsg);
+            }
+          }
+        }
+        return (errorMsg.length > 0) ? errorMsg.join(', ') : '';
       }
 
       _valueChanged(e) {

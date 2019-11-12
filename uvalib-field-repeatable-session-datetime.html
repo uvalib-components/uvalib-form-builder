@@ -41,13 +41,14 @@
 
     <template is="dom-repeat" items="{{_values}}">
       <div class="session" hidden="[[!_show(item.nth, _refresh)]]">
-        <uvalib-field-session-datetime id="[[_setSessionId(item.nth, _refresh)]]" value="{{item.session}}"
+        <uvalib-field-session-datetime hide-title counter="[[counter]]" id="[[_setSessionId(item.nth, _refresh)]]" value="{{item.session}}"
           number-choices="[[numberChoices]]" num-choices-required="[[numChoicesRequired]]"
           include-session-length="[[includeSessionLength]]"
           session-label="[[_setSessionLabel(item.nth, _refresh)]]" date-required="[[dateRequired]]"
           hide-start-time="[[hideStartTime]]" start-time-required="[[startTimeRequired]]"
           hide-end-time="[[hideEndTime]]" end-time-required="[[endTimeRequired]]"
-          minimum-days-out="[[minimumDaysOut]]" minute-step="[[minuteStep]]">
+          minimum-days-out="[[minimumDaysOut]]" minute-step="[[minuteStep]]"
+          required-error="{{item.required_error}}" syntax-errors="{{item.syntax_errors}}">
         </uvalib-field-session-datetime>
         <input hidden="[[!_showRemove(item.nth, _refresh)]]" class="remove" type="button" disabled="[[!_canRemove(item.nth, _refresh)]]"
           id="remove_[[item.nth]]" name="remove_[[item.nth]]" nth="[[item.nth]]" value="Remove session" on-click="_removeSession"/>
@@ -196,9 +197,50 @@
            */
           _focusDelay: {
             type: Number,
-            value: 250
+            value: 225
           }
         });
+      }
+
+      static get observers() {
+        return [
+            '_validate(counter)'
+        ]
+      }
+
+      _validate(counter) {
+        if (counter) {
+          var temp, tempR = [], tempS = [];
+          // Validate the date/time options for this session
+          for (var i=0; i <= this._occurrenceCount; i++) {
+            if (this._values[i].required_error != "") {
+              tempR.push(this._setSessionLabel(this._values[i].nth)+' is missing required fields:'+this._values[i].required_error);
+            }
+            if (this._values[i].syntax_errors != "") {
+              tempS.push(this._setSessionLabel(this._values[i].nth)+' has problems:'+this._values[i].syntax_errors);
+            }
+          }
+          this.syntaxErrors = tempS.join(' ');
+          this.requiredError = tempR.join(' ');
+          if (this.element) {
+            this.element.valid = ((this.requiredError == "") && (this.syntaxErrors == "")) ? true : false;
+          }
+        }
+      }
+
+      focus() {
+        if ((this.requiredError != "") || (this.syntaxErrors != "")) {
+          for (var i=0; i <= this._occurrenceCount; i++) {
+            if ((this._values[i].required_error != "") || (this._values[i].syntax_errors != "")) {
+              console.log(this._setSessionId(this._values[i].nth));
+              this.shadowRoot.querySelector('#'+this._setSessionId(this._values[i].nth)).focus();
+              break;
+            }
+          }
+        } else {
+          console.log('first item');
+          this.shadowRoot.querySelector('#'+this._setSessionId(this._values[0].nth)).focus();
+        }
       }
 
       ready() {
@@ -208,7 +250,7 @@
         super.ready();
         this._values = new Array();
         for (var i=0; i < this.maximumOccurrences; i++) {
-          this._values[i] = { nth: i+1, show: false, session: {}};
+          this._values[i] = { nth: i+1, show: false, session: {}, required_error: '', syntax_errors: '' };
         }
         this._values[0].show = true;
       }
@@ -246,6 +288,8 @@
         removed[0].nth = this.maximumOccurrences;
         removed[0].show = false;
         removed[0].session = {sessionLength: '', sessionDateTime: []};
+        removed[0].required_error = '';
+        removed[0].syntax_errors = '';
         Array.prototype.push.apply(copy,removed);
         // update the session values array
         this.set('_values', copy.slice(0));

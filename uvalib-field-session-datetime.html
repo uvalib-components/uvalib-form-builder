@@ -13,19 +13,31 @@
     </custom-style>
 
     <div class="form-field-group">
-      <label class="field-label">{{sessionLabel}}</label>
+      <template is="dom-if" if="[[!hideTitle]]">
+        <div>
+          <label class="field-label">[[element.title]]</label>
+          <template is="dom-if" if="[[_hasDescription(element)]]">
+            <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
+          </template>
+        </div>
+      </template>
+      <template is="dom-if" if="[[hideTitle]]">
+        <label class="field-label">[[sessionLabel]]</label>
+      </template>
       <template is="dom-if" if="[[includeSessionLength]]">
         <div class="form-field">
           <label class="field-label" for="sessionLength">Length (minutes)<span class="required" aria-hidden="true">*</span><span class="hidden">required</span></label>
           <input type="text" id="sessionLength" name="sessionLength" required aria-required value="{{value.sessionLength::change}}" on-change="_sessionLengthChanged" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
-          <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{_hideLengthErrorMessage}}"><span hidden="{{_syntaxInvalid}}">Please enter the number of minutes for the session length.</span></div>
+          <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{_hideMessage(counter)}}"><span hidden="{{_syntaxInvalid}}">Please enter the number of minutes for the session length.</span></div>
         </div>
       </template>
       <template is="dom-repeat" items="{{_datetimes}}">
-        <uvalib-field-datetime id="datetime_[[item.nth]]" number-choice="[[item.nth]]" date-required="[[_isSessionDetailRequired(dateRequired,_numChoicesRequired,item.nth)]]"
+        <uvalib-field-datetime counter="[[counter]]" id="datetime_[[item.nth]]" number-choice="[[item.nth]]"
+          date-required="[[_isSessionDetailRequired(dateRequired,_numChoicesRequired,item.nth)]]"
           hide-start-time="[[hideStartTime]]" start-time-required="[[_isSessionDetailRequired(startTimeRequired,_numChoicesRequired,item.nth)]]"
           hide-end-time="[[hideEndTime]]" end-time-required="[[_isSessionDetailRequired(endTimeRequired,_numChoicesRequired,item.nth)]]"
-          minimum-days-out="[[minimumDaysOut]]" minute-step="[[minuteStep]]" value="{{item.preferredDateTime}}"></uvalib-field-datetime>
+          minimum-days-out="[[minimumDaysOut]]" minute-step="[[minuteStep]]" value="{{item.preferredDateTime}}"
+          required-error="{{item.requiredError}}" syntax-errors="{{item.syntaxError}}"></uvalib-field-datetime>
       </template>
     </div>
   </template>
@@ -43,6 +55,13 @@
       static get is() { return 'uvalib-field-session-datetime'; }
       static get properties() {
         return Object.assign(super.properties,{
+          /**
+           * When this component is used in the repeatable version the title should not be displayed, e.g. repeated
+           */
+          hideTitle: {
+            type: Boolean,
+            value: false
+          },
           /**
            * Values entered for the session length and multiple date/time choices.
            */
@@ -153,7 +172,8 @@
 
       static get observers() {
         return [
-            '_sessionDateTimeChanged(value.sessionDateTime)'
+            '_sessionDateTimeChanged(value.sessionDateTime)',
+            '_validate(counter,_datetimes.*)'
         ]
       }
 
@@ -164,21 +184,92 @@
       }
 
       focus() {
+        console.log('focus');
+        var focusItem = '';
         if (this.includeSessionLength) {
-          this.shadowRoot.querySelector('#sessionLength').focus();
-        } else {
-          this.shadowRoot.querySelector('#datetime_1').focus();
+          if (this.value.sessionLength == "") {
+            console.log('length');
+            focusItem = '#sessionLength';
+          }
         }
+        if (focusItem == "") {
+          if ((this.requiredError != "") || (this.syntaxErrors != "")) {
+            console.log(this._datetimes);
+            for (var i=0; i <= this._numChoicesRequired; i++) {
+              if ((this._datetimes[i].required_error != "") || (this._datetimes[i].syntax_errors != "")) {
+                if ((this._datetimes[i].preferredDateTime.date == "" && this.dateRequired)
+                  || (this._datetimes[i].preferredDateTime.startTime == "" && this.startTimeRequired)
+                  || (this._datetimes[i].preferredDateTime.endTime == "" && this.endTimeRequired)) {
+                    focusItem = '#datetime_'+this._datetimes[i].nth;
+                    console.log(focusItem);
+                    break;
+                  }
+              }
+            }
+          } else {
+            focusItem = '#datetime_1';
+          }
+        }
+        this.shadowRoot.querySelector(focusItem).focus();
       }
 
       _compareNumberChoices(choicesRequired, numberChoices) {
         return (choicesRequired > numberChoices) ? numberChoices : choicesRequired;
       }
 
+      /**
+       * observes changes to the underlying _datetimes array so _hideMessage is processed
+       * a second time to make sure error messages at the top of the page reflect all
+       * parts of the component inputs
+       */
+      _validate(counter,_datetimes) {
+        this._hideMessage(counter);
+      }
+
+      _hideMessage(counter) {
+        if (counter) {
+          var temp = '', tempR = [], tempS = [];
+          var validSessionLength;
+          // Validate the date/time options for this session
+          for (var i=0; i < this.numberChoices; i++) {
+            if (this._datetimes[i].requiredError != "") {
+              tempR.push(this._datetimes[i].requiredError);
+            }
+            if (this._datetimes[i].syntaxErrors != "") {
+              tempS.push(this._datetimes[i].syntaxErrors);
+            }
+          }
+          this.syntaxErrors = tempS.join("; ").replace(/^;+|;+$/gm,'');
+          this.syntaxErrors += (this.syntaxErrors != "") ? '.' : '';
+
+          // Validate the session length first to deteremine if error needs to display.
+          if (this.includeSessionLength) {
+            validSessionLength = (this.value.hasOwnProperty("sessionLength") && this.value.sessionLength != "") ? true : false;
+          } else {
+            validSessionLength = true;
+          }
+          temp = (!validSessionLength) ? ' session length is a required input' : '';
+          if (temp != "") {
+            tempR.unshift(temp);
+          }
+          this.requiredError = tempR.join("; ").replace(/^;+|;+$/gm,'');
+          this.requiredError += (this.requiredError != "") ? '.' : '';
+
+          if (this.element) {
+            this.element.valid = ((this.requiredError == "") && (this.syntaxErrors == "")) ? true : false;
+          }
+
+          // All inputs are validated here but only the session length validation is returned since this method is used to show its error.
+          return validSessionLength;
+        } else {
+          return (this.element) ? this.element.valid : true;
+        }
+      }
+
       _initializeDateTimeArray() {
         this._datetimes = new Array();
         for (var i=0; i < this.numberChoices; i++) {
-          this._datetimes[i] = { nth: i+1, preferredDateTime: {date: "", startTime: "", endTime: ""}};
+          this._datetimes[i] = { nth: i+1, preferredDateTime: {date: "", startTime: "", endTime: ""}, requiredError: '', syntaxErrors: ''};
         }
       }
 
