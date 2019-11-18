@@ -331,7 +331,6 @@
                   parts[2] = (parts[2]) ? parts[2] : '00'; // if no minutes, assume at the hour
                   parts[3] = (parts[3]) ? parts[3] : 'AM'; // if no am/pm, assume AM
                   parts[1] = (parts[1] == '12' && parts[3] == 'AM') ? '0' : parts[1]; // if 12AM set hour to 0
-                  //console.log(parts);
                   return parts && {
                     hours: parseInt(parts[1]) + ((parts[3] == 'PM' && parts[1] != '12') ? 12 : 0),
                     minutes: parts[2]
@@ -378,7 +377,7 @@
         } else {
           return (this.element) ? this.element.valid : true;
         }
-      }
+      } //420
 
       /**
        * Make sure the required parts of a date time field are present:
@@ -416,11 +415,11 @@
        * returns a non-empty string containing data value errors.
        */
       _verifyDateTimeValues(value) {
-        var today = moment().format('MM-DD-YYYY');
+        var today = moment().format('YYYY-MM-DD');
         var errorMsg = new Array();
         // if date value then check it is a valid date
         if (value.hasOwnProperty("date") && value.date != "") {
-          if (!moment(value.date).isValid()) {
+          if (!moment(value.date,'YYYY-MM-DD').isValid()) {
             this._dateErrorMsg += 'the '+this._labelForDate+' value is invalid';
             errorMsg.push(this._dateErrorMsg);
           }
@@ -428,7 +427,7 @@
         // if start time is visible then check that a value exists and is a valid time
         if (!this.hideStartTime) {
           if (value.hasOwnProperty("startTime") && value.startTime != "") {
-            if (!moment(today+' '+value.startTime).isValid()) {
+            if (!moment(today+' '+value.startTime,'YYYY-MM-DD H:mm').isValid()) {
               this._startTimeErrorMsg += 'the '+this._labelForStartTime+' value is invalid';
               errorMsg.push(this._startTimeErrorMsg);
             }
@@ -437,7 +436,7 @@
         // if end time is visible then check that a value exists and is a valid time
         if (!this.hideEndTime) {
           if (value.hasOwnProperty("endTime") && value.endTime != "") {
-            if (!moment(today+' '+value.endTime).isValid()) {
+            if (!moment(today+' '+value.endTime,'YYYY-MM-DD H:mm').isValid()) {
               this._endTimeErrorMsg += 'the '+this._labelForEndTime+' value is invalid';
               errorMsg.push(this._endTimeErrorMsg);
             }
