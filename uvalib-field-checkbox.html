@@ -15,7 +15,6 @@
       <template is="dom-if" if="[[_hasDescription(element)]]">
         <div class="field-label">
           <span inner-h-t-m-l="[[element.description.markup]]"></span>
-          <template is="dom-if" if="[[_isRequired(element)]]"><span class="required" aria-hidden="true">*</span><span class="hidden">required</span></template>
         </div>
       </template>
       <template is="dom-if" if="[[!_isChecked(element)]]">
@@ -25,6 +24,7 @@
         <input type$="[[element.type]]" id$="[[element.webform_key]]" name$="[[element.name]]" required$="[[_isRequired(element)]]" aria-required$="[[_ariaRequired(element)]]" value="1" on-change="_changedValue" checked aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"/>
       </template>
       <label for$="[[element.webform_key]]">[[element.title]]</label>
+      <template is="dom-if" if="[[_isRequired(element)]]"><span class="required" aria-hidden="true">*</span><span class="hidden">required</span></template>
       <div id="[[_ariaDescribedBy]]" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{_hideMessage}}">[[element.required_error]]</div>
     </div>
     </template>
@@ -46,8 +46,42 @@
                 return Object.assign(super.properties, {});
             }
 
+            static get observers() {
+              return [
+                  '_validate(counter)'
+              ]
+            }
+
+            _changedValue(e) {
+              // for a checkbox determine the current state and adjust it and the elements value
+              if (e.target.checked) {
+                this.shadowRoot.querySelector('#'+this.element.webform_key).checked = true;
+                this.value = 1;
+              } else {
+                this.shadowRoot.querySelector('#'+this.element.webform_key).checked = false;
+                this.value = 0;
+              }
+              this.dispatchEvent(new CustomEvent('changedValue', {detail: {field_id: this.element.webform_key}, bubbles: true, composed: true}));
+            }
+
             _isChecked(el) {
                 return (el.value && (el.value != 0 && el.value != ""));
+            }
+
+            _validate(counter) {
+              if (counter) {
+                this.syntaxError = "";
+                this._syntaxInvalid = false;
+                if (this._isRequired(this.element)) {
+                  if (this._isChecked(this.element)) {
+                    this.requiredError = "";
+                  } else {
+                    if (this.element.required_error == "") {
+                      this.requiredError = "Review the information and select this input.";
+                    }
+                  }
+                }
+              }
             }
 
         }

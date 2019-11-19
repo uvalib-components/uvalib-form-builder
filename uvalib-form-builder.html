@@ -67,62 +67,78 @@
                     <uvalib-field-hidden id="[[fs_elem.webform_key]]" element="{{fs_elem}}" invalid-values="{{_invalidValues}}"></uvalib-field-hidden>
                   </template>
                   <template is="dom-if" if="[[_isSelect(fs_elem)]]">
-                    <uvalib-field-select id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-select>
+                    <uvalib-field-select counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"
+                      invalid-values="{{_invalidValues}}" required-error="{{fs_elem.required_error}}" syntax-errors="{{fs_elem.syntax_error}}">
+                    </uvalib-field-select>
                   </template>
                   <template is="dom-if" if="[[_isRadios(fs_elem)]]">
-                    <uvalib-field-radios id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-radios>
+                    <uvalib-field-radios counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"
+                      invalid-values="{{_invalidValues}}" required-error="{{fs_elem.required_error}}" syntax-errors="{{fs_elem.syntax_error}}">
+                    </uvalib-field-radios>
                   </template>
                   <template is="dom-if" if="[[_isInput(fs_elem)]]">
-                    <uvalib-field-input id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-input>
+                    <uvalib-field-input counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"
+                      invalid-values="{{_invalidValues}}" required-error="{{fs_elem.required_error}}" syntax-errors="{{fs_elem.syntax_error}}">
+                    </uvalib-field-input>
                   </template>
                   <template is="dom-if" if="[[_isFile(fs_elem)]]">
-                    <uvalib-field-file id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-file>
+                    <uvalib-field-file counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"
+                      invalid-values="{{_invalidValues}}" required-error="{{fs_elem.required_error}}" syntax-errors="{{fs_elem.syntax_error}}">
+                    </uvalib-field-file>
                   </template>
                   <template is="dom-if" if="[[_isCheckbox(fs_elem)]]">
-                    <uvalib-field-checkbox id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
+                    <uvalib-field-checkbox counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"
+                      invalid-values="{{_invalidValues}}" required-error="{{fs_elem.required_error}}" syntax-errors="{{fs_elem.syntax_error}}">
+                    </uvalib-field-checkbox>
                   </template>
                   <template is="dom-if" if="[[_isCheckboxes(fs_elem)]]">
-                    <uvalib-field-checkboxes id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkboxes>
+                    <uvalib-field-checkboxes counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"
+                      invalid-values="{{_invalidValues}}" required-error="{{fs_elem.required_error}}" syntax-errors="{{fs_elem.syntax_error}}">
+                    </uvalib-field-checkboxes>
                   </template>
                   <template is="dom-if" if="[[_isTextarea(fs_elem)]]">
-                    <uvalib-field-textarea id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-textarea>
+                    <uvalib-field-textarea counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}"
+                      invalid-values="{{_invalidValues}}" required-error="{{fs_elem.required_error}}" syntax-errors="{{fs_elem.syntax_error}}">
+                    </uvalib-field-textarea>
                   </template>
                   <template is="dom-if" if="[[_isButton(fs_elem)]]">
                     <uvalib-field-button id="[[fs_elem.webform_key]]" element="{{fs_elem}}" hidden$="{{!_showField(fs_elem,_refresh)}}"></uvalib-field-button>
                   </template>
                   <template is="dom-if" if="[[_isDateTime(fs_elem)]]">
-                    <uvalib-field-datetime id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}"
+                    <uvalib-field-datetime counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}"
                       number-choice="[[fs_elem.number_choice]]" date-label="[[fs_elem.date_label]]" date-required="[[fs_elem.date_required]]"
                       start-time-label="[[fs_elem.start_time_label]]" hide-start-time="[[fs_elem.hide_start_time]]" start-time-required="[[fs_elem.start_time_required]]"
                       end-time-label="[[fs_elem.end_time_label]]" hide-end-time="[[fs_elem.hide_end_time]]" end-time-required="[[fs_elem.end_time_required]]"
                       minimum-days-out="[[fs_elem.minimum_days_out]]" minute-step="[[fs_elem.minute_step]]"
-                      hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}">
+                      hidden$="[[!_showField(fs_elem,_refresh)]]" invalid-values="{{_invalidValues}}"
+                      required-error="{{fs_elem.required_error}}" syntax-errors="{{fs_elem.syntax_error}}">
                     </uvalib-field-datetime>
                   </template>
                   <template is="dom-if" if="[[_isSessionDateTimes(fs_elem)]]">
-                    <uvalib-field-session-datetime id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}"
-                      number-choices="[[fs_elem.number_choices]]" num-choices-required="[[fs_elem.num_choices_required]]"
-                      include-session-length="[[fs_elem.include_session_length]]"
+                    <uvalib-field-session-datetime counter="[[_counter]]" id="[[fs_elem.webform_key]]"
+                      element="{{fs_elem}}" value="{{fs_elem.value}}" number-choices="[[fs_elem.number_choices]]"
+                      num-choices-required="[[fs_elem.num_choices_required]]" include-session-length="[[fs_elem.include_session_length]]"
                       session-label="[[fs_elem.session_label]]" date-required="[[fs_elem.date_required]]"
                       hide-start-time="[[fs_elem.hide_start_time]]" start-time-required="[[fs_elem.start_time_required]]"
                       hide-end-time="[[fs_elem.hide_end_time]]" end-time-required="[[fs_elem.end_time_required]]"
                       minimum-days-out="[[fs_elem.minimum_days_out]]" minute-step="[[fs_elem.minute_step]]"
-                      hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}">
+                      hidden$="[[!_showField(fs_elem,_refresh)]]" invalid-values="{{_invalidValues}}"
+                      required-error="{{fs_elem.required_error}}" syntax-errors="{{fs_elem.syntax_error}}">
                     </uvalib-field-session-datetime>
                   </template>
                   <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
-                    <uvalib-sis-input counter="[[_counter]] "id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" show-alternate$="{{fs_elem.show_alternate}}"></uvalib-sis-input>
+                    <uvalib-sis-input counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" show-alternate$="{{fs_elem.show_alternate}}"></uvalib-sis-input>
                   </template>
                   <template is="dom-if" if="[[_isRepeatableSession(fs_elem)]]">
-                    <uvalib-field-repeatable-session-datetime id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}"
+                    <uvalib-field-repeatable-session-datetime counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}"
                       maximum-occurrences="[[fs_elem.maximum_occurrences]]" include-session-length="[[fs_elem.include_session_length]]"
                       number-choices="[[fs_elem.number_choices]]" num-choices-required="[[fs_elem.num_choices_required]]"
                       session-label="[[fs_elem.session_label]]" date-required="[[fs_elem.date_required]]"
                       hide-start-time="[[fs_elem.hide_start_time]]" start-time-required="[[fs_elem.start_time_required]]"
                       hide-end-time="[[fs_elem.hide_end_time]]" end-time-required="[[fs_elem.end_time_required]]"
                       minimum-days-out="[[fs_elem.minimum_days_out]]" minute-step="[[fs_elem.minute_step]]"
-                      hidden$="{{!_showField(fs_elem,_refresh)}}" invalid-values="{{_invalidValues}}"
-                      header-height="[[this._headerHeight]]">
+                      hidden$="[[!_showField(fs_elem,_refresh)]]" invalid-values="{{_invalidValues}}" header-height="[[_headerHeight]]"
+                      required-error="{{fs_elem.required_error}}" syntax-errors="{{fs_elem.syntax_error}}">
                     </uvalib-field-repeatable-session-datetime>
                   </template>
                 </template>
@@ -137,59 +153,75 @@
             <uvalib-field-hidden id="[[elem.webform_key]]" element="{{elem}}" invalid-values="{{_invalidValues}}"></uvalib-field-hidden>
           </template>
           <template is="dom-if" if="[[_isSelect(elem)]]">
-            <uvalib-field-select id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-select>
+            <uvalib-field-select counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"
+              invalid-values="{{_invalidValues}}" required-error="{{elem.required_error}}" syntax-errors="{{elem.syntax_error}}">
+            </uvalib-field-select>
           </template>
           <template is="dom-if" if="[[_isRadios(elem)]]">
-            <uvalib-field-radios id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-radios>
+            <uvalib-field-radios counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"
+              invalid-values="{{_invalidValues}}"required-error="{{elem.required_error}}" syntax-errors="{{elem.syntax_error}}">
+            </uvalib-field-radios>
           </template>
           <template is="dom-if" if="[[_isInput(elem)]]">
-            <uvalib-field-input id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-input>
+            <uvalib-field-input counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"
+              invalid-values="{{_invalidValues}}" required-error="{{elem.required_error}}" syntax-errors="{{elem.syntax_error}}">
+            </uvalib-field-input>
           </template>
           <template is="dom-if" if="[[_isFile(elem)]]">
-            <uvalib-field-file id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-file>
+            <uvalib-field-file counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"
+              invalid-values="{{_invalidValues}}" required-error="{{elem.required_error}}" syntax-errors="{{elem.syntax_error}}">
+            </uvalib-field-file>
+          </template>
+          <template is="dom-if" if="[[_isCheckbox(elem)]]">
+            <uvalib-field-checkbox counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"
+              invalid-values="{{_invalidValues}}" required-error="{{elem.required_error}}" syntax-errors="{{elem.syntax_error}}">
+            </uvalib-field-checkbox>
+          </template>
+          <template is="dom-if" if="[[_isCheckboxes(elem)]]">
+            <uvalib-field-checkboxes counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"
+              invalid-values="{{_invalidValues}}" required-error="{{elem.required_error}}" syntax-errors="{{elem.syntax_error}}">
+            </uvalib-field-checkboxes>
+          </template>
+          <template is="dom-if" if="[[_isTextarea(elem)]]">
+            <uvalib-field-textarea counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"
+              invalid-values="{{_invalidValues}}" required-error="{{elem.required_error}}" syntax-errors="{{elem.syntax_error}}">
+            </uvalib-field-textarea>
           </template>
           <template is="dom-if" if="[[_isDateTime(elem)]]">
-            <uvalib-field-datetime id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}"
+            <uvalib-field-datetime counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}"
               number-choice="[[elem.number_choice]]" date-label="[[elem.date_label]]" date-required="[[elem.date_required]]"
               start-time-label="[[elem.start_time_label]]" hide-start-time="[[elem.hide_start_time]]" start-time-required="[[elem.start_time_required]]"
               end-time-label="[elem.end_time_label]" hide-end-time="[[elem.hide_end_time]]" end-time-required="[[elem.end_time_required]]"
               minimum-days-out="[[elem.minimum_days_out]]" minute-step="[[elem.minute_step]]"
-              hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}">
+              hidden$="[[!_showField(elem,_refresh)]]" invalid-values="{{_invalidValues}}"
+              required-error="{{elem.required_error}}" syntax-errors="{{elem.syntax_error}}">
             </uvalib-field-datetime>
           </template>
-          <template is="dom-if" if="[[_isCheckbox(elem)]]">
-            <uvalib-field-checkbox id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkbox>
-          </template>
-          <template is="dom-if" if="[[_isCheckboxes(elem)]]">
-            <uvalib-field-checkboxes id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-checkboxes>
-          </template>
-          <template is="dom-if" if="[[_isTextarea(elem)]]">
-            <uvalib-field-textarea id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"></uvalib-field-textarea>
-          </template>
           <template is="dom-if" if="[[_isSessionDateTimes(elem)]]">
-            <uvalib-field-session-datetime id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}"
-              number-choices="[[elem.number_choices]]" num-choices-required="[[elem.num_choices_required]]"
-              include-session-length="[[elem.include_session_length]]"
+            <uvalib-field-session-datetime counter="[[_counter]]" id="[[elem.webform_key]]"
+              element="{{elem}}" value="{{elem.value}}" number-choices="[[elem.number_choices]]"
+              num-choices-required="[[elem.num_choices_required]]" include-session-length="[[elem.include_session_length]]"
               session-label="[[elem.session_label]]" date-required="[[elem.date_required]]"
               hide-start-time="[[elem.hide_start_time]]" start-time-required="[[elem.start_time_required]]"
               hide-end-time="[[elem.hide_end_time]]" end-time-required="[[elem.end_time_required]]"
               minimum-days-out="[[elem.minimum_days_out]]" minute-step="[[elem.minute_step]]"
-              hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}">
+              hidden$="[[!_showField(elem,_refresh)]]" invalid-values="{{_invalidValues}}"
+              required-error="{{elem.required_error}}" syntax-errors="{{elem.syntax_error}}">
             </uvalib-field-session-datetime>
           </template>
           <template is="dom-if" if="[[_isSectionSelect(elem)]]">
             <uvalib-sis-input counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}"></uvalib-sis-input>
           </template>
           <template is="dom-if" if="[[_isRepeatableSession(elem)]]">
-            <uvalib-field-repeatable-session-datetime id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}"
+            <uvalib-field-repeatable-session-datetime counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}"
               maximum-occurrences="[[fs_elem.maximum_occurrences]]" include-session-length="[[elem.include_session_length]]"
               number-choices="[[elem.number_choices]]" num-choices-required="[[elem.num_choices_required]]"
               session-label="[[elem.session_label]]" date-required="[[elem.date_required]]"
               hide-start-time="[[elem.hide_start_time]]" start-time-required="[[elem.start_time_required]]"
               hide-end-time="[[elem.hide_end_time]]" end-time-required="[[elem.end_time_required]]"
               minimum-days-out="[[elem.minimum_days_out]]" minute-step="[[elem.minute_step]]"
-              hidden$="{{!_showField(elem,_refresh)}}" invalid-values="{{_invalidValues}}"
-              header-height="[[this._headerHeight]]">
+              hidden$="[[!_showField(elem,_refresh)]]" invalid-values="{{_invalidValues}}" header-height="[[_headerHeight]]"
+              required-error="{{elem.required_error}}" syntax-errors="{{elem.syntax_error}}">
             </uvalib-field-repeatable-session-datetime>
           </template>
     </template>
@@ -339,6 +371,13 @@
                     _headerHeight: {
                       type:String,
                       value:"0"
+                    },
+                    /**
+                     * delay in milliseconds before setting focus for session content after add or remove
+                     */
+                    _buttonClickValidationTime: {
+                      type: Number,
+                      value: 300
                     }
                 });
             }
@@ -424,41 +463,45 @@
              * Validate that any required field is not empty.
              */
             _validateRequired(key,fldObj) {
-              console.log('_validateRequired: '+key);
-              if (fldObj.validated != null) {
-                if (fldObj.validated) {
-                  fldObj.valid = true;
-                } else {
-                  fldObj.valid = false;
-                  this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field is empty - this is required and must be filled in.' });
-                }
-                fldObj.showMessages = true;
-              } else if (fldObj.value && fldObj.value != "") {
-                fldObj.valid = true;
-                if (fldObj.type == 'select') { // if field type is select make sure value is not choose one or select one
-                  var selectorPromptRegExp = /(choose|select) one/i;
-                  if (selectorPromptRegExp.test(fldObj.value)) {
-                    fldObj.valid = false;
-                    this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field option is invalid - a selection must be made from the list.' });
-                  }
-                } else if (fldObj.type == 'datetime') { // if field type is date/time make sure required parts of value are present
-                  var missingDateTime = this._verifyRequiredDateTimeParts(fldObj);
-                  if (missingDateTime != "") {
-                    fldObj.valid = false;
-                    this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field contains required content: '+missingDateTime });
-                  }
-                } else if (fldObj.type == 'datelist') { // if field type is session date/time make sure required parts of value are present
-                  console.log('code to require session date/time goes here');
-                }
-              } else {
-                // Check to see if the field is visible before indicating an empty required field is invalid.
+//              console.log('_validateRequired: '+key);
+              fldObj.valid = true;
+              if (fldObj.type == 'text' || fldObj.type == 'email' || fldObj.type == 'tel' || fldObj.type == 'textarea' || fldObj.type == 'select' ||
+                  fldObj.type == 'radios' || fldObj.type == 'checkbox' || fldObj.type == 'checkboxes') {
+                fldObj.syntax_issue = false;
                 if (!this._showField(fldObj)) {
                   fldObj.valid = true;
                 } else {
-                  fldObj.valid = false;
-  //                console.log(key+': '+fldObj.valid);
-                  this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field is empty - this is required and must be filled in.' });
+                  if (fldObj.required_error != "") {
+                    fldObj.valid = false;
+                    this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field is required - '+fldObj.required_error });
+                  } else {
+                    fldObj.valid = true;
+                  }
                 }
+              } else if (fldObj.type == 'container') {
+                // @TODO This added back to address the SIS component. We should define validation "properties/method abstraction" set by each input component.
+                if (fldObj.validated != null) {
+                  if (fldObj.validated) {
+                    fldObj.valid = true;
+                  } else {
+                    fldObj.valid = false;
+                    this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field is empty - this is required and must be filled in.' });
+                  }
+                } else {
+                  // Check to see if the field is visible before indicating an empty required field is invalid.
+                  if (!this._showField(fldObj)) {
+                    fldObj.valid = true;
+                  } else {
+                    fldObj.valid = false;
+                    this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field is empty - this is required and must be filled in.' });
+                  }
+                }
+              } else if (fldObj.type == 'datetime') {
+                // do nothing as checking required is handled within the component at the same time as syntax validation.
+              } else if (fldObj.type == 'datelist') { // single or repeatable session containing multiple date/times
+                // do nothing as checking required is handled within the component at the same time as syntax validation.
+              } else {
+                console.log(fldObj.type+' not being validated!!!');
               }
             }
 
@@ -516,94 +559,28 @@
             }
 
             /**
-             * Validate a date and time field.
+             * Validate a date and time field for required and syntax problems.
              */
             _validateDateTimeField(key,fldObj) {
-              console.log('_validateDateTimeField');
-              var error_msg = '';
               if (!this._showField(fldObj)) {
                 fldObj.valid = true;
                 fldObj.syntax_issue = false;
               } else {
-                  var error = this._verifyDateTimeValues(fldObj);
-                  if (error != '') {
+                // Validation is performed within each date/time complex component;
+                // each component has an attribute that returns any required_error message
+                // and/or syntax_errors message.
+
+                var errMsg = (fldObj.required_error != "" || fldObj.syntax_error != "") ? 'The '+fldObj.title : '';
+                if (errMsg != "") {
+                  errMsg += (fldObj.required_error != "") ? ' contains required content: ' : ' contains errors: ';
+                  errMsg += fldObj.required_error;
+                  if (fldObj.syntax_error != "") {
                     fldObj.syntax_issue = true;
-                    fldObj.valid = false;
-                    this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field input has problems: '+error });
+                    errMsg += ' '+fldObj.syntax_error;
                   }
-              }
-            }
-
-            /**
-             * Make sure the required parts of a date time field are present:
-             * returns a non-empty string containing required parts error message.
-             */
-            _verifyRequiredDateTimeParts(fldObj) {
-              var errorMsg = new Array();
-              var label;
-              // if date is required then check that a value exists and is a valid date
-              if (fldObj.date_required) {
-                console.log('date required');
-                console.log(fldObj.value);
-                if (fldObj.value.hasOwnProperty("date") && fldObj.value.date == "") {
-                  label = (fldObj.date_label) ? fldObj.date_label : 'date';
-                  errorMsg.push('the '+label+' value is invalid');
+                  this.push('_errors',{"id": key, text: errMsg });
                 }
               }
-              // if start time is required then check that a value exists and is a valid time
-              if (fldObj.start_time_required && !fldObj.hide_start_time) {
-                console.log('start time required');
-                if (fldObj.value.hasOwnProperty("startTime") && fldObj.value.startTime == "") {
-                  label = (fldObj.start_time_label) ? fldObj.start_time_label : 'start time';
-                  errorMsg.push('the '+label+' value is invalid');
-                }
-              }
-              // if end time is required then check that a value exists and is a valid time
-              if (fldObj.end_time_required && !fldObj.hide_end_time) {
-                if (fldObj.value.hasOwnProperty("endTime") && fldObj.value.endTime == "") {
-                  label = (fldObj.end_time_label) ? fldObj.end_time_label : 'end time';
-                  errorMsg.push('the '+label+' value is invalid');
-                }
-              }
-              return (errorMsg.length > 0) ? errorMsg.join(', ') : '';
-            }
-
-            /**
-             * Verify date and time values to make sure they exist and are valid:
-             * values is an object passed that contains date, startTime, and endTime keys.
-             * returns a non-empty string containing data value errors.
-             */
-            _verifyDateTimeValues(fldObj) {
-              console.log('_verifyDateTimeValues');
-              var today = moment().format('MM-DD-YYYY');
-              var errorMsg = new Array();
-              var label;
-              // if date value then check it is a valid date
-              if (fldObj.value.hasOwnProperty("date") && fldObj.value.date != '') {
-                if (!moment(fldObj.value.date).isValid()) {
-                  label = (fldObj.date_label) ? fldObj.date_label : 'date';
-                  errorMsg.push('the '+label+' value is invalid');
-                }
-              }
-              // if start time is visible then check that a value exists and is a valid time
-              if (!fldObj.hide_start_time) {
-                if (fldObj.value.hasOwnProperty("startTime") && fldObj.value.startTime != '') {
-                  if (!moment(today+' '+fldObj.value.startTime).isValid()) {
-                    label = (fldObj.start_time_label) ? fldObj.start_time_label : 'start time';
-                    errorMsg.push('the '+label+' value is invalid');
-                  }
-                }
-              }
-              // if end time is visible then check that a value exists and is a valid time
-              if (!fldObj.hide_end_time) {
-                if (fldObj.value.hasOwnProperty("endTime") && fldObj.value.endTime != '') {
-                  if (!moment(today+' '+fldObj.value.endTime).isValid()) {
-                    label = (fldObj.end_time_label) ? fldObj.end_time_label : 'end time';
-                    errorMsg.push('the '+label+' value is invalid');
-                  }
-                }
-              }
-              return (errorMsg.length > 0) ? errorMsg.join(', ') : '';
             }
 
             /**
@@ -621,7 +598,7 @@
                   if ((this._elements[fldIndex][key].type == 'tel') && this._elements[fldIndex][key].value != '') {
                     this._validatePhone(key,this._elements[fldIndex][key]);
                   }
-                  if ((this._elements[fldIndex][key].type == 'datetime') && this._elements[fldIndex][key].value != '') {
+                  if (((this._elements[fldIndex][key].type == 'datetime') || (this._elements[fldIndex][key].type == 'datelist')) && this._elements[fldIndex][key].value != '') {
                     this._validateDateTimeField(key,this._elements[fldIndex][key]);
                   }
                 }
@@ -635,6 +612,11 @@
               if (e.detail.name == 'Submit') {
                 this._errors = [];
                 this._errorList = "";
+                // give components that need to perform validation a moment to do this.
+                this._counter = this._counter+1;
+                setTimeout(function() {
+                  // let various components perform validation before continuing on
+                }, this._buttonClickValidationTime);
                 // Loop through form fields to make sure required items have values
                 for (var i=0; i<this._elements.length; i++) {
                   // only validate an input field if it is showing on the screen...
@@ -652,7 +634,7 @@
                       if ((this._elements[i].type == 'tel') && this._elements[i].valid) {
                         this._validatePhone(field,this._elements[i]);
                       }
-                      if ((this._elements[i].type == 'datetime') && this._elements[i].valid) {
+                      if (((this._elements[i].type == 'datetime') || (this._elements[i].type == 'datelist')) && this._elements[i].valid) {
                         this._validateDateTimeField(field,this._elements[i]);
                       }
                     }
@@ -704,8 +686,8 @@
                       console.log(error);
                     });
                 }
-                this._counter = this._counter+1;
-                //console.log(this._elements);
+//                this._counter = this._counter+1;
+                console.log(this._elements);
               }
             }
 

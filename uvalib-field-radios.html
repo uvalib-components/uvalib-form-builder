@@ -49,6 +49,18 @@
               super.ready();
             }
 
+            _changedValue(e) {
+              for (var key in this.element.options) {
+                var val = this._optionStripped(this.element.options[key]);
+                this.$.radioGroup.querySelector('#'+val).checked = false;
+                if (e.target.id == val) {
+                  this.value = this.element.options[key];
+                  this.$.radioGroup.querySelector('#'+val).checked = true;
+                }
+              }
+              this.dispatchEvent(new CustomEvent('changedValue', {detail: {field_id: this.element.webform_key}, bubbles: true, composed: true}));
+            }
+
             _isChecked(option,value) {
               return (option == value);
             }
@@ -59,6 +71,22 @@
                 opts.push(el.options[key]);
               }
               return opts;
+            }
+
+            _validate(counter) {
+              if (counter) {
+                this.syntaxError = "";
+                this._syntaxInvalid = false;
+                if (this._isRequired(this.element)) {
+                  if (this.element.value && this.element.value != "") {
+                    this.requiredError = "";
+                  } else {
+                    if (this.element.required_error == "") {
+                      this.requiredError = "Please select a choice.";
+                    }
+                  }
+                }
+              }
             }
         }
 

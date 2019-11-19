@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../uva-helper-libs/lodash.html">
 <link rel="import" href="uvalib-field.html">
 <link rel="import" href="../uvalib-theme/uvalib-theme.html">
 <link rel="import" href="../uvalib-theme/uvalib-fonts.html">
@@ -43,14 +44,39 @@
             }
             static get properties() {
                 return Object.assign(super.properties, {
+                  value: {
+                    type: Array,
+                    value: [],
+                    notify: true,
+                    reflectToAttribute: true
+                  }
                 });
             }
+
+            static get observers() {
+              return [
+                  '_validate(counter)'
+              ]
+            }
+
             ready() {
               super.ready();
             }
 
-            _isChecked(option,value) {
-              return (option == value);
+            _changedValue(e) {
+              for (var key in this.element.options) {
+                var val = this._optionStripped(this.element.options[key]);
+                if (e.target.id == val) {
+                  if (e.target.checked) {
+                    this.$.checkboxGroup.querySelector('#'+val).checked = true;
+                    this.value[key] = this.element.options[key];
+                  } else {
+                    this.$.checkboxGroup.querySelector('#'+val).checked = false;
+                    delete this.value[key];
+                  }
+                }
+              }
+              this.dispatchEvent(new CustomEvent('changedValue', {detail: {field_id: this.element.webform_key}, bubbles: true, composed: true}));
             }
 
             _getOptions(el) {
@@ -59,6 +85,28 @@
                 opts.push(el.options[key]);
               }
               return opts;
+            }
+
+            _isChecked(option,value) {
+              return (option == value);
+            }
+
+            _validate(counter) {
+              if (counter) {
+                this.syntaxError = "";
+                this._syntaxInvalid = false;
+                if (this.element.required) {
+                  var count = 0;
+                  for (var key in this.value) count++;
+                  if (count > 0) {
+                    this.requiredError = "";
+                  } else {
+                    if (this.element.required_error == "") {
+                      this.requiredError = "Please select at least one option.";
+                    }
+                  }
+                }
+              }
             }
         }
 

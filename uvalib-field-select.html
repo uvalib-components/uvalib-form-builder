@@ -61,6 +61,11 @@
         return _.values(obj.options);
       }
 
+      _isValidOption(value) {
+        // '- Select -' is a default assigned by the Drupal webform module. So we want to ignore this when generating our forms.
+        return (value != '- Select -') ? true : false;
+      }
+
       /**
        * Make sure that a select list with "choose one" or "select one" has an empty string value.
        * This makes sure that submitting the form doesn't see the prompt option as an allowed value
@@ -76,15 +81,24 @@
         }
       }
 
-      _isValidOption(value) {
-        // '- Select -' is a default assigned by the Drupal webform module. So we want to ignore this when generating our forms.
-        return (value != '- Select -') ? true : false;
-      }
-
       _selectedValue(el,option) {
         return (el.default_value && el.default_value==option);
       }
 
+      _validate(counter) {
+        if (counter) {
+          this.syntaxError = "";
+          this._syntaxInvalid = false;
+          var selectorPromptRegExp = /(choose|select) one/i;
+          if (selectorPromptRegExp.test(this.value)) {
+            if (this.element.required_error == "") {
+              this.requiredError = "A selection must be made from the options."
+            }
+          } else {
+            this.requiredError = "";
+          }
+        }
+      }
     }
 
     window.customElements.define(UvalibFieldSelect.is, UvalibFieldSelect);

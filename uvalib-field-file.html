@@ -18,8 +18,10 @@
       <template is="dom-if" if="[[_hasDescription(element)]]">
         <div class="descriptive-text" inner-h-t-m-l="[[element.description.markup]]"></div>
       </template>
-      <vaadin-upload id="[[element.webform_key]]" form-data-name="[[element.name]]" max-files="1" files="{{files}}" no-auto max-file-size="[[_convertMegabyteToByte(element)]]" accept="[[_fileExtensions(element)]]" required$="[[_isRequired(element)]]" aria-required$="[[_ariaRequired(element)]]" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}"></vaadin-upload>
-      <!-- input type$="[[element.type]]"  on-change="_changedValue"/ -->
+      <vaadin-upload id="[[element.webform_key]]" form-data-name="[[element.name]]" max-files="1" files="{{files}}" no-auto max-file-size="[[_convertMegabyteToByte(element)]]" accept="[[_fileExtensions(element)]]" required$="[[_isRequired(element)]]" aria-required$="[[_ariaRequired(element)]]" aria-invalid$="{{_ariaInvalid}}" aria-describedby$="{{_ariaDescribedBy}}">
+        <span slot="upload-button"><button>Upload [[element.title]] file</button></span>
+        <span slot="drop-label">Drop the [[element.title]] file here</span>
+      </vaadin-upload>
       <div id="{{_ariaDescribedBy}}" class="uvalib-icon-exclamation-circle validation-message" hidden$="{{_hideMessage}}"><span hidden="{{_syntaxInvalid}}">[[element.required_error]]</span> <span hidden$="{{!_syntaxInvalid}}">[[element.syntax_error]]</span></div>
     </div>
   </template>
@@ -62,6 +64,12 @@
         this.addEventListener('upload-start',this._uploadStart);
         this.addEventListener('upload-success',this._uploadSuccess);
         super.ready();
+      }
+
+      _changedValue(e) {
+        this.element.files = this.shadowRoot.querySelector('#'+this.element.webform_key).files;
+        console.log(this.element);
+        this.dispatchEvent(new CustomEvent('changedValue', {detail: {field_id: this.element.webform_key}, bubbles: true, composed: true}));
       }
 
       /**
@@ -123,6 +131,10 @@
        */
       uploadFile() {
         this.shadowRoot.querySelector('#'+this.element.webform_key).uploadFiles(this.files);
+      }
+
+      _validate(counter) {
+
       }
     }
 
