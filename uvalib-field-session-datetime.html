@@ -184,24 +184,20 @@
       }
 
       focus() {
-        console.log('focus');
         var focusItem = '';
         if (this.includeSessionLength) {
           if (this.value.sessionLength == "") {
-            console.log('length');
             focusItem = '#sessionLength';
           }
         }
         if (focusItem == "") {
           if ((this.requiredError != "") || (this.syntaxErrors != "")) {
-            console.log(this._datetimes);
             for (var i=0; i <= this._numChoicesRequired; i++) {
               if ((this._datetimes[i].required_error != "") || (this._datetimes[i].syntax_errors != "")) {
                 if ((this._datetimes[i].preferredDateTime.date == "" && this.dateRequired)
                   || (this._datetimes[i].preferredDateTime.startTime == "" && this.startTimeRequired)
                   || (this._datetimes[i].preferredDateTime.endTime == "" && this.endTimeRequired)) {
                     focusItem = '#datetime_'+this._datetimes[i].nth;
-                    console.log(focusItem);
                     break;
                   }
               }

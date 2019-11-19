@@ -232,13 +232,11 @@
         if ((this.requiredError != "") || (this.syntaxErrors != "")) {
           for (var i=0; i <= this._occurrenceCount; i++) {
             if ((this._values[i].required_error != "") || (this._values[i].syntax_errors != "")) {
-              console.log(this._setSessionId(this._values[i].nth));
               this.shadowRoot.querySelector('#'+this._setSessionId(this._values[i].nth)).focus();
               break;
             }
           }
         } else {
-          console.log('first item');
           this.shadowRoot.querySelector('#'+this._setSessionId(this._values[0].nth)).focus();
         }
       }
