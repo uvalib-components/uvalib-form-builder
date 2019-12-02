@@ -1,0 +1,57 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="uvalib-field.html">
+<link rel="import" href="../uvalib-theme/uvalib-theme.html">
+<link rel="import" href="../uvalib-theme/uvalib-fonts.html">
+<link rel="import" href="uvalib-form-style.html">
+
+<dom-module id="uvalib-field-email-verify">
+  <template>
+    <custom-style>
+      <style include="uvalib-theme uvalib-fonts uvalib-form-style">
+        span {
+          display: none;
+          visibility: hidden;
+        }
+      </style>
+    </custom-style>
+
+    <span>
+      <label for="email_verify">
+        Ignore this text box. It is used to detect spammers. If you enter anything into this text box, your request will not be sent.
+      </label>
+      <input type="text" name="email_verify" size="25" required value$="{{element.value::change}}" on-change="_changedValue"/>
+    </span>
+
+  </template>
+
+  <script>
+    /**
+     * `uvalib-field-email-verify`
+     * Component that generates an verify email input field used for honeypot.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/uvalib-field-email-verify.html
+     */
+    class UvalibFieldEmailVerify extends UvalibField(Polymer.Element) {
+      static get is() { return 'uvalib-field-email-verify'; }
+      static get properties() {
+        return Object.assign(super.properties,{
+
+        });
+      }
+
+      ready() {
+        super.ready();
+      }
+
+      _changedValue(e) {
+        this.value = (this.shadowRoot.querySelector('#'+this.element.webform_key).value) ? this.shadowRoot.querySelector('#'+this.element.webform_key).value : '';
+        this.dispatchEvent(new CustomEvent('changedValue', {detail: {field_id: this.element.webform_key}, bubbles: true, composed: true}));
+      }
+
+    }
+
+    window.customElements.define(UvalibFieldEmailVerify.is, UvalibFieldEmailVerify);
+  </script>
+</dom-module>
