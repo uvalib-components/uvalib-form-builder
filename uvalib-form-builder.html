@@ -1,5 +1,4 @@
 <link rel="import" href="../polymer/polymer-element.html">
-<link rel="import" href="../google-recaptcha/google-recaptcha.html">
 <link rel="import" href="../uva-helper-libs/lodash.html">
 <link rel="import" href="../uva-helper-libs/moment-timezone.html">
 <link rel="import" href="../uvalib-account/uvalib-account-app.html">
@@ -11,6 +10,7 @@
 <link rel="import" href="uvalib-field-html-markup.html">
 <link rel="import" href="uvalib-field-select.html">
 <link rel="import" href="uvalib-field-input.html">
+<link rel="import" href="uvalib-field-email-verify.html">
 <link rel="import" href="uvalib-field-file.html">
 <link rel="import" href="uvalib-field-hidden.html">
 <link rel="import" href="uvalib-field-textarea.html">
@@ -224,10 +224,10 @@
               required-error="{{elem.required_error}}" syntax-errors="{{elem.syntax_error}}">
             </uvalib-field-repeatable-session-datetime>
           </template>
+          <template is="dom-if" if="[[_isCaptcha(elem)]]">
+            <uvalib-field-email-verify counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}"></uvalib-field-email-verify>
+          </template>
     </template>
-    </template>
-    <template is="dom-if" if="[[_hasCaptcha]]">
-      <google-recaptcha force-in-body id="recaptcha" name="recaptcha" sitekey="[[_recaptchaSiteKey]]" value="{{_recaptchaValue}}" required></google-recaptcha>
     </template>
     <template is="dom-repeat" items="{{_elements}}" as="elem">
       <template is="dom-if" if="[[_isButton(elem)]]">
@@ -251,6 +251,7 @@
          * @demo demo/uvalib-field-button.html
          * @demo demo/uvalib-field-checkbox.html
          * @demo demo/uvalib-form-datetime.html
+         * @demo demo/uvalib-field-email-verify.html
          * @demo demo/uvalib-field-file.html
          * @demo demo/uvalib-field-input.html
          * @demo demo/uvalib-field-repeatable-session-datetime.html
@@ -301,13 +302,6 @@
                         computed: '_isFormAuthenticated(_elements)'
                     },
                     /**
-                     * Form captcha indicator.
-                     */
-                    _hasCaptcha: {
-                        type: Boolean,
-                        computed: '_doesFormHaveCaptcha(_elements)'
-                    },
-                    /**
                      * Form confirmation page path.
                      */
                     _confirmationPagePath: {
@@ -351,14 +345,6 @@
                         type: Boolean,
                         computed: '_readyToDisplayForm(_authenticated,userInfo)',
                         notify: true
-                    },
-                    _recaptchaSiteKey: {
-                      type: String,
-                      computed: '_getSitekey(_elements)'
-                    },
-                    _recaptchaValue: {
-                      type: String,
-                      value: ""
                     },
                     _online: {
                       type: Boolean,
@@ -640,13 +626,6 @@
                     }
                   }
                 }
-                // if recaptcha included on form then make sure valid
-                if (this._hasCaptcha) {
-                  if (!this.shadowRoot.querySelector('#recaptcha').validate()) {
-                    this.push('_errors',{"id": 'recaptcha', text: 'Please complete the Captcha process before you submit the form.' });
-
-                  }
-                }
                 // need to refresh errors to make sure they get reflected
                 this._errors = JSON.parse(JSON.stringify(this._errors));
 
@@ -662,29 +641,32 @@
                   this.shadowRoot.querySelector('#btn_submit').disabled = false;
                 } else {
                   // otherwise save the results
-                  this.$.user.saveRequest(this._elements)
-                    .then(results => {
-                      if (results.requestPathWrite) {
-                        // redirect to the confirmation form
-                        // @TODO Can we remove the domain reference when this is live in production?
-                        window.location.replace("https://library.virginia.edu"+this._confirmationPagePath);
-                      } else {
-                        console.log(results.message); // This may not be a useful message to display to patrons but we can always view Firebase logs to see technical errors.
-                        this._firebaseProblem = true;
-                        this._errors = JSON.parse(JSON.stringify(this._errors));
-                        this.push('_errors',{"id": 'btn_submit', text: 'Unable to submit your request at this time. Please wait a minute and try again.' });
-                        // Scroll the form-builder into view since the error message shows up at the top
-                        this.scrollIntoView();
-                        // Adjust the scroll position for the header height, and we want to show the previous element (should be a label or heading)
-                        window.scroll(0,window.scrollY-parseInt(this._headerHeight)-parseInt(this.previousElementSibling.offsetHeight)-5);
-                        this.shadowRoot.querySelector('#errorList').focus();
-                        this.shadowRoot.querySelector('#btn_submit').submitted = false;
-                        this.shadowRoot.querySelector('#btn_submit').disabled = false;
-                      }
-                    })
-                    .catch(error => {
-                      console.log(error);
-                    });
+                  // before saving check to see if the form contains a honeypot or not and make sure if it does that it's empty
+                  if (!this._formHasHoneypot(this._elements) || (this._formHasHoneypot(this._elements) && this._honeypotValue(this._elements) == "")) {
+                    this.$.user.saveRequest(this._elements)
+                      .then(results => {
+                        if (results.requestPathWrite) {
+                          // redirect to the confirmation form
+                          // @TODO Can we remove the domain reference when this is live in production?
+                          window.location.replace("https://library.virginia.edu"+this._confirmationPagePath);
+                        } else {
+                          console.log(results.message); // This may not be a useful message to display to patrons but we can always view Firebase logs to see technical errors.
+                          this._firebaseProblem = true;
+                          this._errors = JSON.parse(JSON.stringify(this._errors));
+                          this.push('_errors',{"id": 'btn_submit', text: 'Unable to submit your request at this time. Please wait a minute and try again.' });
+                          // Scroll the form-builder into view since the error message shows up at the top
+                          this.scrollIntoView();
+                          // Adjust the scroll position for the header height, and we want to show the previous element (should be a label or heading)
+                          window.scroll(0,window.scrollY-parseInt(this._headerHeight)-parseInt(this.previousElementSibling.offsetHeight)-5);
+                          this.shadowRoot.querySelector('#errorList').focus();
+                          this.shadowRoot.querySelector('#btn_submit').submitted = false;
+                          this.shadowRoot.querySelector('#btn_submit').disabled = false;
+                        }
+                      })
+                      .catch(error => {
+                        console.log(error);
+                      });
+                  }
                 }
 //                this._counter = this._counter+1;
                 console.log(this._elements);
@@ -713,26 +695,24 @@
             }
 
             /**
-             * Check authenticated field value to determine if form has captcha.
+             * Check if captcha field exists to determine if form has honeypot.
              * @return Boolean
              */
-            _doesFormHaveCaptcha(els) {
+            _formHasHoneypot(els) {
                 let captcha = _.find(els, {
                     type: 'captcha'
                 });
-                return (captcha && captcha.sitekey && captcha.sitekey != "") ? true : false;
+                return (captcha) ? true : false;
             }
 
             /**
-             * Returns sitekey value if found; otherwise a generic developer key value.
-             * @return String
+             * return the value of the honeypot captcha input field
              */
-            _getSitekey(els) {
-                let captcha = _.find(els, {
-                    type: 'captcha'
-                });
-                // returns developer key if no valid sitekey value is found
-                return (captcha && captcha.sitekey && captcha.sitekey != "") ? captcha.sitekey : '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
+            _honeypotValue(els) {
+              let captcha = _.find(els, {
+                type: 'captcha'
+              });
+              return (captcha && captcha.value) ? captcha.value : '';
             }
 
             /**
@@ -811,6 +791,7 @@
              * @return Array
              */
             _parsePageForm(frmPg) {
+              console.log ('parsePageForm');
                 var fields = Array();
                 if (frmPg) {
                     var form = JSON.parse(frmPg[0].webform);
