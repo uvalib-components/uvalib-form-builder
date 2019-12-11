@@ -734,7 +734,10 @@
               fldObj.valid = true;
               // for text field make sure the type matches up with the HTML input expected
               if (fldObj.type && fldObj.type == 'textfield') {
-                  fldObj.type = 'text';
+                fldObj.type = 'text';
+              }
+              if (fldObj.type && fldObj.type == 'checkboxes') {
+                fldObj.value = {};
               }
               // if the field should be auto-filled then do so...
               if (fldObj.data_auto_fill) {

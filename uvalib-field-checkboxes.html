@@ -45,10 +45,11 @@
             static get properties() {
                 return Object.assign(super.properties, {
                   value: {
-                    type: Array,
-                    value: [],
+                    type: Object,
+                    value: {},
                     notify: true,
-                    reflectToAttribute: true
+                    reflectToAttribute: true,
+                    observer: '_validateValue'
                   }
                 });
             }
@@ -106,6 +107,16 @@
                     }
                   }
                 }
+              }
+            }
+
+            _validateValue() {
+              if (typeof this.value === 'object' && this.value !== null) {
+                for (var key in this.element.options) {
+//                  this.value[key] = (this.value.hasOwnProperty(key)) ? key : null;
+                }
+              } else {
+                this.set('value', {});
               }
             }
         }
