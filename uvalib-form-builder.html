@@ -737,7 +737,7 @@
                 fldObj.type = 'text';
               }
               if (fldObj.type && fldObj.type == 'checkboxes') {
-                fldObj.value = {};
+                fldObj.value = {};  // need to override value specified by Drupal JSON output
               }
               // if the field should be auto-filled then do so...
               if (fldObj.data_auto_fill) {

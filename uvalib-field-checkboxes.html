@@ -112,9 +112,6 @@
 
             _validateValue() {
               if (typeof this.value === 'object' && this.value !== null) {
-                for (var key in this.element.options) {
-//                  this.value[key] = (this.value.hasOwnProperty(key)) ? key : null;
-                }
               } else {
                 this.set('value', {});
               }
