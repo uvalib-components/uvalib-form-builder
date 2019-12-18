@@ -35,7 +35,9 @@
         <uvalib-field-datetime counter="[[counter]]" id="datetime_[[item.nth]]" number-choice="[[item.nth]]"
           date-required="[[_isSessionDetailRequired(dateRequired,_numChoicesRequired,item.nth)]]"
           hide-start-time="[[hideStartTime]]" start-time-required="[[_isSessionDetailRequired(startTimeRequired,_numChoicesRequired,item.nth)]]"
+          start-time-label="[[startTimeLabel]]"
           hide-end-time="[[hideEndTime]]" end-time-required="[[_isSessionDetailRequired(endTimeRequired,_numChoicesRequired,item.nth)]]"
+          end-time-label="[[endTimeLabel]]"
           minimum-days-out="[[minimumDaysOut]]" minute-step="[[minuteStep]]" value="{{item.preferredDateTime}}"
           required-error="{{item.requiredError}}" syntax-errors="{{item.syntaxError}}"></uvalib-field-datetime>
       </template>
@@ -140,6 +142,13 @@
             value: false
           },
           /**
+           * label for the start time input - the default is Start time
+           */
+          startTimeLabel: {
+            type: String,
+            value: ""
+          },
+          /**
            * indicates the end time input should not be displayed
            */
           hideEndTime: {
@@ -152,6 +161,13 @@
           endTimeRequired: {
             type: Boolean,
             value: false
+          },
+          /**
+           * label for the end time input - the default is End time
+           */
+          endTimeLabel: {
+            type: String,
+            value: ""
           },
           /**
            * the number of days from today that should be highlighted on the pop-up calendar

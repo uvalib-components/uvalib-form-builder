@@ -46,7 +46,9 @@
           include-session-length="[[includeSessionLength]]"
           session-label="[[_setSessionLabel(item.nth, _refresh)]]" date-required="[[dateRequired]]"
           hide-start-time="[[hideStartTime]]" start-time-required="[[startTimeRequired]]"
+          start-time-label="[[startTimeLabel]]"
           hide-end-time="[[hideEndTime]]" end-time-required="[[endTimeRequired]]"
+          end-time-label="[[endTimeLabel]]"
           minimum-days-out="[[minimumDaysOut]]" minute-step="[[minuteStep]]"
           required-error="{{item.required_error}}" syntax-errors="{{item.syntax_errors}}">
         </uvalib-field-session-datetime>
@@ -158,6 +160,13 @@
             value: false
           },
           /**
+           * label for the start time input - the default is Start time
+           */
+          startTimeLabel: {
+            type: String,
+            value: ""
+          },
+          /**
            * indicates the end time input should not be displayed
            */
           hideEndTime: {
@@ -170,6 +179,13 @@
           endTimeRequired: {
             type: Boolean,
             value: false
+          },
+          /**
+           * label for the end time input - the default is End time
+           */
+          endTimeLabel: {
+            type: String,
+            value: ""
           },
           /**
            * the number of days from today that should be highlighted on the pop-up calendar
