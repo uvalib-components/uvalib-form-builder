@@ -21,19 +21,21 @@
         :host {
           display: block;
         }
-        :host([small-screen]) .grid-main {
-          display: grid;
-          grid-template-columns: 1fr;
-          grid-gap: 10px;
-          grid-auto-rows: auto;
-          margin-bottom: 0;
-        }
         .grid-main {
           display: grid;
           grid-template-columns: 1fr 1fr 1fr;
           grid-gap: 10px;
           grid-auto-rows: auto;
           margin-bottom: 0;
+        }
+        @media (max-width: 600px) {
+          .grid-main {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-gap: 10px;
+            grid-auto-rows: auto;
+            margin-bottom: 0;
+          }
         }
       </style>
     </custom-style>
