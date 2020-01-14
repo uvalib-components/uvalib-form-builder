@@ -646,9 +646,13 @@
                     this.$.user.saveRequest(this._elements)
                       .then(results => {
                         if (results.requestPathWrite) {
-                          // redirect to the confirmation form
-                          // @TODO Can we remove the domain reference when this is live in production?
-                          window.location.replace("https://library.virginia.edu"+this._confirmationPagePath);
+                          // redirect to the confirmation page
+                          if ((this._confirmationPagePath.indexOf('http://') === 0) || (this._confirmationPagePath.indexOf('https://') === 0)) {
+                            window.location.replace(this._confirmationPagePath);
+                          } else {
+                            let slash = (this._confirmationPagePath.indexOf('/') === 0) ? '' : '/';
+                            window.location.replace("https://library.virginia.edu"+slash+this._confirmationPagePath);
+                          }
                         } else {
                           console.log(results.message); // This may not be a useful message to display to patrons but we can always view Firebase logs to see technical errors.
                           this._firebaseProblem = true;
