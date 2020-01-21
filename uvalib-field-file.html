@@ -51,6 +51,10 @@
             notify: true,
             reflectToAttribute: true,
             observer: '_validateValue'
+          },
+          _maxFileSizeAllowed: {
+            type: Number,
+            computed: "_convertMegabyteToByte(element)"
           }
         });
       }
@@ -65,14 +69,18 @@
       _changedValue(e) {
         var storageRef = firebase.storage().ref(); //storage root reference
         var localFiles = this.shadowRoot.querySelector('#'+this.element.webform_key).files;
+        console.log(localFiles);
 
         if (!this.element.multiple && localFiles.length == 1) {
           // if file being replaced then delete existing storage file
           if (this.value.fids.length > 0) {
             this._deleteStorageFile(storageRef, this.value.fids[0]);
           }
-          this._createStorageFile(storageRef, localFiles[0]);
-        } else if (this.element.multiple && newFiles.length > 0) {
+          // check file size to make sure it is allowed
+          if (localFiles[0].size <= this._maxFileSizeAllowed) {
+            this._createStorageFile(storageRef, localFiles[0]);
+          }
+        } else if (this.element.multiple && localFiles.length > 0) {
           console.log('multiple files to upload...');
         } else {
           console.log('file upload option not accounted for!');
@@ -81,7 +89,7 @@
       }
 
       /**
-       * Convert the megabyte value entered in Drupal to bytes which the vaadin-upload component expects.
+       * Convert the megabyte value entered in Drupal to bytes which this component expects.
        */
       _convertMegabyteToByte(el) {
         return el.max_filesize * 1048576;
@@ -113,7 +121,7 @@
           var index = that.value.fids.indexOf(filename);
           that.splice('value.fids',index,1);
         }).catch(function(error) {
-          console.log(error);
+          // do nothing as file may not exist if it was too large when upload attempted
         });
       }
 
@@ -128,6 +136,12 @@
         return list;
       }
 
+      _fileIsAcceptable(file) {
+        let fileExt = file.name.toLowerCase().substr(file.name.lastIndexOf('.'));
+        console.log(fileExt);
+        return ((this.acceptedFiles.toLowerCase().search(fileExt) != -1) || (this.acceptedFiles.toLowerCase().search(file.type.toLowerCase()) != -1)) ? true : false;
+      }
+
       /**
        * modify a file's content if it was adjusted as part of a change to the file list
        */
@@ -139,17 +153,38 @@
 
       _validate(counter) {
         if (counter) {
-          this.syntaxError = "";
-          this._syntaxInvalid = false;
+          var localFiles = this.shadowRoot.querySelector('#'+this.element.webform_key).files;
+          this.requiredError = "";
+          this.syntaxErrors = "";
+          console.log('file validate');
           if (this._isRequired(this.element)) {
-            if (this.element.files && this.element.files.length > 0) {
-              this.requiredError = "";
+            console.log('is required');
+            if (localFiles && localFiles.length > 0) {
             } else {
               if (this.element.required_error == "") {
-                this.requiredError = "Please specify a value for this input.";
+                this.requiredError = "Please upload an appropriate file.";
               }
             }
           }
+          if (localFiles.length > 0) {
+            console.log(localFiles);
+            for (var i=0; i<localFiles.length; i++) {
+              if (this._fileIsAcceptable(localFiles[i])) {
+                console.log(localFiles[i].size);
+                if (localFiles[i].size > this._maxFileSizeAllowed) {
+                  console.log(this._maxFileSizeAllowed);
+                  this.syntaxErrors += localFiles[i].name + " exceeds maximum file size allowed. "
+                }
+              } else {
+                this.syntaxErrors += localFiles[i].name + " is not an allowed file type. ";
+              }
+            }
+            this._syntaxInvalid = (this.syntaxErrors != "") ? true : false;
+          }
+          // if errors not found then hide error message; otherwise display
+          return ((this.requiredError == "") && (this.syntaxErrors == "")) ? true : false;
+        } else {
+          return (this.element) ? this.element.valid : true;
         }
       }
 

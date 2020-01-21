@@ -413,6 +413,7 @@
                 return true;
               }
             }
+
             _errorString(count) {
               return (count == 1) ? 'error' : 'errors';
             }
@@ -518,6 +519,30 @@
               }
             }
 
+            _validateFile(key,fldObj) {
+              if (!this._showField(fldObj)) {
+                fldObj.valid = true;
+                fldObj.syntax_issue = false;
+              } else {
+                // if not empty
+                console.log('_validateFile');
+                console.log(fldObj);
+                // Validation is performed within file component;
+                // returns any syntax_errors message.
+                var errMsg = (fldObj.required_error != "" || fldObj.syntax_error != "") ? 'The '+fldObj.title : '';
+                if (errMsg != "") {
+                  fldObj.valid = false;
+                  errMsg += (fldObj.required_error != "") ? ' contains required content: ' : ' contains errors: ';
+                  errMsg += fldObj.required_error;
+                  if (fldObj.syntax_error != "") {
+                    fldObj.syntax_issue = true;
+                    errMsg += ' '+fldObj.syntax_error;
+                  }
+                  this.push('_errors',{"id": key, text: errMsg });
+                }
+              }
+            }
+
             /**
              * Test that a telephone number input type field contains a string that represents a validly formatted telephone number.
              */
@@ -555,7 +580,6 @@
                 // Validation is performed within each date/time complex component;
                 // each component has an attribute that returns any required_error message
                 // and/or syntax_errors message.
-
                 var errMsg = (fldObj.required_error != "" || fldObj.syntax_error != "") ? 'The '+fldObj.title : '';
                 if (errMsg != "") {
                   errMsg += (fldObj.required_error != "") ? ' contains required content: ' : ' contains errors: ';
@@ -586,6 +610,9 @@
                   }
                   if (((this._elements[fldIndex][key].type == 'datetime') || (this._elements[fldIndex][key].type == 'datelist')) && this._elements[fldIndex][key].value != '') {
                     this._validateDateTimeField(key,this._elements[fldIndex][key]);
+                  }
+                  if ((this._elements[fldIndex][key].type == 'file') && this._elements[fldIndex][key].valid) {
+                    this._validateFile(key,this._elements[fldIndex][key]);
                   }
                 }
               }
@@ -622,6 +649,9 @@
                       }
                       if (((this._elements[i].type == 'datetime') || (this._elements[i].type == 'datelist')) && this._elements[i].valid) {
                         this._validateDateTimeField(field,this._elements[i]);
+                      }
+                      if ((this._elements[i].type == 'file') && this._elements[i].valid) {
+                        this._validateFile(field,this._elements[i]);
                       }
                     }
                   }
@@ -739,6 +769,9 @@
               // for text field make sure the type matches up with the HTML input expected
               if (fldObj.type && fldObj.type == 'textfield') {
                 fldObj.type = 'text';
+              }
+              if (fldObj.type && fldObj.type == 'managed_file') {
+                fldObj.type = 'file';
               }
               if (fldObj.type && fldObj.type == 'checkboxes') {
                 fldObj.value = {};  // need to override value specified by Drupal JSON output
