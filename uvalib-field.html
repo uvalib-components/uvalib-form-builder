@@ -133,7 +133,11 @@
 
         _isRequired(el) {
           // if the input field is actually being hidden then we shouldn't require a value for it
-          return (el.required || el._required);
+          if (el) {
+            return (el.required || el._required);
+          } else {
+            return false;
+          }
         }
 
         _optionStripped(option) {
@@ -149,9 +153,7 @@
               if (this.element.value && this.element.value != "") {
                 this.requiredError = "";
               } else {
-                if (this.element.required_error == "") {
-                  this.requiredError = "Please specify a value for this input.";
-                }
+                this.requiredError = (this.element.required_error == "") ? "Please specify a value for this input." : this.element.required_error;
               }
             }
           }
