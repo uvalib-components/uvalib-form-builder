@@ -87,15 +87,18 @@
 
       _validate(counter) {
         if (counter) {
+          this.requiredError = "";
           this.syntaxError = "";
           this._syntaxInvalid = false;
-          var selectorPromptRegExp = /(choose|select) one/i;
-          if (selectorPromptRegExp.test(this.value)) {
-            if (this.element.required_error == "") {
-              this.requiredError = "A selection must be made from the options."
+          if (this._isRequired(this.element)) {
+            var selectorPromptRegExp = /(choose|select) one/i;
+            if (selectorPromptRegExp.test(this.value) || this.value == "") {
+              if (this.element.required_error == "") {
+                this.requiredError = "A selection must be made from the options."
+              } else {
+                this.requiredError = this.element.required_error;
+              }
             }
-          } else {
-            this.requiredError = "";
           }
         }
       }
