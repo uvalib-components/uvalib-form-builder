@@ -156,9 +156,7 @@
           var localFiles = this.shadowRoot.querySelector('#'+this.element.webform_key).files;
           this.requiredError = "";
           this.syntaxErrors = "";
-          console.log('file validate');
           if (this._isRequired(this.element)) {
-            console.log('is required');
             if (localFiles && localFiles.length > 0) {
             } else {
               if (this.element.required_error == "") {
