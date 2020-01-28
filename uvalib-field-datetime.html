@@ -268,7 +268,7 @@
 
       _daysOut(minDaysOut) {
         var dayOutInFuture = new Date();
-        dayOutInFuture.setDate(dayOutInFuture.getDate() + minDaysOut);
+        dayOutInFuture.setDate(dayOutInFuture.getDate() + parseInt(minDaysOut));
         return this._formatDate(dayOutInFuture);
       }
 
