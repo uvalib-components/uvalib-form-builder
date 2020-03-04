@@ -830,7 +830,7 @@
              * Returns web form definition for the form page object.
              * @return Array
              */
-            _parsePageForm(frmPg) {
+            _parsePageForm(frmPg,userInfo) {
                 var fields = Array();
                 if (frmPg) {
                     var form = JSON.parse(frmPg[0].webform);
@@ -838,13 +838,13 @@
                         if (key.match(/^sect_/)) {
                           for (var skey in form[key]) {
                             if (skey.match(/^fld_/)) {
-                              this._preprocessField(form[key][skey],this.userInfo);
+                              this._preprocessField(form[key][skey],userInfo);
                             }
                           }
                         }
                         if (key.match(/^sect_|fld_|mkup_|btn_|authenticated|confirmation/)) {
                             fields.push(form[key]);
-                            this._preprocessField(form[key],this.userInfo);
+                            this._preprocessField(form[key],userInfo);
                         }
                     }
                 }
