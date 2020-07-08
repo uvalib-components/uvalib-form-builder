@@ -127,7 +127,7 @@
                     </uvalib-field-session-datetime>
                   </template>
                   <template is="dom-if" if="[[_isSectionSelect(fs_elem)]]">
-                    <uvalib-sis-input counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" course-default-value$="{{fs_elem.course_default_value}}" show-alternate$="{{fs_elem.show_alternate}}" show-enrollment$="{{fs_elem.show_enrollment}}"></uvalib-sis-input>
+                    <uvalib-sis-input counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}" hidden$="{{!_showField(fs_elem,_refresh)}}" course-default-value$="{{fs_elem.course_default_value}}" show-alternate$="{{fs_elem.show_alternate}}" show-enrollment$="{{fs_elem.show_enrollment}}" show-meeting-time$="{{fs_elem.show_meeting_time}}"></uvalib-sis-input>
                   </template>
                   <template is="dom-if" if="[[_isRepeatableSession(fs_elem)]]">
                     <uvalib-field-repeatable-session-datetime counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}"
@@ -210,7 +210,7 @@
             </uvalib-field-session-datetime>
           </template>
           <template is="dom-if" if="[[_isSectionSelect(elem)]]">
-            <uvalib-sis-input counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" course-default-value$="{{elem.course_default_value}}" show-alternate$="{{elem.show_alternate}}" show-enrollment$="{{elem.show_enrollment}}"></uvalib-sis-input>
+            <uvalib-sis-input counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}" hidden$="{{!_showField(elem,_refresh)}}" course-default-value$="{{elem.course_default_value}}" show-alternate$="{{elem.show_alternate}}" show-enrollment$="{{elem.show_enrollment}}" show-meeting-time$="{{fs_elem.show_meeting_time}}"></uvalib-sis-input>
           </template>
           <template is="dom-if" if="[[_isRepeatableSession(elem)]]">
             <uvalib-field-repeatable-session-datetime counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}"
