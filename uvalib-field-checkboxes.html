@@ -96,7 +96,7 @@
               if (counter) {
                 this.syntaxError = "";
                 this._syntaxInvalid = false;
-                if (this.element.required) {
+                if (this._isRequired(this.element)) {
                   var count = 0;
                   for (var key in this.value) count++;
                   if (count > 0) {

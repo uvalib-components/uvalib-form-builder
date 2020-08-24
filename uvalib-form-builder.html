@@ -525,8 +525,8 @@
                 fldObj.syntax_issue = false;
               } else {
                 // if not empty
-                console.log('_validateFile');
-                console.log(fldObj);
+                //console.log('_validateFile');
+                //console.log(fldObj);
                 // Validation is performed within file component;
                 // returns any syntax_errors message.
                 var errMsg = (fldObj.required_error != "" || fldObj.syntax_error != "") ? 'The '+fldObj.title : '';
@@ -665,7 +665,11 @@
                   // Scroll the form-builder into view since the error message shows up at the top
                   this.scrollIntoView();
                   // Adjust the scroll position for the header height, and we want to show the previous element (should be a label or heading)
-                  window.scroll(0,window.scrollY-parseInt(this._headerHeight)-parseInt(this.previousElementSibling.offsetHeight)-5);
+                  if (this.previousElementSibling) {
+                    window.scroll(0,window.scrollY-parseInt(this._headerHeight)-parseInt(this.previousElementSibling.offsetHeight)-5);
+                  } else {
+                    window.scroll(0,window.scrollY-parseInt(this._headerHeight)-5);
+                  }
                   this.shadowRoot.querySelector('#errorList').focus();
                   this.shadowRoot.querySelector('#btn_submit').submitted = false;
                   this.shadowRoot.querySelector('#btn_submit').disabled = false;
@@ -691,7 +695,11 @@
                           // Scroll the form-builder into view since the error message shows up at the top
                           this.scrollIntoView();
                           // Adjust the scroll position for the header height, and we want to show the previous element (should be a label or heading)
-                          window.scroll(0,window.scrollY-parseInt(this._headerHeight)-parseInt(this.previousElementSibling.offsetHeight)-5);
+                          if (this.previousElementSibling) {
+                            window.scroll(0,window.scrollY-parseInt(this._headerHeight)-parseInt(this.previousElementSibling.offsetHeight)-5);
+                          } else {
+                            window.scroll(0,window.scrollY-parseInt(this._headerHeight)-5);
+                          }
                           this.shadowRoot.querySelector('#errorList').focus();
                           this.shadowRoot.querySelector('#btn_submit').submitted = false;
                           this.shadowRoot.querySelector('#btn_submit').disabled = false;
