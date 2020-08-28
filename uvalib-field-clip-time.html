@@ -73,7 +73,8 @@
             type: Object,
             value: function() {return {startTime: "", startDescription: "", endTime: "", endDescription: ""};},
             reflectToAttribute: true,
-            notify: true
+            notify: true,
+            observer: '_validateValue'
           },
           /**
            * Clip number to include for input group label; useful if this component is used in loop to allow for multiple options
@@ -271,6 +272,17 @@
 
       _valueChanged(e) {
         this.dispatchEvent(new CustomEvent('clip-time-change', {bubbles: true, composed: true, detail: {clipTime: this.value}}));
+      }
+
+      _validateValue() {
+        if (typeof this.value === 'object' && this.value !== null) {
+          if (!this.value.hasOwnProperty('startTime')) this.set('value.startTime', "");
+          if (!this.value.hasOwnProperty('startDescription')) this.set('value.startDescription', "");
+          if (!this.value.hasOwnProperty('endTime')) this.set('value.endTime', "");
+          if (!this.value.hasOwnProperty('endDescription')) this.set('value.endDescription', "");
+        } else {
+          this.set('value', {startTime: "", startDescription: "", endTime: "", endDescription: ""});
+        }
       }
     }
 
