@@ -1,0 +1,279 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../uvalib-theme/uvalib-theme.html">
+<link rel="import" href="../uvalib-theme/uvalib-fonts.html">
+<link rel="import" href="uvalib-form-style.html">
+<link rel="import" href="uvalib-field.html">
+
+<dom-module id="uvalib-field-clip-time">
+  <template>
+    <custom-style>
+      <style include="uvalib-theme uvalib-fonts uvalib-form-style">
+        :host {
+          display: block;
+        }
+        .grid-main {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr 1fr;
+          grid-gap: 10px;
+          grid-auto-rows: auto;
+          margin-bottom: 0;
+        }
+        @media (max-width: 600px) {
+          .grid-main {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-gap: 10px;
+            grid-auto-rows: auto;
+            margin-bottom: 0;
+          }
+        }
+      </style>
+    </custom-style>
+    <div class="form-field">
+      <label class="field-label"><span id="clipLabel">[[_clipLabel]]</span><template is="dom-if" if="[[required]]"><span class="required" aria-hidden="true">*</span><span class="hidden">required</span></template></label>
+      <div class="grid-main">
+        <div>
+          <label id="labelStartTime">Start time (hh:mm)</label><br>
+          <input id="startTime" type="text" required$="[[required]]" aria-describedby="clipLabel labelStartTime">
+        </div>
+        <div>
+          <label id="labelStartDesc">Start description</label><br>
+          <input id="startDesc" type="text" required$="[[required]]" aria-describedby="clipLabel labelStartDesc">
+        </div>
+        <div>
+          <label id="labelEndTime">End time (hh:mm)</label><br>
+          <input id="endTime" type="text" required$="[[required]]" aria-describedby="clipLabel labelEndTime">
+        </div>
+        <div>
+          <label id="labelEndDesc">End description</label><br>
+          <input id="endDesc" type="text" required$="[[required]]" aria-describedby="clipLabel labelEndDesc">
+        </div>
+      </div>
+      <div id="clip_detail_error" class="uvalib-icon-exclamation-circle validation-message" hidden$="[[_hideMessage(counter)]]"><span hidden="{{_syntaxInvalid}}">{{requiredError}}</span> <span hidden$="{{!_syntaxInvalid}}">{{syntaxErrors}}</span></div>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * `uvalib-field-clip-time`
+     * Component that generates a set of inputs that can identify a period of time within a media object.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/uvalib-field-clip-time.html
+     */
+    class UvalibFieldClipTime extends UvalibField(Polymer.Element) {
+      static get is() { return 'uvalib-field-clip-time'; }
+      static get properties() {
+        return Object.assign(super.properties,{
+          /**
+           * Values entered for the clip time. Only values for displayed input elements should be used.
+           */
+          value: {
+            type: Object,
+            value: function() {return {startTime: "", startDescription: "", endTime: "", endDescription: ""};},
+            reflectToAttribute: true,
+            notify: true
+          },
+          /**
+           * Clip number to include for input group label; useful if this component is used in loop to allow for multiple options
+           */
+          clipNumber: {
+            type: Number,
+            value: 0
+          },
+          /**
+           * custom label to use for time clip
+           */
+          _clipLabel: {
+            type: String,
+            computed: '_setClipLabel(clipNumber)'
+          },
+          _clipErrorMsg: {
+            type: String,
+            value: ''
+          },
+          /**
+           * indicates that the time clip is required
+           */
+          required: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           *  indicates start clip time entered is invalid
+           */
+          _startTimeError: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           *  start clip time error message to display when invalid
+           */
+          _startTimeErrorMsg: {
+            type: String,
+            value: "",
+            reflectToAttribute: true
+          },
+          /**
+           *  indicates start time description entered is invalid
+           */
+          _startDescError: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           *  start time description error message to display when invalid
+           */
+          _startDescErrorMsg: {
+            type: String,
+            value: "",
+            reflectToAttribute: true
+          },
+          /**
+           *  indicates end clip time entered is invalid
+           */
+          _endTimeError: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           *  end clip time error message to display when invalid
+           */
+          _endTimeErrorMsg: {
+            type: String,
+            value: "",
+            reflectToAttribute: true
+          },
+          /**
+           *  indicates end time description entered is invalid
+           */
+          _endDescError: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           *  end time description error message to display when invalid
+           */
+          _endDescErrorMsg: {
+            type: String,
+            value: "",
+            reflectToAttribute: true
+          }
+        });
+      }
+
+      ready() {
+        super.ready();
+      }
+
+      focus() {
+        if (this._startTimeErrorMsg != "") {
+          this.shadowRoot.querySelector('#startTime').focus();
+        } else if (this._startDescErrorMsg != "") {
+          this.shadowRoot.querySelector('#startDesc').focus();
+        } else if (this._endTimeErrorMsg != "") {
+          this.shadowRoot.querySelector('#endTime').focus();
+        } else if (this._endDescErrorMsg != "") {
+          this.shadowRoot.querySelector('#endDesc').focus();
+        } else {
+          this.shadowRoot.querySelector('#startTime').focus();
+        }
+      }
+
+      _hideMessage(counter) {
+        return this._validate(counter);
+      }
+
+      _setClipLabel(clipNumber) {
+        const label = 'Media clip';
+        return (clipNumber > 0) ? label+' '+clipNumber : label;
+      }
+
+      _validate(counter) {
+        if (counter) {
+          this._startTimeErrorMsg = "";
+          this._startDescErrorMsg = "";
+          this._endTimeErrorMsg = "";
+          this._endDescErrorMsg = "";
+          this.requiredError = this._verifyRequired(this.value);
+          this.syntaxErrors = this._verifyClipTimeFormat(this.value);
+          if (this.requiredError != "") {
+            this._syntaxInvalid = false;
+          }
+          if (this.syntaxErrors != "") {
+            this._syntaxInvalid = true;
+          }
+          if (this.element) {
+            this.element.valid = ((this.requiredError == "") && (this.syntaxErrors == "")) ? true : false;
+          }
+          // if errors not found then hide error message; otherwise display
+          return ((this.requiredError == "") && (this.syntaxErrors == "")) ? true : false;
+        } else {
+          return (this.element) ? this.element.valid : true;
+        }
+      } //420
+
+      /**
+       * Make sure the required parts of a date time field are present:
+       * returns a non-empty string containing required parts error message.
+       */
+      _verifyRequired(value) {
+        var errorMsg = new Array();
+        // if date is required then check that a value exists and is a valid date
+        if (this.required) {
+          if (value.hasOwnProperty("startTime") && value.startTime == "") {
+            this._startTimeErrorMsg += 'the start time value is missing';
+            errorMsg.push(this._startTimeErrorMsg);
+          }
+          if (value.hasOwnProperty("startDescription") && value.startDescription == "") {
+            this._startDescErrorMsg += 'the start description value is missing';
+            errorMsg.push(this._startDescErrorMsg);
+          }
+          if (value.hasOwnProperty("endTime") && value.endTime == "") {
+            this._endTimeErrorMsg += 'the end time value is missing';
+            errorMsg.push(this._endTimeErrorMsg);
+          }
+          if (value.hasOwnProperty("endTime") && value.endTime == "") {
+            this._endDescErrorMsg += 'the ebd description value is missing';
+            errorMsg.push(this._endDescErrorMsg);
+          }
+        }
+        return (errorMsg.length > 0) ? errorMsg.join(', ') : '';
+      }
+      /**
+       * check that a string contains timeclip pattern of dd:dd at minimum.
+       */
+      _validTimeClip(str) {
+        var pattern = /\d{2,3}:\d{2}(:\d{2})?/;
+        return pattern.text(str);
+      }
+      /**
+       * Verify time values to make sure they are format dd:dd[:dd]
+       */
+      _verifyClipTimeFormat(value) {
+        var errorMsg = new Array();
+        // if date value then check it is a valid date
+        if (value.hasOwnProperty("startTime") && value.startTime != "") {
+          if (!this._validTimeClip(value.startTime)) {
+            this._startTimeErrorMsg += 'the start time needs to have format hh:mm at minimum';
+            errorMsg.push(this._startTimeErrorMsg);
+          }
+        }
+        if (value.hasOwnProperty("endTime") && value.endTime != "") {
+          if (!this._validTimeClip(value.endTime)) {
+            this._endTimeErrorMsg += 'the end time needs to have format hh:mm at minimum';
+            errorMsg.push(this._endTimeErrorMsg);
+          }
+        }
+        return (errorMsg.length > 0) ? errorMsg.join(', ') : '';
+      }
+
+      _valueChanged(e) {
+        this.dispatchEvent(new CustomEvent('clip-time-change', {bubbles: true, composed: true, detail: {clipTime: this.value}}));
+      }
+    }
+
+    window.customElements.define(UvalibFieldClipTime.is, UvalibFieldClipTime);
+  </script>
+</dom-module>

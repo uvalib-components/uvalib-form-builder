@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>uvalib-form demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../uvalib-theme/uvalib-theme.html">
+    <link rel="import" href="../uvalib-field-clip-time.html">
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+        :host {
+          display: block;
+          width: 100%;
+        }
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="horizontal-section-container centered">
+      <h3>Uvalib field clip time input demo default values</h3>
+      <demo-snippet>
+        <template>
+          <uvalib-field-clip-time id="demo0"></uvalib-field-clip-time>
+        </template>
+      </demo-snippet>
+    </div>
+    <div class="horizontal-section-container centered">
+      <h3>Uvalib field clip time input demo clip number and required fields</h3>
+      <demo-snippet>
+        <template>
+          <uvalib-field-clip-time id="demo1" clip-number="2" required ></uvalib-field-clip-time>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>
