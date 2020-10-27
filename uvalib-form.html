@@ -25,7 +25,8 @@
                                 email: '',
                                 phone: '',
                                 affiliation: '',
-                                department_school: ''
+                                department_school: '',
+                                processed_dept_school: ''
                             };
                         }
                     },
@@ -97,7 +98,12 @@
             }
 
             _isField(el) {
-                return (el.type && (el.type == "hidden" || el.type == "datelist" || el.type == "datetime" || el.type == "file" || el.type == "number" || el.type == "email" || el.type == "tel" || el.type == "text" || el.type == "select" || el.type == "textarea" || el.type == "radios" || el.type == "container" || el.type == "checkbox" || el.type == "checkboxes" || el.type == "webform_actions" || el.type == "captcha"));
+                return (el.type && (el.type == "hidden" || el.type == "datelist" || el.type == "datetime"
+                        || el.type == "file" || el.type == "number" || el.type == "email" || el.type == "tel"
+                        || el.type == "text" || el.type == "select" || el.type == "textarea" || el.type == "radios"
+                        || el.type == "container" || el.type == "checkbox" || el.type == "checkboxes"
+                        || el.type == "webform_actions" || el.type == "captcha"
+                        || el.type == 'webform_custom_composite'));
             }
 
             _isFile(el) {
@@ -114,6 +120,10 @@
 
             _isMarkup(el) {
                 return (el.type && el.type == "webform_markup");
+            }
+
+            _isRepeatableMediaClip(el) {
+                return ((el.type && el.type == "webform_custom_composite") && (el.element && el.element.media_clip_time));
             }
 
             _isRadios(el) {
