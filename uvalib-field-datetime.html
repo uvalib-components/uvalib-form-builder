@@ -57,7 +57,7 @@
          value="{{value.endTime}}" invalid="{{_endTimeError}}" error-message="[[_endTimeErrorMsg]]">
         </vaadin-time-picker>
       </div>
-      <div id="date_times" class="uvalib-icon-exclamation-circle validation-message" hidden$="[[_hideMessage(counter)]]"><span hidden="{{_syntaxInvalid}}">{{requiredError}}</span> <span hidden$="{{!_syntaxInvalid}}">{{syntaxErrors}}</span></div>
+      <div id="date_times" class="uvalib-icon-exclamation-circle validation-message" hidden$="[[_hideMessage(counter)]]"><span hidden$="{{_syntaxInvalid}}">{{requiredError}}</span> <span hidden$="{{!_syntaxInvalid}}">{{syntaxErrors}}</span></div>
     </div>
   </template>
 
@@ -379,7 +379,7 @@
         } else {
           return (this.element) ? this.element.valid : true;
         }
-      } //420
+      }
 
       /**
        * Make sure the required parts of a date time field are present:
