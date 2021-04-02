@@ -18,6 +18,15 @@
           grid-auto-rows: auto;
           margin-bottom: 0;
         }
+        @media (min-width: 601px) and (max-width: 800px) {
+          .grid-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 10px;
+            grid-auto-rows: auto;
+            margin-bottom: 0;
+          }
+        }
         @media (max-width: 600px) {
           .grid-main {
             display: grid;
@@ -32,24 +41,24 @@
     <div class="form-field">
       <label class="field-label"><span id="clipLabel">[[_clipLabel]]</span><template is="dom-if" if="[[required]]"><span class="required" aria-hidden="true">*</span><span class="hidden">required</span></template></label>
       <div class="grid-main">
-        <div>
+        <div class="item">
           <label id="labelStartTime">Start time (hh:mm)</label><br>
-          <input id="startTime" type="text" required$="[[required]]" aria-describedby="clipLabel labelStartTime">
+          <input type="text" id="startTime" required$="[[required]]" aria-required$="[[required]]" value="{{value.startTime::change}}" on-change="_startTimeChanged" aria-invalid$="{{_ariaInvalid}}" aria-describedby="clipLabel labelStartTime">
         </div>
-        <div>
+        <div class="item">
           <label id="labelStartDesc">Start description</label><br>
-          <input id="startDesc" type="text" required$="[[required]]" aria-describedby="clipLabel labelStartDesc">
+          <input type="text" id="startDescription" required$="[[required]]" aria-required$="[[required]]" value="{{value.startDescription::change}}" on-change="_startDescriptionChanged" aria-invalid$="{{_ariaInvalid}}" aria-describedby="clipLabel labelStartDesc">
         </div>
-        <div>
+        <div class="item">
           <label id="labelEndTime">End time (hh:mm)</label><br>
-          <input id="endTime" type="text" required$="[[required]]" aria-describedby="clipLabel labelEndTime">
+          <input type="text" id="endTime" required$="[[required]]" aria-required$="[[required]]" value="{{value.endTime::change}}" on-change="_endTimeChanged" aria-invalid$="{{_ariaInvalid}}" aria-describedby="clipLabel labelEndTime">
         </div>
-        <div>
+        <div class="item">
           <label id="labelEndDesc">End description</label><br>
-          <input id="endDesc" type="text" required$="[[required]]" aria-describedby="clipLabel labelEndDesc">
+          <input type="text" id="endDescription" required$="[[required]]" aria-required$="[[required]]" value="{{value.endDescription::change}}" on-change="_endDescriptionChanged" aria-invalid$="{{_ariaInvalid}}" aria-describedby="clipLabel labelEndDesc">
         </div>
       </div>
-      <div id="clip_detail_error" class="uvalib-icon-exclamation-circle validation-message" hidden$="[[_hideMessage(counter)]]"><span hidden="{{_syntaxInvalid}}">{{requiredError}}</span> <span hidden$="{{!_syntaxInvalid}}">{{syntaxErrors}}</span></div>
+      <div id="clip_detail_error" class="uvalib-icon-exclamation-circle validation-message" hidden$="[[_hideMessage(counter)]]"><span>{{requiredError}}{{syntaxErrors}}</span></div>
     </div>
   </template>
 
@@ -84,11 +93,18 @@
             value: 0
           },
           /**
+           * Label to use for each input group label.
+           */
+          clipLabel: {
+            type: String,
+            value: 'Media clip'
+          },
+          /**
            * custom label to use for time clip
            */
           _clipLabel: {
             type: String,
-            computed: '_setClipLabel(clipNumber)'
+            computed: '_setClipLabel(clipLabel,clipNumber)'
           },
           _clipErrorMsg: {
             type: String,
@@ -172,26 +188,45 @@
         if (this._startTimeErrorMsg != "") {
           this.shadowRoot.querySelector('#startTime').focus();
         } else if (this._startDescErrorMsg != "") {
-          this.shadowRoot.querySelector('#startDesc').focus();
+          this.shadowRoot.querySelector('#startDescription').focus();
         } else if (this._endTimeErrorMsg != "") {
           this.shadowRoot.querySelector('#endTime').focus();
         } else if (this._endDescErrorMsg != "") {
-          this.shadowRoot.querySelector('#endDesc').focus();
+          this.shadowRoot.querySelector('#endDescription').focus();
         } else {
           this.shadowRoot.querySelector('#startTime').focus();
         }
       }
 
-      _hideMessage(counter) {
-        return this._validate(counter);
+      _startTimeChanged(e) {
+        this.set('value.startTime', this.shadowRoot.querySelector('#startTime').value.trim());
+        this.dispatchEvent(new CustomEvent('clip-time-change', {bubbles: true, composed: true, detail: {value: this.value}}));
       }
 
-      _setClipLabel(clipNumber) {
-        const label = 'Media clip';
-        return (clipNumber > 0) ? label+' '+clipNumber : label;
+      _startDescriptionChanged(e) {
+        this.set('value.startDescription', this.shadowRoot.querySelector('#startDescription').value.trim());
+        this.dispatchEvent(new CustomEvent('clip-time-change', {bubbles: true, composed: true, detail: {value: this.value}}));
+      }
+
+      _endTimeChanged(e) {
+        this.set('value.endTime', this.shadowRoot.querySelector('#endTime').value.trim());
+        this.dispatchEvent(new CustomEvent('clip-time-change', {bubbles: true, composed: true, detail: {value: this.value}}));
+      }
+
+      _endDescriptionChanged(e) {
+        this.set('value.endDescription', this.shadowRoot.querySelector('#endDescription').value.trim());
+        this.dispatchEvent(new CustomEvent('clip-time-change', {bubbles: true, composed: true, detail: {value: this.value}}));
       }
 
       _validate(counter) {
+        this._hideMessage(counter);
+      }
+
+      _setClipLabel(clipLabel,clipNumber) {
+        return (clipNumber > 0) ? clipLabel+' '+clipNumber : clipLabel;
+      }
+
+      _hideMessage(counter) {
         if (counter) {
           this._startTimeErrorMsg = "";
           this._startDescErrorMsg = "";
@@ -213,7 +248,7 @@
         } else {
           return (this.element) ? this.element.valid : true;
         }
-      } //420
+      }
 
       /**
        * Make sure the required parts of a date time field are present:
@@ -221,7 +256,7 @@
        */
       _verifyRequired(value) {
         var errorMsg = new Array();
-        // if date is required then check that a value exists and is a valid date
+        // if data is required then check that a value exists and is a valid date
         if (this.required) {
           if (value.hasOwnProperty("startTime") && value.startTime == "") {
             this._startTimeErrorMsg += 'the start time value is missing';
@@ -236,7 +271,7 @@
             errorMsg.push(this._endTimeErrorMsg);
           }
           if (value.hasOwnProperty("endTime") && value.endTime == "") {
-            this._endDescErrorMsg += 'the ebd description value is missing';
+            this._endDescErrorMsg += 'the end description value is missing';
             errorMsg.push(this._endDescErrorMsg);
           }
         }
@@ -246,15 +281,15 @@
        * check that a string contains timeclip pattern of dd:dd at minimum.
        */
       _validTimeClip(str) {
-        var pattern = /\d{2,3}:\d{2}(:\d{2})?/;
-        return pattern.text(str);
+        var pattern = /\d?\d\d:\d\d(:\d\d)?/;
+        return pattern.test(str);
       }
       /**
        * Verify time values to make sure they are format dd:dd[:dd]
        */
       _verifyClipTimeFormat(value) {
         var errorMsg = new Array();
-        // if date value then check it is a valid date
+        // if time log value then check it is a valid time syntax
         if (value.hasOwnProperty("startTime") && value.startTime != "") {
           if (!this._validTimeClip(value.startTime)) {
             this._startTimeErrorMsg += 'the start time needs to have format hh:mm at minimum';
@@ -268,10 +303,6 @@
           }
         }
         return (errorMsg.length > 0) ? errorMsg.join(', ') : '';
-      }
-
-      _valueChanged(e) {
-        this.dispatchEvent(new CustomEvent('clip-time-change', {bubbles: true, composed: true, detail: {clipTime: this.value}}));
       }
 
       _validateValue() {

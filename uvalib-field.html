@@ -102,6 +102,8 @@
             // Input values are fine as is. So do nothing, e.g. validation is handled when form is submitted.
           } else if (this.element.type == "datelist") {
             // Input values are fine as is. So do nothing, e.g. validation is handled when form is submitted.
+          } else if (this.element.type == "webform_custom_composite") {
+            // Input values are fine as is. So do nothing, e.g. validation is handled when form is submitted.
           } else {
             // trim leading and trailing whitespace from the content entered
             this.value = this.shadowRoot.querySelector('#'+this.element.webform_key).value.trim();

@@ -38,11 +38,10 @@
         }
       </style>
     </custom-style>
-
     <template is="dom-repeat" items="{{_values}}">
       <div class="session" hidden="[[!_show(item.nth, _refresh)]]">
         <uvalib-field-clip-time counter="[[counter]]" id="[[_setClipId(item.nth, _refresh)]]"
-          value="{{item.clip}}" clip-number="[[item.nth]]" required$="[[_isRequired(element)]]"
+          value="{{item.clip}}" clip-label="[[clipLabel]]" clip-number="[[item.nth]]" required$="[[_isRequired(element)]]"
           required-error="{{item.required_error}}" syntax-errors="{{item.syntax_errors}}">
         </uvalib-field-clip-time>
         <input hidden="[[!_showRemove(item.nth, _refresh)]]" class="remove" type="button" disabled="[[!_canRemove(item.nth, _refresh)]]"
@@ -81,6 +80,13 @@
           _values: {
             type: Array,
             value: []
+          },
+          /**
+           * Label to use for each input group label.
+           */
+          clipLabel: {
+            type: String,
+            value: 'Media clip'
           },
           /**
            * maximum number of clips that can be displayed

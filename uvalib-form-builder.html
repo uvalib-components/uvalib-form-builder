@@ -20,6 +20,7 @@
 <link rel="import" href="uvalib-field-datetime.html">
 <link rel="import" href="uvalib-field-session-datetime.html">
 <link rel="import" href="uvalib-field-repeatable-session-datetime.html">
+<link rel="import" href="uvalib-field-repeatable-clip-time.html">
 <link rel="import" href="uvalib-field-button.html">
 <link rel="import" href="../uvalib-sis-input/uvalib-sis-input.html">
 <link rel="import" href="../app-storage/app-localstorage/app-localstorage-document.html">
@@ -141,6 +142,13 @@
                       required-error="{{fs_elem.required_error}}" syntax-errors="{{fs_elem.syntax_error}}">
                     </uvalib-field-repeatable-session-datetime>
                   </template>
+                  <template is="dom-if" if="[[_isRepeatableMediaClip(fs_elem)]]">
+                    <uvalib-field-repeatable-clip-time counter="[[_counter]]" id="[[fs_elem.webform_key]]" element="{{fs_elem}}" value="{{fs_elem.value}}"
+                      maximum-occurrences="[[fs_elem.maximum_occurrences]]" clip-label="[[fs_elem.clip_label]]"
+                      hidden$="[[!_showField(fs_elem,_refresh)]]" invalid-values="{{_invalidValues}}" header-height="[[_headerHeight]]"
+                      required-error="{{fs_elem.required_error}}" syntax-errors="{{fs_elem.syntax_error}}">
+                    </uvalib-field-repeatable-clip-time>
+                  </template>
                 </template>
     </template>
     </div>
@@ -223,6 +231,13 @@
               hidden$="[[!_showField(elem,_refresh)]]" invalid-values="{{_invalidValues}}" header-height="[[_headerHeight]]"
               required-error="{{elem.required_error}}" syntax-errors="{{elem.syntax_error}}">
             </uvalib-field-repeatable-session-datetime>
+          </template>
+          <template is="dom-if" if="[[_isRepeatableMediaClip(elem)]]">
+            <uvalib-field-repeatable-clip-time counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}"
+              maximum-occurrences="[[elem.maximum_occurrences]]" clip-label="[[elem.clip_label]]"
+              hidden$="[[!_showField(elem,_refresh)]]" invalid-values="{{_invalidValues}}" header-height="[[_headerHeight]]"
+              required-error="{{elem.required_error}}" syntax-errors="{{elem.syntax_error}}">
+            </uvalib-field-repeatable-clip-time>
           </template>
           <template is="dom-if" if="[[_isCaptcha(elem)]]">
             <uvalib-field-email-verify counter="[[_counter]]" id="[[elem.webform_key]]" element="{{elem}}" value="{{elem.value}}"></uvalib-field-email-verify>
@@ -450,7 +465,6 @@
              * Validate that any required field is not empty.
              */
             _validateRequired(key,fldObj) {
-//              console.log('_validateRequired: '+key);
               fldObj.valid = true;
               if (fldObj.type == 'text' || fldObj.type == 'email' || fldObj.type == 'tel' || fldObj.type == 'textarea' || fldObj.type == 'select' ||
                   fldObj.type == 'radios' || fldObj.type == 'checkbox' || fldObj.type == 'checkboxes') {
@@ -483,6 +497,8 @@
                     this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field is empty - this is required and must be filled in.' });
                   }
                 }
+              } else if (fldObj.type == 'webform_custom_composite' && (fldObj.element && fldObj.element.media_clip_time)) {
+                // do nothing as checking required is handled within the component at the same time as syntax validation.
               } else if (fldObj.type == 'datetime') {
                 // do nothing as checking required is handled within the component at the same time as syntax validation.
               } else if (fldObj.type == 'datelist') { // single or repeatable session containing multiple date/times
@@ -525,8 +541,6 @@
                 fldObj.syntax_issue = false;
               } else {
                 // if not empty
-                //console.log('_validateFile');
-                //console.log(fldObj);
                 // Validation is performed within file component;
                 // returns any syntax_errors message.
                 var errMsg = (fldObj.required_error != "" || fldObj.syntax_error != "") ? 'The '+fldObj.title : '';
@@ -594,6 +608,31 @@
             }
 
             /**
+             * Validate a date and time field for required and syntax problems.
+             */
+            _validateMediaClipField(key,fldObj) {
+              console.log('media clip validation');
+              if (!this._showField(fldObj)) {
+                fldObj.valid = true;
+                fldObj.syntax_issue = false;
+              } else {
+                // Validation is performed within each media clip complex component;
+                // each component has an attribute that returns any required_error message
+                // and/or syntax_errors message.
+                var errMsg = (fldObj.required_error != "" || fldObj.syntax_error != "") ? 'The '+fldObj.title : '';
+                if (errMsg != "") {
+                  errMsg += (fldObj.required_error != "") ? ' contains required content: ' : ' contains errors: ';
+                  errMsg += fldObj.required_error;
+                  if (fldObj.syntax_error != "") {
+                    fldObj.syntax_issue = true;
+                    errMsg += ' '+fldObj.syntax_error;
+                  }
+                  this.push('_errors',{"id": key, text: errMsg });
+                }
+              }
+            }
+
+            /**
              * Validate input fields found in a form section.
              */
             _validateSection(fldIndex) {
@@ -610,6 +649,9 @@
                   }
                   if (((this._elements[fldIndex][key].type == 'datetime') || (this._elements[fldIndex][key].type == 'datelist')) && this._elements[fldIndex][key].value != '') {
                     this._validateDateTimeField(key,this._elements[fldIndex][key]);
+                  }
+                  if ((this._elements[fldIndex][key].type == 'webform_custom_composite') && (this._elements[fldIndex][key].element && this._elements[fldIndex][key].element.media_clip_time)) {
+                    this._validateMediaClipField(key,this._elements[fldIndex][key]);
                   }
                   if ((this._elements[fldIndex][key].type == 'file') && this._elements[fldIndex][key].valid) {
                     this._validateFile(key,this._elements[fldIndex][key]);
@@ -649,6 +691,10 @@
                       }
                       if (((this._elements[i].type == 'datetime') || (this._elements[i].type == 'datelist')) && this._elements[i].valid) {
                         this._validateDateTimeField(field,this._elements[i]);
+                      }
+                      if ((this._elements[i].type == 'webform_custom_composite') && (this._elements[i].element && this._elements[i].element.media_clip_time)) {
+                        console.log('media clip'); // ***** ADD FOR DEBUGGING
+                        this._validateMediaClipField(field,this._elements[i]);
                       }
                       if ((this._elements[i].type == 'file') && this._elements[i].valid) {
                         this._validateFile(field,this._elements[i]);
