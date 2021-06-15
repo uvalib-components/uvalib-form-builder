@@ -467,7 +467,7 @@
             _validateRequired(key,fldObj) {
               fldObj.valid = true;
               if (fldObj.type == 'text' || fldObj.type == 'email' || fldObj.type == 'tel' || fldObj.type == 'textarea' || fldObj.type == 'select' ||
-                  fldObj.type == 'radios' || fldObj.type == 'checkbox' || fldObj.type == 'checkboxes') {
+                  fldObj.type == 'radios' || fldObj.type == 'checkbox' || fldObj.type == 'checkboxes' || fldObj.type == 'number') {
                 fldObj.syntax_issue = false;
                 if (!this._showField(fldObj)) {
                   fldObj.valid = true;
@@ -568,6 +568,31 @@
                 fldObj.syntax_issue = false;
               } else {
                 if (!phoneRegExp.test(fldObj.value)) {
+                  fldObj.syntax_issue = true;
+                  // when testing for a syntax error append the error to an existing error if appropriate; otherwise add it to the error list.
+                  if (this._errors[key]) {
+                    this._errors[key].text += ' And it'+error_msg;
+                  } else {
+                    fldObj.valid = false;
+                    this.push('_errors',{"id": key, text: 'The '+fldObj.title+' field input'+error_msg });
+                  }
+                } else {
+                  fldObj.valid = true;
+                  fldObj.syntax_issue = false;
+                }
+              }
+            }
+
+            /**
+             * Test that a number input type field contains a string that represents a validly formatted integer.
+             */
+            _validateNumeric(key,fldObj) {
+              var error_msg = ' does not look like a number, please check the value you entered.';
+              if (!this._showField(fldObj)) {
+                fldObj.valid = true;
+                fldObj.syntax_issue = false;
+              } else {
+                if (isNaN(fldObj.value)) {
                   fldObj.syntax_issue = true;
                   // when testing for a syntax error append the error to an existing error if appropriate; otherwise add it to the error list.
                   if (this._errors[key]) {
@@ -688,6 +713,9 @@
                       }
                       if ((this._elements[i].type == 'tel') && this._elements[i].valid) {
                         this._validatePhone(field,this._elements[i]);
+                      }
+                      if ((this._elements[i].type == 'number') && this._elements[i].valid) {
+                        this._validateNumeric(field,this._elements[i]);
                       }
                       if (((this._elements[i].type == 'datetime') || (this._elements[i].type == 'datelist')) && this._elements[i].valid) {
                         this._validateDateTimeField(field,this._elements[i]);
