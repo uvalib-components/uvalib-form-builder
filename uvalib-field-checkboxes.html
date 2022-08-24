@@ -15,7 +15,7 @@
     <fieldset id="checkboxGroup" class="form-field">
       <legend class="field-label">[[element.title]]<template is="dom-if" if="[[_isRequired(element)]]"><span class="required" aria-hidden="true">*</span><span class="hidden">required</span></template></legend>
       <template is="dom-if" if="[[_hasDescription(element)]]">
-        <div class="field-label">
+        <div class="descriptive-text">
           <span inner-h-t-m-l="[[element.description.markup]]"></span>
         </div>
       </template>
